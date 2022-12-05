@@ -77,31 +77,3 @@ You can just open the repo folder on you local machine and configure CMake throu
 Your VSCode should have installed extensions `CMake Tools` and `C/C++` from Microsoft.
 
 To run your program, you should select target `sparks` first. Then, you're recommended to use `Run->Start Debugging` and `Run->Run Without Debugging`, start from the menu bar.
-
-## Project Framework
-
-All the corresponding codes of this project is under `src/sparks`.
-You should explore the code and get familiar with the framework.
-
-The following stuff is what you need to know about this framework.
-
-### Scene
-
-The most important part of a renderer is its scene.
-A scene contains different kinds of assets.
-
-Codes for describing the scene is under `src/sparks/assets`.
-
-#### Textures
-
-#### Model
-
-##### Mesh
-
-#### Material
-
-#### Entity
-
-### Renderer
-
-#### Path Tracer
