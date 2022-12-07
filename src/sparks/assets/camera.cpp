@@ -2,6 +2,7 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "imgui.h"
+#include "sparks/util/util.h"
 
 namespace sparks {
 
@@ -13,6 +14,11 @@ glm::mat4 Camera::GetProjectionMatrix(float aspect) const {
 bool Camera::ImGuiItems() {
   bool value_changed = false;
   value_changed |= ImGui::SliderFloat("FOV", &fov_, 1.0f, 160.0f, "%.0f", 0);
+  value_changed |=
+      ImGui::SliderFloat("Aperture", &aperture_, 0.0f, 1.0f, "%.2f");
+  value_changed |=
+      ImGui::SliderFloat("Focal Length", &focal_length_, 0.1f, 10000.0f, "%.2f",
+                         ImGuiSliderFlags_Logarithmic);
   return value_changed;
 }
 
