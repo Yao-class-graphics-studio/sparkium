@@ -6,31 +6,102 @@
 #include "sparks/assets/accelerated_mesh.h"
 #include "sparks/util/util.h"
 
+#include <sstream>
+
 namespace sparks {
 
-Scene::Scene() {
-  AddTexture(Texture(1, 1, glm::vec4{1.0f}, SAMPLE_TYPE_LINEAR), "Pure White");
-  AddTexture(Texture(1, 1, glm::vec4{0.0f}, SAMPLE_TYPE_LINEAR), "Pure Black");
-  Texture envmap;
-  Texture::Load(u8"../../textures/envmap_clouds_4k.hdr", envmap);
-  envmap.SetSampleType(SAMPLE_TYPE_LINEAR);
-  envmap_id_ = AddTexture(envmap, "Clouds");
-  AddEntity(
-      AcceleratedMesh({{{-1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-                       {{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-                       {{1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-                       {{1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}},
-                      {0, 1, 2, 2, 1, 3}),
-      Material{}, glm::mat4{1.0f});
-  SetCameraToWorld(glm::inverse(glm::lookAt(glm::vec3{2.0f, 1.0f, 3.0f},
-                                            glm::vec3{0.0f, 0.0f, 0.0f},
-                                            glm::vec3{0.0f, 1.0f, 0.0f})));
+Scene::Scene(const std::string &filename) {
+  tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument;
+  doc->LoadFile(filename.c_str());
+  tinyxml2::XMLElement *rootElement = doc->RootElement();
 
-  Texture texture;
-  Texture::Load("../../textures/earth.jpg", texture);
-  AddEntity(AcceleratedMesh(Mesh::Sphere(glm::vec3{0.0f, 0.0f, 0.0f}, 0.5f)),
-            Material{glm::vec3{1.0f}, AddTexture(texture, "Earth")},
-            glm::translate(glm::mat4{1.0f}, glm::vec3{0.0f, 0.5f, 0.0f}));
+  std::string envmapFilename = "../../textures/envmap_clouds_4k.hdr";
+  glm::mat4 cameraMatrix = glm::inverse(
+      glm::lookAt(glm::vec3{2.0f, 1.0f, 3.0f}, glm::vec3{0.0f, 0.0f, 0.0f},
+                  glm::vec3{0.0f, 1.0f, 0.0f}));
+
+  for (tinyxml2::XMLElement *childElement = rootElement->FirstChildElement();
+       childElement; childElement = childElement->NextSiblingElement()) {
+    std::string elementType{childElement->Value()};
+    if (elementType == "envmap") {
+      envmapFilename = childElement->FirstChildElement("string")
+                           ->FindAttribute("value")
+                           ->Value();
+    } else if (elementType == "camera") {
+      cameraMatrix = transformMatrix(childElement->FirstChildElement("transform"));
+    } else if (elementType == "mesh") {
+      Mesh mesh = Mesh(childElement);
+      Material material =
+          CreateMaterial(childElement->FirstChildElement("material"));
+      glm::mat4 transformation =
+          transformMatrix(childElement->FirstChildElement("transform"));
+
+      AddEntity(AcceleratedMesh(mesh), material, transformation);
+    } else {
+      std::cout << "Unknown Element Type: " << childElement->Value()
+                << std::endl;
+    }
+  }
+
+  Texture envmap;
+  Texture::Load(envmapFilename, envmap);
+  envmap.SetSampleType(SAMPLE_TYPE_LINEAR);
+  envmap_id_ = AddTexture(envmap, getBaseName(envmapFilename));
+
+  SetCameraToWorld(cameraMatrix);
+
+  //return;
+  //AddTexture(Texture(1, 1, glm::vec4{1.0f}, SAMPLE_TYPE_LINEAR), "Pure White");
+  //AddTexture(Texture(1, 1, glm::vec4{0.0f}, SAMPLE_TYPE_LINEAR), "Pure Black");
+  //Texture envmap;
+  //Texture::Load(u8"../../textures/envmap_clouds_4k.hdr", envmap);
+  //envmap.SetSampleType(SAMPLE_TYPE_LINEAR);
+  //envmap_id_ = AddTexture(envmap, "Clouds");
+  //AddEntity(
+  //    AcceleratedMesh({{{-1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+  //                     {{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+  //                     {{1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+  //                     {{1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}},
+  //                    {0, 1, 2, 2, 1, 3}),
+  //    Material{}, glm::mat4{1.0f});
+  //SetCameraToWorld(glm::inverse(glm::lookAt(glm::vec3{2.0f, 1.0f, 3.0f},
+  //                                          glm::vec3{0.0f, 0.0f, 0.0f},
+  //                                          glm::vec3{0.0f, 1.0f, 0.0f})));
+
+  //Texture texture;
+  //Texture::Load("../../textures/earth.jpg", texture);
+  //AddEntity(AcceleratedMesh(Mesh::Sphere(glm::vec3{0.0f, 0.0f, 0.0f}, 0.5f)),
+  //          Material{glm::vec3{1.0f}, AddTexture(texture, "Earth")},
+  //          glm::translate(glm::mat4{1.0f}, glm::vec3{0.0f, 0.5f, 0.0f}));
+}
+
+Material Scene::CreateMaterial(const tinyxml2::XMLElement *materialElement) {
+  if (!materialElement) {
+    std::cout << "No Material Defined, Use Default Material." << std::endl;
+    return Material{};
+  }
+    
+  Material material{glm::vec3{1.0f}};
+  const tinyxml2::XMLElement *tmp;
+  if (tmp = materialElement->FirstChildElement("rgb")) {
+    glm::vec4 rgba{string2vec3(tmp->FindAttribute("value")->Value()), 1.0f};
+    material.albedo_texture_id =
+        AddTexture(Texture(1, 1, rgba, SAMPLE_TYPE_LINEAR));
+  } else if (tmp = materialElement->FirstChildElement("rgba")) {
+    glm::vec4 rgba{string2vec4(tmp->FindAttribute("value")->Value())};
+    material.albedo_texture_id =
+        AddTexture(Texture(1, 1, rgba, SAMPLE_TYPE_LINEAR));
+  } else if (tmp = materialElement->FirstChildElement("texture")) {
+    std::string textureFilename{
+        tmp->FirstChildElement("string")->FindAttribute("value")->Value()};
+    Texture texture;
+    Texture::Load(textureFilename, texture);
+    material.albedo_texture_id =
+        AddTexture(texture, getBaseName(textureFilename));
+  }
+  material.material_type = mat[materialElement->FindAttribute("type")->Value()];
+  
+  return material;
 }
 
 int Scene::AddTexture(const Texture &texture, const std::string &name) {

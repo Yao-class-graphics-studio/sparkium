@@ -11,7 +11,9 @@
 namespace sparks {
 class Scene {
  public:
-  Scene();
+  //Scene();
+  Scene(const std::string &filename = "../../scenes/base.xml");
+  Material CreateMaterial(const tinyxml2::XMLElement *materialElement);
   int AddTexture(const Texture &texture,
                  const std::string &name = "Unnamed Texture");
   [[nodiscard]] const std::vector<Texture> &GetTextures() const;
@@ -84,5 +86,10 @@ class Scene {
   glm::vec3 camera_position_{0.0f};
   glm::vec3 camera_pitch_yaw_roll_{0.0f, 0.0f, 0.0f};
   Camera camera_{};
+  std::unordered_map<std::string, MaterialType> mat{
+      {"lambertian", MATERIAL_TYPE_LAMBERTIAN},
+      {"specular", MATERIAL_TYPE_SPECULAR},
+      {"transmissive", MATERIAL_TYPE_TRANSMISSIVE},
+      {"principled", MATERIAL_TYPE_PRINCIPLED}};
 };
 }  // namespace sparks

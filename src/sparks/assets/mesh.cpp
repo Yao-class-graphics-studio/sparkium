@@ -19,6 +19,30 @@ Mesh::Mesh(const std::vector<Vertex> &vertices,
   indices_ = indices;
 }
 
+Mesh::Mesh(const tinyxml2::XMLElement *element) {
+  std::string meshType = element->FindAttribute("type")->Value();
+  if (meshType == "Sphere") {
+    glm::vec3 center = string2vec3(element->FirstChildElement("vec3")
+                                       ->FindAttribute("value")
+                                       ->Value());
+    float radius = std::stof(
+        element->FirstChildElement("float")
+                                 ->FindAttribute("value")
+                                 ->Value());
+    Mesh mesh_ = Mesh::Sphere(center, radius);
+    vertices_ = mesh_.vertices_;
+    indices_ = mesh_.indices_;
+  } else if (meshType == "obj") {
+    Mesh::LoadObjFile(
+        element->FirstChildElement("string")
+                          ->FindAttribute("value")
+                          ->Value(),
+                      *this);
+  } else {
+    std::cout << "Unknown Mesh Type: " << meshType << std::endl;
+  }
+}
+
 Mesh Mesh::Cube(const glm::vec3 &center, const glm::vec3 &size) {
   return {{}, {}};
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+	<!--<integrator type="path">
+		--><!-- Instantiate a path tracer with a max. path length of 8 --><!--
+		<integer name="max_depth" value="8"/>
+	</integrator>-->
+	
+	<camera>
+		<transform type="lookat">
+			<vec3 name="eye" value="2.0 1.0 3.0"/>
+			<vec3 name="center" value="0.0 0.0 0.0"/>
+			<vec3 name="up" value="0.0 1.0 0.0"/>
+			<!--<lookat eye="2.0 1.0 3.0" center="0.0 0.0 0.0" up="0.0 1.0 0.0"/>-->
+		</transform>
+	</camera>
+	
+	<envmap type="hdr">
+		<string name="filename" value="../../textures/envmap_clouds_4k.hdr"/>
+	</envmap>
+	
+	<!--obj example-->
+	<!--<mesh type="obj">
+		<string name="filename" value="xxx"/>
+		<material type="">
+			<texture name="filename" value="xxx"/>
+		</material>
+	</mesh>-->
+	
+	<mesh type="obj">
+		<string name="filename" value="../../meshes/plane.obj"/>
+		
+		<material type="lambertian">
+			<rgb name="albedo" value="0.8 0.8 0.8"/>
+		</material>
+	</mesh>
+
+	<mesh type="Sphere">
+		<vec3 name="center" value="0.0 0.0 0.0"/>
+		<float name="radius" value="0.5"/>
+		
+		<transform type="translate">
+			<vec3 name="translation" value="0.0 0.5 0.0"/>
+		</transform>
+		
+		<material type="lambertian">
+			<texture name="albedo">
+				<string name="filename" value="../../textures/earth.jpg"/>
+			</texture>
+		</material>
+	</mesh>
+	
+</scene>

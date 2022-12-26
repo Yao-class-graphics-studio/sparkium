@@ -2,6 +2,7 @@
 #include "sparks/assets/model.h"
 #include "sparks/assets/vertex.h"
 #include "vector"
+#include "sparks/assets/util.h"
 
 namespace sparks {
 class Mesh : public Model {
@@ -10,6 +11,7 @@ class Mesh : public Model {
   Mesh(const Mesh &mesh);
   Mesh(const std::vector<Vertex> &vertices,
        const std::vector<uint32_t> &indices);
+  Mesh(const tinyxml2::XMLElement *element);
   ~Mesh() override = default;
   [[nodiscard]] float TraceRay(const glm::vec3 &origin,
                                const glm::vec3 &direction,
