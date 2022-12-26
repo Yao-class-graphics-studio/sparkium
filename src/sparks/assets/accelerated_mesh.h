@@ -7,7 +7,8 @@ namespace sparks {
 namespace {
 struct TreeNode {
   AxisAlignedBoundingBox aabb{};
-  int child[2]{-1, -1};
+  int child[8]{};
+  glm::vec3 center;
 };
 }  // namespace
 
@@ -27,5 +28,23 @@ class AcceleratedMesh : public Mesh {
   /*
    * You can add your acceleration structure contents here.
    * */
+  int treeRoot;
+  int intersectCnt;
+  std::vector<TreeNode> t;
+  const int Ids[8]{0, 1, 2, 4, 6, 5, 3, 7};
+  void buildTree(int &x, std::vector<int> faceIds);
+  int relativeId(glm::vec3 a, glm::vec3 b) const;
+  bool treeIntersect(int x,
+                     const glm::vec3 &origin,
+                     const glm::vec3 &direction,
+                     float t_min,
+                     float &t_max,
+                     HitRecord *hit_record) const;
+  bool triangleIntersect(int x,
+                          const glm::vec3 &origin,
+                          const glm::vec3 &direction,
+                          float t_min,
+                          float &t_max,
+                          HitRecord *hit_record) const;
 };
 }  // namespace sparks
