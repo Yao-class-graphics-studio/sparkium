@@ -5,11 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch sparks",
+            "name": "Launch sparks cpu",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
             "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/src/sparks",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Launch sparks gpu",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": ["-vkrt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/sparks",
             "environment": [],

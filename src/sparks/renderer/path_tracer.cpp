@@ -25,8 +25,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
       auto &material =
           scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
       throughput *=
-          material.albedo_color *
-          glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(
+          material.diffuse *
+          glm::vec3{scene_->GetTextures()[material.diffuse_texture_id].Sample(
               hit_record.tex_coord)};
       origin = hit_record.position;
       direction = scene_->GetEnvmapLightDirection();

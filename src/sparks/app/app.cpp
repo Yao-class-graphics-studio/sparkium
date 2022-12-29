@@ -371,7 +371,7 @@ void App::UpdateImGui() {
 
     if (app_settings_.hardware_renderer) {
       reset_accumulation_ |= ImGui::SliderInt(
-          "Samples", &renderer_->GetRendererSettings().num_samples, 1, 128);
+          "Samples", &renderer_->GetRendererSettings().num_samples, 1, 256);
     } else {
       reset_accumulation_ |= ImGui::SliderInt(
           "Samples", &renderer_->GetRendererSettings().num_samples, 1, 16);
@@ -409,16 +409,32 @@ void App::UpdateImGui() {
       ImGui::Separator();
       static int current_item = 0;
       std::vector<const char *> material_types = {"Lambertian", "Specular",
-                                                  "Transmissive", "Principled"};
+                                                  "Transmissive", "Principled", "Emission"};
       Material &material = scene.GetEntity(selected_entity_id_).GetMaterial();
       reset_accumulation_ |=
           ImGui::Combo("Type", reinterpret_cast<int *>(&material.material_type),
                        material_types.data(), material_types.size());
       reset_accumulation_ |= ImGui::ColorEdit3(
-          "Albedo Color", &material.albedo_color[0],
+          "Ambient Color", &material.ambient[0],
           ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
       reset_accumulation_ |=
-          scene.TextureCombo("Albedo Texture", &material.albedo_texture_id);
+          scene.TextureCombo("Ambient Texture", &material.ambient_texture_id);
+      reset_accumulation_ |= ImGui::ColorEdit3(
+          "Diffuse Color", &material.diffuse[0],
+          ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
+      reset_accumulation_ |=
+          scene.TextureCombo("Diffuse Texture", &material.diffuse_texture_id);
+      reset_accumulation_ |= ImGui::ColorEdit3(
+          "Specular Color", &material.specular[0],
+          ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
+      reset_accumulation_ |=
+          scene.TextureCombo("Specular Texture", &material.specular_texture_id);
+      reset_accumulation_ |= ImGui::ColorEdit3(
+          "Transmittance Color", &material.transmittance[0],
+          ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
+      reset_accumulation_ |= ImGui::ColorEdit3(
+          "Emission Color", &material.emission[0],
+          ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
     }
 
 #if !defined(NDEBUG)

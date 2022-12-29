@@ -1,7 +1,15 @@
 
 struct Material {
-  vec3 albedo_color;
-  int albedo_texture_id;
+  vec3 ambient;
+  int ambient_texture_id;
+  vec3 diffuse;
+  int diffuse_texture_id;
+  vec3 specular;
+  int specular_texture_id;
+  vec3 transmittance;
+  int reserve0;
+  vec3 emission;
+  int reserve1;
   uint material_type;
 };
 

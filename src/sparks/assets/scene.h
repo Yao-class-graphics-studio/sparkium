@@ -67,6 +67,7 @@ class Scene {
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
+  int LoadObjFile(const std::string &file_path, const glm::mat4 &transform);
 
  private:
   std::vector<Texture> textures_;

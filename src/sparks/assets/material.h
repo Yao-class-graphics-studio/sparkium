@@ -13,8 +13,17 @@ enum MaterialType : int {
 };
 
 struct Material {
-  glm::vec3 albedo_color{0.8f};
-  int albedo_texture_id{0};
+  glm::vec3 ambient{0.0f};
+  int ambient_texture_id{0};
+  glm::vec3 diffuse{0.8f};
+  int diffuse_texture_id{0};
+  glm::vec3 specular{0.0f};
+  int specular_texture_id{0};
+  glm::vec3 transmittance{0.0f};
+  int reserve0;
+  glm::vec3 emission{0.0f};
+  int reserve1;
+
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
   int reserve[3];
 };
