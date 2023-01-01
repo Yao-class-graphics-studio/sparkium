@@ -167,6 +167,9 @@ void App::OnInit() {
   material_uniform_buffer_ =
       std::make_unique<vulkan::framework::DynamicBuffer<Material>>(core_.get(),
                                                                    16384);
+  emission_uniform_buffer_ =
+      std::make_unique<vulkan::framework::DynamicBuffer<uint32_t>>(core_.get(),
+                                                                   16384);
 
   std::vector<glm::vec2> vertices{
       {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}};
@@ -560,13 +563,18 @@ void App::UpdateDynamicBuffer() {
   guo.accumulated_sample = accumulated_sample_;
   guo.num_samples = renderer_->GetRendererSettings().num_samples;
   guo.num_bounces = renderer_->GetRendererSettings().num_bounces;
-  global_uniform_buffer_->operator[](0) = guo;
   auto &entities = renderer_->GetScene().GetEntities();
+  uint32_t emission_cnt = 0;
   for (int i = 0; i < entities.size(); i++) {
     auto &entity = entities[i];
     entity_uniform_buffer_->operator[](i).model = entity.GetTransformMatrix();
     material_uniform_buffer_->operator[](i) = entity.GetMaterial();
+    if (entity.GetMaterial().material_type & MATERIAL_TYPE_EMISSION) {
+      emission_uniform_buffer_->operator[](emission_cnt++) = i;
+    }
   }
+  guo.num_emissions = emission_cnt;
+  global_uniform_buffer_->operator[](0) = guo;
 }
 
 void App::UpdateHostStencilBuffer() {
@@ -616,7 +624,8 @@ void App::UpdateDeviceAssets() {
               vulkan::raytracing::BottomLevelAccelerationStructure>(
               core_->GetDevice(), core_->GetCommandPool(), vertices, indices));
       object_info_data_.push_back({uint32_t(ray_tracing_vertex_data_.size()),
-                                   uint32_t(ray_tracing_index_data_.size())});
+                                   uint32_t(ray_tracing_index_data_.size()),
+                                   uint32_t(indices.size() / 3)});
       ray_tracing_vertex_data_.insert(ray_tracing_vertex_data_.end(),
                                       vertices.begin(), vertices.end());
       ray_tracing_index_data_.insert(ray_tracing_index_data_.end(),
@@ -992,6 +1001,8 @@ void App::BuildRayTracingPipeline() {
                                              VK_SHADER_STAGE_RAYGEN_BIT_KHR);
   ray_tracing_render_node_->AddUniformBinding(binding_texture_samplers_,
                                               VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+  ray_tracing_render_node_->AddBufferBinding(emission_uniform_buffer_.get(),
+                                             VK_SHADER_STAGE_RAYGEN_BIT_KHR);
   ray_tracing_render_node_->SetShaders("../../shaders/path_tracing.rgen.spv",
                                        "../../shaders/path_tracing.rmiss.spv",
                                        "../../shaders/path_tracing.rchit.spv");

@@ -28,3 +28,19 @@ void InitRandomSeed(uint x, uint y, uint s) {
 float RandomFloat() {
   return float(WangHash(random_device.seed)) / 4294967296.0;
 }
+
+int RandomInt(int lower, int upper) {
+  return lower + int(WangHash(random_device.seed) % uint(upper - lower));
+}
+
+int RandomInt(int upper) {
+  return int(WangHash(random_device.seed) % uint(upper));
+}
+
+uint RandomInt(uint upper) {
+  return WangHash(random_device.seed) % upper;
+}
+
+int RandomInt() {
+  return int(WangHash(random_device.seed));
+}

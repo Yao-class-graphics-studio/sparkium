@@ -37,12 +37,15 @@ Scene::Scene() {
   // AddEntity(AcceleratedMesh(Mesh::Sphere(glm::vec3{0.0f, 0.0f, 0.0f}, 0.5f)),
   //           Material{glm::vec3{1.0f}, 0, glm::vec3{1.0f, 0.0f, 0.0f}},
   //           glm::translate(glm::mat4{1.0f}, glm::vec3{0.0f, 0.5f, 0.0f}));
-  LoadObjFile(
-      "D:/Seafile/Yao Class/Semester 5/Graphics/models/nashida/nashida.obj", glm::mat4{0.05f});
   // LoadObjFile(
-  //     "D:/Seafile/Yao Class/Semester "
-  //     "5/Graphics/models/cornellbox/cornell_box.obj",
-  //     glm::translate(glm::mat4{0.001f}, glm::vec3{0.0f, 0.0f, 0.0f}));
+  //     "D:/Seafile/Yao Class/Semester 5/Graphics/models/nashida/nashida.obj", glm::mat4{0.05f});
+  LoadObjFile(
+      "D:/Seafile/Yao Class/Semester "
+      "5/Graphics/models/cornellbox/cornell_box.obj",
+      glm::translate(glm::mat4{0.001f}, glm::vec3{0.0f, 0.0f, 0.0f}));
+  // AddRectangleLight(
+  //     glm::vec3{20.0f, 20.0f, 20.0f}, glm::vec3{0.0f},
+  //     glm::vec3{1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, 1.0f, 0.0f});
 }
 
 int Scene::AddTexture(const Texture &texture, const std::string &name) {
@@ -440,6 +443,10 @@ int Scene::LoadObjFile(const std::string &file_path, const glm::mat4 &transform 
         material.emission.r = mtr.emission[0];
         material.emission.g = mtr.emission[1];
         material.emission.b = mtr.emission[2];
+
+        material.shininess = mtr.shininess;
+
+        material.ior = mtr.ior;
 
         int cnt = 0;
         if (mtr.emission[0] > 0 || mtr.emission[1] > 0 || mtr.emission[2] > 0) {

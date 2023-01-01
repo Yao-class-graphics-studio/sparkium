@@ -7,9 +7,9 @@ struct Material {
   vec3 specular;
   int specular_texture_id;
   vec3 transmittance;
-  int reserve0;
+  int shininess;
   vec3 emission;
-  int reserve1;
+  int ior;
   uint material_type;
 };
 

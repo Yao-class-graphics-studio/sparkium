@@ -4,7 +4,7 @@
 
 namespace sparks {
 
-enum MaterialType : int {
+enum MaterialType : uint32_t {
   MATERIAL_TYPE_LAMBERTIAN = 0,
   MATERIAL_TYPE_SPECULAR = 1,
   MATERIAL_TYPE_TRANSMISSIVE = 2,
@@ -20,9 +20,9 @@ struct Material {
   glm::vec3 specular{0.0f};
   int specular_texture_id{0};
   glm::vec3 transmittance{0.0f};
-  int reserve0;
+  float shininess{0.0f};
   glm::vec3 emission{0.0f};
-  int reserve1;
+  float ior{1.0f};
 
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
   int reserve[3];

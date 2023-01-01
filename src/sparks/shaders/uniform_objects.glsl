@@ -12,6 +12,7 @@ struct GlobalUniformObject {
   int accumulated_sample;
   int num_samples;
   int num_bounces;
+  int num_emissions;
 };
 
 struct EntityUniformObject {
@@ -21,4 +22,5 @@ struct EntityUniformObject {
 struct ObjectInfo {
   uint vertex_offset;
   uint index_offset;
+  uint num_faces;
 };

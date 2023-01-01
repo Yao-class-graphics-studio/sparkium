@@ -30,6 +30,6 @@ void main() {
   color_out =
       vec4(material.diffuse * light, 1.0) *
       texture(texture_samplers[nonuniformEXT(material.diffuse_texture_id)],
-              tex_coord);
+              tex_coord) + vec4(material.emission, 1.0);
   instance_out = uvec4(instance_id);
 }
