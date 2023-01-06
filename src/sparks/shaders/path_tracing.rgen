@@ -57,7 +57,7 @@ vec3 SampleEnvmap(vec3 direction) {
 
 HitRecord hit_record;
 bool TraceRay(vec3 origin, vec3 direction) {
-  float tmin = 1e-3;
+  float tmin = 1e-5;
   float tmax = 1e4;
 
   ray_payload.t = -1.0;
@@ -506,16 +506,24 @@ vec3 SampleRay1(vec3 origin, vec3 direction) {
 }
 
 void main() {
-  const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
-  const vec2 inUV = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
-  vec2 d = inUV * 2.0 - 1.0;
+  // const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
+  // const vec2 inUV = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
+  // vec2 d = inUV * 2.0 - 1.0;
 
   mat4 camera_to_world = inverse(guo.camera);
   mat4 screen_to_camera = inverse(guo.projection);
 
   for (int i = 0; i < guo.num_samples; i++) {
-    InitRandomSeed(uint(pixelCenter.x), uint(pixelCenter.y),
+    // InitRandomSeed(uint(pixelCenter.x), uint(pixelCenter.y),
+    //                guo.accumulated_sample + i);
+    InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y,
                    guo.accumulated_sample + i);
+    vec2 pixelPoint = vec2(gl_LaunchIDEXT.xy) + vec2(RandomFloat(), RandomFloat());
+    vec2 inUV = pixelPoint / vec2(gl_LaunchSizeEXT.xy);
+    vec2 d = inUV * 2.0 - 1.0;
+    // const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
+    // const vec2 inUV = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
+    // vec2 d = inUV * 2.0 - 1.0;
     vec4 origin = camera_to_world * vec4(0, 0, 0, 1);
     vec4 target = screen_to_camera * vec4(d.x, d.y, 1, 1);
     vec4 direction = camera_to_world * vec4(normalize(target.xyz), 0);
