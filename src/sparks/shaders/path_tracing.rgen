@@ -56,9 +56,9 @@ vec3 SampleEnvmap(vec3 direction) {
 }
 
 HitRecord hit_record;
-bool TraceRay(vec3 origin, vec3 direction, float tmax) {
+bool TraceRay(vec3 origin, vec3 direction) {
   float tmin = 1e-3;
-  // float tmax = 1e4;
+  float tmax = 1e4;
 
   ray_payload.t = -1.0;
   ray_payload.barycentric = vec3(0.0);
@@ -81,7 +81,7 @@ vec3 SampleRay(vec3 origin, vec3 direction) {
   vec3 radiance = vec3(0.0);
   vec3 throughput = vec3(1.0);
   for (int b = 0; b < guo.num_bounces; b++) {
-    if (!TraceRay(origin, direction, 1e4)) {
+    if (!TraceRay(origin, direction)) {
       radiance += throughput * SampleEnvmap(direction);
       break;
     } else {
@@ -93,7 +93,7 @@ vec3 SampleRay(vec3 origin, vec3 direction) {
       direction = guo.envmap_light_direction;
       radiance += throughput * guo.envmap_minor_color;
       throughput *= max(dot(direction, hit_record.normal), 0.0) * 2.0;
-      if (!TraceRay(origin, direction, 1e4)) {
+      if (!TraceRay(origin, direction)) {
         radiance += throughput * guo.envmap_major_color;
       }
       break;
@@ -102,27 +102,26 @@ vec3 SampleRay(vec3 origin, vec3 direction) {
   return radiance;
 }
 
-vec3 BRDFImportanceSampling(vec3 N, vec3 T, Material material) {
+vec3 ImportanceSamplingLamberrian(vec3 N, vec3 T) {
   float phi = 2.0 * PI * RandomFloat();
-  float theta;
-  if (material.material_type == MATERIAL_TYPE_LAMBERTIAN) {
-    // theta = asin(sqrt(RandomFloat()));
-    theta = acos(1.0 - 2.0 * RandomFloat()) * 0.5;
-  }
-  else if (material.material_type == MATERIAL_TYPE_SPECULAR) {
-    theta = acos(pow(RandomFloat(), 1 / (material.shininess + 1)));
-  }
-  // vec3 t;
-  // if (abs(N.x) > abs(N.y)) {
-  //   t = normalize(vec3(N.z, 0.0, -N.x));
-  // } else {
-  //   t = normalize(vec3(0.0, -N.z, N.y));
-  // }  
-  // vec3 B = cross(N, t);
+  float theta = acos(1.0 - 2.0 * RandomFloat()) * 0.5;
   vec3 B = cross(N, T);
   vec3 W = vec3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
   vec3 wi = T * W.x + B * W.y + N * W.z;
   return wi;
+}
+
+void ImportanceSamplingSpecular(in vec3 N, in vec3 T, in float roughness, in vec3 wo, out vec3 wh, out vec3 wi) {
+  float phi = 2.0 * PI * RandomFloat();
+  // float theta = acos(1.0 - 2.0 * RandomFloat()) * 0.5;
+  float ksi = RandomFloat();  
+  float cos_theta = sqrt((1.0 - ksi) / (ksi * (roughness * roughness - 1.0) + 1.0));
+  float sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+  // float theta = acos();
+  vec3 B = cross(N, T);
+  vec3 W = vec3(sin_theta * cos(phi), sin_theta * sin(phi), cos_theta);
+  wh = T * W.x + B * W.y + N * W.z;
+  wi = 2.0 * wh * dot(wh, wo) - wo; 
 }
 
 // vec3 SampleLight(vec3 origin, vec3 normal) {
@@ -272,7 +271,7 @@ vec3 SampleEmission(vec3 origin, vec3 origin_normal) {
 
   // if (!TraceRay(origin, direction, ray_length - 1e-3)) {
   HitRecord save_hit_record = hit_record;
-  if (TraceRay(origin, wi, 1e4)) {
+  if (TraceRay(origin, wi)) {
     // return vec3(0.0, 0.0, 1.0);
     // return 20.0 * vec3(angle);
     // float cos_i = max(dot(origin_normal, direction), 0.0f);
@@ -295,6 +294,104 @@ vec3 SampleEmission(vec3 origin, vec3 origin_normal) {
   return energy;
 }
 
+vec3 SampleEmission2(vec3 origin, vec3 origin_normal) {
+  vec3 energy = vec3(0.0);
+  uint emission_id = RandomInt(guo.num_emissions);
+  // for (uint emission_id = 0; emission_id < guo.num_emissions; emission_id++) {
+  uint emission_entity_id = emissions[emission_id];
+  ObjectInfo object_info = object_infos[emission_entity_id];
+  uint face_id = RandomInt(object_info.num_faces);
+  // for (uint face_id = 0; face_id < object_info.num_faces; face_id++) {
+  Vertex v0 = GetVertex(
+      object_info.vertex_offset +
+      indices[object_info.index_offset + face_id * 3 + 0]);
+  Vertex v1 = GetVertex(
+      object_info.vertex_offset +
+      indices[object_info.index_offset + face_id * 3 + 1]);
+  Vertex v2 = GetVertex(
+      object_info.vertex_offset +
+      indices[object_info.index_offset + face_id * 3 + 2]);
+  vec3 barycentric;
+  barycentric.x = RandomFloat();
+  barycentric.y = RandomFloat() * (1.0 - barycentric.x);
+  barycentric.z = 1 - barycentric.x - barycentric.y;
+  mat3 object_to_world = mat3(entity_objects[emission_entity_id].model);
+  mat3 positions = mat3(entity_objects[emission_entity_id].model * 
+                        mat3x4(vec4(v0.position, 1.0), vec4(v1.position, 1.0), 
+                               vec4(v2.position, 1.0)));
+
+  // if (length(positions[0] - vec3(0.343, 0.548, 0.227)) < 1e-3) {
+  //   return vec3(0.0, 1.0, 1.0);
+  // }
+  // else {
+  //   return vec3(1.0, 0.0, 1.0);
+  // }
+  // float angle;
+  // vec3 wi;
+  // bool result = 
+  // SampleSolidAngle(origin, positions, angle, wi);
+  // if (result) {
+  //   return vec3(1.0);
+  // }
+  // else {
+  //   return vec3(0.0);
+  // }
+  vec3 position = positions * barycentric;
+  float ray_length = length(position - origin);
+  vec3 direction = normalize(position - origin);
+  vec3 normal = normalize(transpose(inverse(object_to_world)) *
+                          mat3(v0.normal, v1.normal, v2.normal) *
+                          barycentric);
+  vec3 sign_area = cross(positions[1] - positions[0], positions[2] - positions[1]);
+  float area = length(sign_area) / 2.0 ;
+  vec3 geometry_normal = normalize(sign_area);
+  if (dot(normal, geometry_normal) < 0.0) {
+    geometry_normal = -geometry_normal;
+  }
+  if (dot(direction, geometry_normal) > 0.0) {
+    geometry_normal = -geometry_normal;
+    normal = -normal;
+  }
+  // if (dot(-direction, normal) > 0) {
+  //   return vec3(0.0, 0.0, 1.0);
+  // }
+  // else {
+  //   return vec3(0.0);
+  // }
+  // if (angle < 0) {
+  //   return vec3(1.0,1.0,1.0);
+  // }
+  // else {
+  //   return vec3(0.0);
+  // }
+
+  // if (!TraceRay(origin, direction, ray_length - 1e-3)) {
+  HitRecord save_hit_record = hit_record;
+  if (TraceRay(origin, direction)) {
+    // return vec3(0.0, 0.0, 1.0);
+    // return 20.0 * vec3(angle);
+    // float cos_i = max(dot(origin_normal, direction), 0.0f);
+    // float cos_o = max(dot(normal, -direction), 0.0f);
+    // float f0 = cos_i * cos_o / (ray_length * ray_length);
+    // float cos_i_o = max(dot(origin_normal, normal), 0.0);
+    if (hit_record.hit_entity_id == emission_entity_id && 
+        ray_payload.primitive_id == face_id) {
+      energy = materials[emission_entity_id].emission *  
+               max(dot(origin_normal, direction), 0.0) * area *
+               max(dot(normal, -direction), 0.0) *
+               object_info.num_faces * guo.num_emissions /
+               (ray_length * ray_length);
+    }
+    // energy = f0 * area * materials[emission_entity_id].emission * angle;
+    // return vec3(0.0, 0.0, 1.0);
+    // return cos_i * cos_o * materials[emission_entity_id].emission;
+  }
+  hit_record = save_hit_record;
+  // energy = clamp(energy, 0.0, 1.0);
+  // }}
+  return energy;
+}
+
 vec3 SampleRay1(vec3 origin, vec3 direction) {
   vec3 radiance = vec3(0.0);
   vec3 throughput = vec3(1.0);
@@ -304,7 +401,7 @@ vec3 SampleRay1(vec3 origin, vec3 direction) {
   vec3 wi = direction;
   vec3 Fr;
   Material material;
-  if (!TraceRay(p, wi, 1e4)) {
+  if (!TraceRay(p, wi)) {
     radiance += throughput * SampleEnvmap(wi);
     return radiance;
   }
@@ -331,29 +428,64 @@ vec3 SampleRay1(vec3 origin, vec3 direction) {
     n = hit_record.normal;
     vec3 t = hit_record.tangent;
 
-    Fr = material.diffuse *
+    // wo = -wi;
+    // wi = BRDFImportanceSampling(n, t, material);
+
+    if (material.material_type == MATERIAL_TYPE_LAMBERTIAN) {
+      wo = -wi;
+      wi = ImportanceSamplingLamberrian(n, t);
+      Fr = material.diffuse *
               vec3(texture(texture_samplers[material.diffuse_texture_id],
-                    hit_record.tex_coord)) + 
-         material.specular * 
-              vec3(texture(texture_samplers[material.specular_texture_id],
                     hit_record.tex_coord));
+      throughput *= Fr / prob;
+
+      radiance += throughput * SampleEmission(p, n) * INV_PI;
+    }
+    else if (material.material_type == MATERIAL_TYPE_SPECULAR) {
+      wo = -wi;
+      vec3 wh = vec3(0.0);
+      ImportanceSamplingSpecular(n, t, material.roughness, wo, wh, wi);
+      // return vec3(max(0.0,dot(n,wi)));
+      vec3 F0 = material.specular * 
+           vec3(texture(texture_samplers[material.specular_texture_id],
+                hit_record.tex_coord));
+      // Fr = F0 * dot(wo, wh) / dot(n, wo);
+      vec3 F = F0 + (1.0 - F0) * pow(1.0 - max(dot(wo, wh),0.0), 5.0);
+      // Fr = F * max(dot(wo, wh),0.0);
+      float k = material.roughness + 1.0;
+      k = k * k / 8.0;
+      float no = max(dot(n, wo),0.0);
+      float ni = max(dot(n, wi),0.0);
+      Fr = F * max(dot(wo, wh),0.0) * ni / (no * (1.0 - k) + k) / (ni * (1.0 - k) + k);
+      // return vec3(dot(n, wh));
+      // float G1 = no / (no * (1.0 - k) + k);
+      // float G2 = ni / (ni * (1.0 - k) + k);
+      // float G = G1 * G2;
+      // Fr = F * G * dot(wo, wh) / no;
+      throughput *= Fr / prob;
+    }
 
 
-    wo = -wi;
-    wi = BRDFImportanceSampling(n, t, material);
+    // throughput *= Fr / prob;
 
-    throughput *= Fr / prob;
-
-    radiance += throughput * INV_PI * SampleEmission(p, n);
+    // radiance += throughput * INV_PI * SampleEmission(p, n);
     // radiance += throughput * SampleEmission(p, n);
 
-    if (!TraceRay(p, wi, 1e4)) {
-      vec3 env_ambient = guo.envmap_minor_color + guo.envmap_major_color * 2.0 *
-                  max(0.0, dot(guo.envmap_light_direction, hit_record.normal));
-      radiance += throughput * env_ambient * material.ambient * 
-                  vec3(texture(texture_samplers[material.ambient_texture_id],
-                                hit_record.tex_coord));
+    if (!TraceRay(p, wi)) {
+      if (material.material_type == MATERIAL_TYPE_SPECULAR) {
+        radiance += SampleEnvmap(wi);
+      }
+      else {
+        vec3 env_ambient = guo.envmap_minor_color + guo.envmap_major_color * 2.0 *
+                    max(0.0, dot(guo.envmap_light_direction, hit_record.normal));
+        radiance += throughput * env_ambient * material.ambient * 
+                    vec3(texture(texture_samplers[material.ambient_texture_id],
+                                  hit_record.tex_coord));
+      }
       break;
+    }
+    if (material.material_type == MATERIAL_TYPE_SPECULAR) {
+      radiance += throughput * materials[hit_record.hit_entity_id].emission;
     }
     material = materials[hit_record.hit_entity_id];
     // radiance += throughput * material.emission;

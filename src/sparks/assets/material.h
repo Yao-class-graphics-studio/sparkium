@@ -20,7 +20,7 @@ struct Material {
   glm::vec3 specular{0.0f};
   int specular_texture_id{0};
   glm::vec3 transmittance{0.0f};
-  float shininess{0.0f};
+  float roughness{0.0f};
   glm::vec3 emission{0.0f};
   float ior{1.0f};
 
