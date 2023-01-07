@@ -18,6 +18,7 @@ App::App(Renderer *renderer, const AppSettings &app_settings) {
   core_settings.window_height = app_settings_.height;
   core_settings.validation_layer = app_settings_.validation_layer;
   core_settings.raytracing_pipeline_required = app_settings_.hardware_renderer;
+  core_settings.selected_device = app_settings.selected_device;
   core_ = std::make_unique<vulkan::framework::Core>(core_settings);
 }
 
@@ -149,6 +150,22 @@ void App::OnInit() {
         renderer_->LoadTexture(path);
       } else if (absl::EndsWith(path, ".obj")) {
         renderer_->LoadObjMesh(path);
+      } else if (absl::EndsWith(path, ".xml")) {
+        renderer_->LoadScene(path);
+        renderer_->ResetAccumulation();
+        num_loaded_device_textures_ = 0;
+        num_loaded_device_assets_ = 0;
+        device_texture_samplers_.clear();
+        entity_device_assets_.clear();
+        selected_entity_id_ = -1;
+        if (app_settings_.hardware_renderer) {
+          reset_accumulation_ = true;
+          top_level_acceleration_structure_.reset();
+          bottom_level_acceleration_structures_.clear();
+          object_info_data_.clear();
+          ray_tracing_vertex_data_.clear();
+          ray_tracing_index_data_.clear();
+        }
       }
     }
   });
@@ -499,7 +516,7 @@ void App::UpdateImGui() {
     static auto last_sample = current_sample;
     static auto last_sample_time = current_time;
     static float sample_rate = 0.0f;
-    float duration_us;
+    float duration_us = 0;
     if (last_sample != current_sample) {
       if (last_sample < current_sample) {
         auto duration_ms =

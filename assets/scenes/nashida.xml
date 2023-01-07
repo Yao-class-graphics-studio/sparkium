@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+        <transform type="lookat">
+            <eye value="0.0 0.4 -0.800"/>
+            <center value="0.0 0.4 0.0"/>
+            <up value="0.0 1.0 0.0"/>
+        </transform>
+        <fov value="60"/>
+    </camera>
+
+	<envmap type="file" value="../../textures/envmap_clouds_4k.hdr"/>
+
+    <!--Scene-->
+    <scene type="obj">
+		<filename value="D:/Seafile/Yao Class/Semester 5/Graphics/models/nashida/nashida.obj"/>
+        <transform type="scale" value="0.05">
+        </transform>
+    </scene>
+
+</scene>

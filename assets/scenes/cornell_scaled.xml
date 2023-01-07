@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+        <transform type="lookat">
+            <eye value="0.278 0.273 -0.800"/>
+            <center value="0.278 0.273 0.0"/>
+            <up value="0.0 1.0 0.0"/>
+        </transform>
+        <fov value="40"/>
+    </camera>
+
+    <!--Scene-->
+    <scene type="obj">
+		<filename value="D:\Seafile\Yao Class\Semester 5\Graphics\sparkium\assets\meshes\cornell_box.obj"/>
+        <transform type="scale" value="0.001">
+        </transform>
+    </scene>
+
+</scene>

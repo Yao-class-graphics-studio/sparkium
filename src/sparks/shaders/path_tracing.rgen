@@ -57,8 +57,8 @@ vec3 SampleEnvmap(vec3 direction) {
 
 HitRecord hit_record;
 bool TraceRay(vec3 origin, vec3 direction) {
-  float tmin = 1e-5;
-  float tmax = 1e4;
+  float tmin = 1e-3;
+  float tmax = 1e5;
 
   ray_payload.t = -1.0;
   ray_payload.barycentric = vec3(0.0);
@@ -86,17 +86,22 @@ vec3 SampleRay(vec3 origin, vec3 direction) {
       break;
     } else {
       Material material = materials[hit_record.hit_entity_id];
-      throughput *= material.diffuse *
-                    vec3(texture(texture_samplers[material.diffuse_texture_id],
-                                 hit_record.tex_coord));
-      origin = hit_record.position;
-      direction = guo.envmap_light_direction;
-      radiance += throughput * guo.envmap_minor_color;
-      throughput *= max(dot(direction, hit_record.normal), 0.0) * 2.0;
-      if (!TraceRay(origin, direction)) {
-        radiance += throughput * guo.envmap_major_color;
+      if (material.material_type == MATERIAL_TYPE_EMISSION) {
+        radiance += throughput * material.emission;
+        break;
+      } else {
+        throughput *= material.diffuse *
+                      vec3(texture(texture_samplers[material.diffuse_texture_id],
+                                  hit_record.tex_coord));
+        origin = hit_record.position;
+        direction = guo.envmap_light_direction;
+        radiance += throughput * guo.envmap_minor_color;
+        throughput *= max(dot(direction, hit_record.normal), 0.0) * 2.0;
+        if (!TraceRay(origin, direction)) {
+          radiance += throughput * guo.envmap_major_color;
+        }
+        break;
       }
-      break;
     }
   }
   return radiance;

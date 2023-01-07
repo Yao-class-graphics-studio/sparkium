@@ -287,4 +287,126 @@ const char *Mesh::GetDefaultEntityName() {
   return "Mesh";
 }
 
+Mesh::Mesh(const tinyxml2::XMLElement *element) {
+  auto cal_tangent = [](Vertex &v0, Vertex &v1, Vertex &v2) {
+    glm::vec3 E0 = v1.position - v0.position;
+    glm::vec3 E1 = v2.position - v1.position;
+    glm::vec3 E2 = v0.position - v2.position;
+    glm::vec2 D0 = v1.tex_coord - v0.tex_coord;
+    glm::vec2 D1 = v2.tex_coord - v1.tex_coord;
+    glm::vec2 D2 = v0.tex_coord - v2.tex_coord;
+    glm::vec3 T0 = (D0.y * E2 - D2.y * E0) / (D0.y * D2.x - D2.y * D0.x);
+    glm::vec3 T1 = (D1.y * E0 - D0.y * E1) / (D1.y * D0.x - D0.y * D1.x);
+    glm::vec3 T2 = (D2.y * E1 - D1.y * E2) / (D2.y * D1.x - D1.y * D2.x);
+    v0.tangent = glm::normalize(T0 - glm::dot(T0, v0.normal) * v0.normal);
+    v1.tangent = glm::normalize(T1 - glm::dot(T1, v1.normal) * v1.normal);
+    v2.tangent = glm::normalize(T2 - glm::dot(T2, v2.normal) * v2.normal);
+  };
+  auto default_tangent = [](Vertex &v0, Vertex &v1, Vertex &v2) {
+    glm::vec3 T0 = v1.position - v0.position;
+    v0.tangent = glm::normalize(T0 - glm::dot(T0, v0.normal) * v0.normal);
+    glm::vec3 T1 = v2.position - v1.position;
+    v1.tangent = glm::normalize(T1 - glm::dot(T1, v1.normal) * v1.normal);
+    glm::vec3 T2 = v0.position - v2.position;
+    v2.tangent = glm::normalize(T2 - glm::dot(T2, v2.normal) * v2.normal);
+  };
+
+  std::string mesh_type{};
+  auto element_type = element->FindAttribute("type");
+  if (element_type) {
+    mesh_type = element_type->Value();
+  }
+
+  if (mesh_type == "sphere") {
+    glm::vec3 center{0.0f};
+    float radius{1.0f};
+
+    auto child_element = element->FirstChildElement("center");
+    if (child_element) {
+      center = StringToVec3(child_element->FindAttribute("value")->Value());
+    }
+
+    child_element = element->FirstChildElement("radius");
+    if (child_element) {
+      radius = std::stof(child_element->FindAttribute("value")->Value());
+    }
+
+    *this = Mesh::Sphere(center, radius);
+  } else if (mesh_type == "obj") {
+    Mesh::LoadObjFile(
+        element->FirstChildElement("filename")->FindAttribute("value")->Value(),
+        *this);
+  } else {
+    // std::cout << "2" << std::endl;
+    std::vector<Vertex> vertices{};
+    std::vector<uint32_t> indices{};
+    for (auto vertex_element = element->FirstChildElement("vertex");
+         vertex_element;
+         vertex_element = vertex_element->NextSiblingElement("vertex")) {
+      Vertex vertex{{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {-1.0f, -1.0f}};
+      auto attribute = vertex_element->FindAttribute("position");
+      if (attribute) {
+        vertex.position = StringToVec3(attribute->Value());
+      }
+      attribute = vertex_element->FindAttribute("normal");
+      if (attribute) {
+        vertex.normal = StringToVec3(attribute->Value());
+      }
+      attribute = vertex_element->FindAttribute("tex_coord");
+      if (attribute) {
+        vertex.tex_coord = StringToVec2(attribute->Value());
+      }
+      vertices.push_back(vertex);
+    }
+
+    for (auto index_element = element->FirstChildElement("index");
+         index_element;
+         index_element = index_element->NextSiblingElement("index")) {
+      uint32_t index =
+          std::stoul(index_element->FindAttribute("value")->Value());
+      indices.push_back(index);
+    }
+
+    for (int i = 0; i < indices.size(); i += 3) {
+      auto v0 = vertices[indices[i]];
+      auto v1 = vertices[indices[i + 1]];
+      auto v2 = vertices[indices[i + 2]];
+      auto geom_normal = glm::normalize(
+          glm::cross(v1.position - v0.position, v2.position - v0.position));
+      if (glm::length(v0.normal) < 0.5f) {
+        v0.normal = geom_normal;
+      } else if (glm::dot(geom_normal, v0.normal) < 0.0f) {
+        v0.normal = -v0.normal;
+      }
+      if (glm::length(v1.normal) < 0.5f) {
+        v1.normal = geom_normal;
+      } else if (glm::dot(geom_normal, v1.normal) < 0.0f) {
+        v1.normal = -v1.normal;
+      }
+      if (glm::length(v2.normal) < 0.5f) {
+        v2.normal = geom_normal;
+      } else if (glm::dot(geom_normal, v2.normal) < 0.0f) {
+        v2.normal = -v2.normal;
+      }
+      if (v0.tex_coord == glm::vec2{-1.0f, -1.0f}) {
+        v0.tex_coord = glm::vec2{0.0f, 0.0f};
+        v1.tex_coord = glm::vec2{0.0f, 0.0f};
+        v2.tex_coord = glm::vec2{0.0f, 0.0f};
+        // std::cout << "1" << std::endl;
+        default_tangent(v0, v1, v2);
+      }
+      else {
+        cal_tangent(v0, v1, v2);
+      }
+      vertices_.push_back(v0);
+      vertices_.push_back(v1);
+      vertices_.push_back(v2);
+      indices_.push_back(i);
+      indices_.push_back(i + 1);
+      indices_.push_back(i + 2);
+    }
+    MergeVertices();
+  }
+}
+
 }  // namespace sparks

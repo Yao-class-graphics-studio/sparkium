@@ -12,6 +12,7 @@ namespace sparks {
 class Scene {
  public:
   Scene();
+  explicit Scene(const std::string &filename);
   int AddTexture(const Texture &texture,
                  const std::string &name = "Unnamed Texture");
   [[nodiscard]] const std::vector<Texture> &GetTextures() const;
@@ -68,6 +69,7 @@ class Scene {
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
   int LoadObjFile(const std::string &file_path, const glm::mat4 &transform);
+  int LoadObjFile(const tinyxml2::XMLElement *element);
 
  private:
   std::vector<Texture> textures_;
@@ -75,7 +77,7 @@ class Scene {
 
   std::vector<Entity> entities_;
 
-  int envmap_id_{0};
+  int envmap_id_{1};
   float envmap_offset_{0.0f};
   std::vector<float> envmap_cdf_;
   glm::vec3 envmap_light_direction_{0.0f, 1.0f, 0.0f};
