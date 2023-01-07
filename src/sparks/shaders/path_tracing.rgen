@@ -449,20 +449,27 @@ vec3 SampleRay1(vec3 origin, vec3 direction) {
       vec3 F0 = material.specular * 
            vec3(texture(texture_samplers[material.specular_texture_id],
                 hit_record.tex_coord));
-      // Fr = F0 * dot(wo, wh) / dot(n, wo);
+      Fr = F0 * dot(wo, wh) / dot(n, wo);
       vec3 F = F0 + (1.0 - F0) * pow(1.0 - max(dot(wo, wh),0.0), 5.0);
       // Fr = F * max(dot(wo, wh),0.0);
       float k = material.roughness + 1.0;
       k = k * k / 8.0;
-      float no = max(dot(n, wo),0.0);
-      float ni = max(dot(n, wi),0.0);
-      Fr = F * max(dot(wo, wh),0.0) * ni / (no * (1.0 - k) + k) / (ni * (1.0 - k) + k);
+      float no = max(dot(n, wo), 0.0);
+      float ni = max(dot(n, wi), 0.0);
+      float nh = max(dot(n, wh), 0.0);
+      if (nh == 0.0) {
+        Fr = vec3(0.0);
+      }
+      else {
+        Fr = F * max(dot(wo, wh), 0.0) * ni / (no * (1.0 - k) + k) / (ni * (1.0 - k) + k) / nh;
+      }
       // return vec3(dot(n, wh));
       // float G1 = no / (no * (1.0 - k) + k);
       // float G2 = ni / (ni * (1.0 - k) + k);
       // float G = G1 * G2;
       // Fr = F * G * dot(wo, wh) / no;
       throughput *= Fr / prob;
+      // throughput *= F0 / prob;
     }
 
 
@@ -478,9 +485,7 @@ vec3 SampleRay1(vec3 origin, vec3 direction) {
       else {
         vec3 env_ambient = guo.envmap_minor_color + guo.envmap_major_color * 2.0 *
                     max(0.0, dot(guo.envmap_light_direction, hit_record.normal));
-        radiance += throughput * env_ambient * material.ambient * 
-                    vec3(texture(texture_samplers[material.ambient_texture_id],
-                                  hit_record.tex_coord));
+        radiance += throughput * env_ambient;
       }
       break;
     }

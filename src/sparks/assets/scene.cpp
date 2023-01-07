@@ -26,8 +26,10 @@ Scene::Scene() {
   //                     {0, 1, 2, 2, 1, 3}),
   //     Material{}, glm::mat4{1.0f});
   SetCameraToWorld(glm::inverse(glm::lookAt(glm::vec3{0.278f, 0.273f, -0.800f},
-                                            glm::vec3{0.278f, 0.273f, 0.2f},
+                                            glm::vec3{0.278f, 0.273f, 0.0f},
                                             glm::vec3{0.0f, 1.0f, 0.0f})));
+  // const Camera camera = ;
+  SetCamera(Camera{40.0f, 0.0f, 3.0f});
 
   // Texture texture;
   // Texture::Load("../../textures/earth.jpg", texture);
@@ -409,14 +411,14 @@ int Scene::LoadObjFile(const std::string &file_path, const glm::mat4 &transform 
         Material material{};
 
         tinyobj::material_t mtr = materials[last_material_id];
-        material.ambient.r = mtr.ambient[0];
-        material.ambient.g = mtr.ambient[1];
-        material.ambient.b = mtr.ambient[2];
-        Texture ambient_texture;
-        if (Texture::Load(dir_path + "/" + mtr.ambient_texname, ambient_texture)) {
-          material.ambient_texture_id = AddTexture(ambient_texture, mtr.ambient_texname);
-          material.ambient = glm::vec3{1.0f};
-        }
+        // material.ambient.r = mtr.ambient[0];
+        // material.ambient.g = mtr.ambient[1];
+        // material.ambient.b = mtr.ambient[2];
+        // Texture ambient_texture;
+        // if (Texture::Load(dir_path + "/" + mtr.ambient_texname, ambient_texture)) {
+        //   material.ambient_texture_id = AddTexture(ambient_texture, mtr.ambient_texname);
+        //   material.ambient = glm::vec3{1.0f};
+        // }
 
         material.diffuse.r = mtr.diffuse[0];
         material.diffuse.g = mtr.diffuse[1];
@@ -444,7 +446,7 @@ int Scene::LoadObjFile(const std::string &file_path, const glm::mat4 &transform 
         material.emission.g = mtr.emission[1];
         material.emission.b = mtr.emission[2];
 
-        material.roughness = mtr.shininess;
+        material.roughness = mtr.shininess * mtr.shininess;
         // std::cout << mtr.shininess << std::endl;
 
         material.ior = mtr.ior;
@@ -561,14 +563,14 @@ int Scene::LoadObjFile(const std::string &file_path, const glm::mat4 &transform 
     Material material{};
 
     tinyobj::material_t mtr = materials[last_material_id];
-    material.ambient.r = mtr.ambient[0];
-    material.ambient.g = mtr.ambient[1];
-    material.ambient.b = mtr.ambient[2];
-    Texture ambient_texture;
-    if (Texture::Load(dir_path + "/" + mtr.ambient_texname, ambient_texture)) {
-      material.ambient_texture_id = AddTexture(ambient_texture, mtr.ambient_texname);
-      material.ambient = glm::vec3(1.0f);
-    }
+    // material.ambient.r = mtr.ambient[0];
+    // material.ambient.g = mtr.ambient[1];
+    // material.ambient.b = mtr.ambient[2];
+    // Texture ambient_texture;
+    // if (Texture::Load(dir_path + "/" + mtr.ambient_texname, ambient_texture)) {
+    //   material.ambient_texture_id = AddTexture(ambient_texture, mtr.ambient_texname);
+    //   material.ambient = glm::vec3(1.0f);
+    // }
 
     material.diffuse.r = mtr.diffuse[0];
     material.diffuse.g = mtr.diffuse[1];
@@ -596,7 +598,7 @@ int Scene::LoadObjFile(const std::string &file_path, const glm::mat4 &transform 
     material.emission.g = mtr.emission[1];
     material.emission.b = mtr.emission[2];
 
-    material.roughness = mtr.shininess;
+    material.roughness = mtr.shininess * mtr.shininess;
     // std::cout << mtr.shininess << std::endl;
 
     material.ior = mtr.ior;

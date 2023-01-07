@@ -13,18 +13,37 @@ enum MaterialType : uint32_t {
 };
 
 struct Material {
-  glm::vec3 ambient{0.0f};
-  int ambient_texture_id{0};
-  glm::vec3 diffuse{0.8f};
+  // glm::vec3 ambient{0.0f};
+  // int ambient_texture_id{0};
+  glm::vec3 diffuse{1.0f};
   int diffuse_texture_id{0};
+
   glm::vec3 specular{0.0f};
   int specular_texture_id{0};
-  glm::vec3 transmittance{0.0f};
-  float roughness{0.0f};
+
+  glm::vec3 opacity{0.0f};
+  int opacity_texture_id{1};
+
   glm::vec3 emission{0.0f};
+  int emission_texture_id{0};
+
+  glm::vec3 transmittance{0.0f};
   float ior{1.0f};
 
+  float roughness{0.0f};
+  int roughness_texture_id{0};
+  float metallic{0.0f};
+  int metallic_texture_id{0};
+
+  float sheen{0.0f};
+  int sheen_texture_id{0};
+  float clearcoat_thickness{0.0f};
+  float clearcoat_roughness{0.0f};
+
+  float anisotropy{0.0f};
+  float anisotropy_rotation{0.0f};
+  int normal_texture_id{0};
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
-  int reserve[3];
+  // int reserve[2];
 };
 }  // namespace sparks

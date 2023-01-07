@@ -417,11 +417,11 @@ void App::UpdateImGui() {
       reset_accumulation_ |=
           ImGui::Combo("Type", reinterpret_cast<int *>(&material.material_type),
                        material_types.data(), material_types.size());
-      reset_accumulation_ |= ImGui::ColorEdit3(
-          "Ambient Color", &material.ambient[0],
-          ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
-      reset_accumulation_ |=
-          scene.TextureCombo("Ambient Texture", &material.ambient_texture_id);
+      // reset_accumulation_ |= ImGui::ColorEdit3(
+      //     "Ambient Color", &material.ambient[0],
+      //     ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
+      // reset_accumulation_ |=
+      //     scene.TextureCombo("Ambient Texture", &material.ambient_texture_id);
       reset_accumulation_ |= ImGui::ColorEdit3(
           "Diffuse Color", &material.diffuse[0],
           ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
