@@ -475,6 +475,9 @@ void App::UpdateImGui() {
     reset_accumulation_ |= scene.GetCamera().ImGuiItems();
     reset_accumulation_ |= ImGui::InputFloat3(
         "Position", reinterpret_cast<float *>(&scene.GetCameraPosition()));
+    reset_accumulation_ |= ImGui::SliderFloat(
+        "Moving Speed", &scene.GetCameraSpeed(), 0.01f, 1e6f,
+        "%.3f", ImGuiSliderFlags_Logarithmic);
     reset_accumulation_ |= ImGui::SliderAngle(
         "Pitch", &scene.GetCameraPitchYawRoll().x, -90.0f, 90.0f);
     reset_accumulation_ |= ImGui::SliderAngle(
@@ -599,6 +602,7 @@ void App::UpdateImGui() {
       ImGui::Text("Primary Ray Rate: %.2f r/s", sample_rate);
     }
     ImGui::Text("Accumulated Samples: %d", current_sample);
+    ImGui::Text("Cursor Position: (%d, %d)", cursor_x, cursor_y);
     ImGui::Text("R:%f G:%f B:%f", hovering_pixel_color_.x,
                 hovering_pixel_color_.y, hovering_pixel_color_.z);
     if (app_settings_.hardware_renderer) {
@@ -676,6 +680,8 @@ void App::UpdateHostStencilBuffer() {
          (double)core_->GetWindowHeight());
   int x = std::lround(dx), y = std::lround(dy);
   int index = y * core_->GetFramebufferWidth() + x;
+  cursor_x = x;
+  cursor_y = y;
   if (x < 0 || x >= core_->GetFramebufferWidth() || y < 0 ||
       y >= core_->GetFramebufferHeight()) {
     hover_entity_id_ = -1;
@@ -1014,7 +1020,7 @@ void App::UpdateCamera() {
 
   auto &io = ImGui::GetIO();
 
-  auto speed = 3.0f;
+  auto speed = scene.GetCameraSpeed();
   if (!io.WantCaptureMouse && !io.WantCaptureKeyboard) {
     if (ImGui::IsKeyDown(ImGuiKey_W)) {
       position += duration * 0.001f * (-z) * speed;
