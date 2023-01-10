@@ -475,7 +475,7 @@ void App::UpdateImGui() {
     reset_accumulation_ |= scene.GetCamera().ImGuiItems();
     reset_accumulation_ |= ImGui::InputFloat3(
         "Position", reinterpret_cast<float *>(&scene.GetCameraPosition()));
-    reset_accumulation_ |= ImGui::SliderFloat(
+    ImGui::SliderFloat(
         "Moving Speed", &scene.GetCameraSpeed(), 0.01f, 1e6f,
         "%.3f", ImGuiSliderFlags_Logarithmic);
     reset_accumulation_ |= ImGui::SliderAngle(
