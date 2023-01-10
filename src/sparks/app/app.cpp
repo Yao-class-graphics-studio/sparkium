@@ -602,7 +602,7 @@ void App::UpdateImGui() {
       ImGui::Text("Primary Ray Rate: %.2f r/s", sample_rate);
     }
     ImGui::Text("Accumulated Samples: %d", current_sample);
-    ImGui::Text("Cursor Position: (%d, %d)", cursor_x, cursor_y);
+    ImGui::Text("Cursor Position: (%d, %d)", cursor_x_, cursor_y_);
     ImGui::Text("R:%f G:%f B:%f", hovering_pixel_color_.x,
                 hovering_pixel_color_.y, hovering_pixel_color_.z);
     if (app_settings_.hardware_renderer) {
@@ -680,8 +680,8 @@ void App::UpdateHostStencilBuffer() {
          (double)core_->GetWindowHeight());
   int x = std::lround(dx), y = std::lround(dy);
   int index = y * core_->GetFramebufferWidth() + x;
-  cursor_x = x;
-  cursor_y = y;
+  cursor_x_ = x;
+  cursor_y_ = y;
   if (x < 0 || x >= core_->GetFramebufferWidth() || y < 0 ||
       y >= core_->GetFramebufferHeight()) {
     hover_entity_id_ = -1;
