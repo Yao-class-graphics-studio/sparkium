@@ -6,9 +6,11 @@
 
 namespace sparks {
 
-glm::mat4 Camera::GetProjectionMatrix(float aspect) const {
+glm::mat4 Camera::GetProjectionMatrix(float aspect,
+                                      float t_min,
+                                      float t_max) const {
   return glm::scale(glm::mat4{1.0f}, glm::vec3{1.0f, -1.0f, 1.0f}) *
-         glm::perspectiveZO(glm::radians(fov_), aspect, 0.1f, 1000.0f);
+         glm::perspectiveZO(glm::radians(fov_), aspect, t_min, t_max);
 }
 
 bool Camera::ImGuiItems() {
@@ -19,6 +21,9 @@ bool Camera::ImGuiItems() {
   value_changed |=
       ImGui::SliderFloat("Focal Length", &focal_length_, 0.1f, 10000.0f, "%.2f",
                          ImGuiSliderFlags_Logarithmic);
+  value_changed |= ImGui::SliderFloat("Clamp", &clamp_, 1.0f, 1000000.0f,
+                                      "%.2f", ImGuiSliderFlags_Logarithmic);
+  ImGui::SliderFloat("Gamma", &gamma_, 0.1f, 10.0f);
   return value_changed;
 }
 
@@ -41,7 +46,18 @@ void Camera::GenerateRay(float aspect,
   pos.y *= -1.0f;
   origin = glm::vec3{0.0f};
   auto tan_fov = std::tan(glm::radians(fov_ * 0.5f));
+  float theta = 2.0f * PI * rand_w;
+  float sin_theta = std::sin(theta);
+  float cos_theta = std::cos(theta);
+  origin =
+      glm::vec3{glm::vec2{sin_theta, cos_theta} * rand_r * aperture_, 0.0f};
   direction = glm::normalize(
-      glm::vec3{tan_fov * aspect * pos.x, tan_fov * pos.y, -1.0f});
+      glm::vec3{tan_fov * aspect * pos.x, tan_fov * pos.y, -1.0f} *
+          focal_length_ -
+      origin);
+}
+
+Camera::Camera(float fov, float aperture, float focal_length)
+    : fov_(fov), aperture_(aperture), focal_length_(focal_length) {
 }
 }  // namespace sparks

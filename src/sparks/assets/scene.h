@@ -13,6 +13,7 @@ namespace sparks {
 class Scene {
  public:
   Scene();
+  explicit Scene(const std::string &filename);
   int AddTexture(const Texture &texture,
                  const std::string &name = "Unnamed Texture");
   [[nodiscard]] const std::vector<Texture> &GetTextures() const;
@@ -45,6 +46,8 @@ class Scene {
   [[nodiscard]] const float &GetEnvmapOffset() const;
   glm::vec3 &GetCameraPosition();
   [[nodiscard]] const glm::vec3 &GetCameraPosition() const;
+  float &GetCameraSpeed();
+  [[nodiscard]] const float &GetCameraSpeed() const;
   glm::vec3 &GetCameraPitchYawRoll();
   [[nodiscard]] const glm::vec3 &GetCameraPitchYawRoll() const;
 
@@ -78,7 +81,7 @@ class Scene {
 
   std::vector<Entity> entities_;
 
-  int envmap_id_{0};
+  int envmap_id_{1};
   float envmap_offset_{0.0f};
   std::vector<float> envmap_cdf_;
   glm::vec3 envmap_light_direction_{0.0f, 1.0f, 0.0f};
@@ -86,6 +89,7 @@ class Scene {
   glm::vec3 envmap_minor_color_{0.3f};
 
   glm::vec3 camera_position_{0.0f};
+  float camera_speed_{3.0f};
   glm::vec3 camera_pitch_yaw_roll_{0.0f, 0.0f, 0.0f};
   Camera camera_{};
 };

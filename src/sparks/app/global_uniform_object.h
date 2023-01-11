@@ -12,5 +12,14 @@ struct GlobalUniformObject {
   glm::vec3 envmap_major_color{0.5f};
   int hover_id{0};
   int selected_id{0};
+  int accumulated_sample{0};
+  int num_samples{0};
+  int num_bounces{0};
+  float fov{glm::radians(60.0f)};
+  float aperture{0.0f};
+  float focal_length{3.0f};
+  float clamp{100.0f};
+  float gamma{2.2f};
+  float aspect{1.0f};
 };
 }  // namespace sparks

@@ -10,6 +10,13 @@
 [submodule "ImGuizmo"]
 	path = external/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
+
+[submodule "external/tinyxml2"]
+	path = external/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git
+[submodule "external/tinyfiledialogs"]
+	path = external/tinyfiledialogs
+	url = https://github.com/LazyJazz/tinyfiledialogs.git
 [submodule "assimp"]
 	path = external/assimp
 	url = https://github.com/assimp/assimp.git
