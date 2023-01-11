@@ -5,9 +5,11 @@
 #include "imgui.h"
 #include "sparks/assets/accelerated_mesh.h"
 #include "sparks/util/util.h"
+/*
 #include "assimp/Importer.hpp"     // C++ importer interface
 #include "assimp/scene.h"           // Output data structure
 #include "assimp/postprocess.h"
+*/
 namespace sparks {
 
 Scene::Scene() {
@@ -539,6 +541,6 @@ bool Scene::LoadAssimp(const std::string &file_path,glm::mat4 transform){
   return true;
 
 
-}
-*/
+}*/
+
 }  // namespace sparks

@@ -7,7 +7,7 @@
 #include "sparks/assets/texture.h"
 #include "sparks/assets/util.h"
 #include "vector"
-#include "assimp/scene.h"           // Output data structure
+/*#include "assimp/scene.h"*/           // Output data structure
 
 namespace sparks {
 class Scene {
@@ -71,10 +71,10 @@ class Scene {
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
-  bool LoadAssimp(const std::string &file_path,glm::mat4 transform);
-  void FindMesh(aiScene *scene, aiNode *node,glm::mat4 transform);
-  Entity processMesh(aiMesh *mesh, const aiScene *scene,glm::mat4 transform);
-  std::vector<int> loadMaterialTextures(aiMaterial *mat,aiTextureType type,std::string typeName);
+  //bool LoadAssimp(const std::string &file_path,glm::mat4 transform);
+  //void FindMesh(aiScene *scene, aiNode *node,glm::mat4 transform);
+  //Entity processMesh(aiMesh *mesh, const aiScene *scene,glm::mat4 transform);
+  //std::vector<int> loadMaterialTextures(aiMaterial *mat,aiTextureType type,std::string typeName);
  private:
   std::vector<Texture> textures_;
   std::vector<std::string> texture_names_;
