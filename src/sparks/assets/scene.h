@@ -7,6 +7,8 @@
 #include "sparks/assets/texture.h"
 #include "sparks/assets/util.h"
 #include "vector"
+/*#include "assimp/scene.h"*/           // Output data structure
+
 #include "random"
 namespace sparks {
 class Scene {
@@ -71,6 +73,10 @@ class Scene {
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
+  //bool LoadAssimp(const std::string &file_path,glm::mat4 transform);
+  //void FindMesh(aiScene *scene, aiNode *node,glm::mat4 transform);
+  //Entity processMesh(aiMesh *mesh, const aiScene *scene,glm::mat4 transform);
+  //std::vector<int> loadMaterialTextures(aiMaterial *mat,aiTextureType type,std::string typeName);
   glm::vec3 SampleLight(glm::vec3 direction, HitRecord &hit_record,std::mt19937 &rd)const;
   glm::vec3 SampleEnvmap_Li(std::mt19937 rd,glm::vec3 *wi,float* lightpdf)const;
   float EnvMapPdfLi(HitRecord &hit_record, glm::vec3 wi)const;

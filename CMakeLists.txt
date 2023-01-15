@@ -13,6 +13,7 @@ add_subdirectory(external/abseil-cpp)
 add_subdirectory(external/tinyobjloader)
 add_subdirectory(external/tinyxml2)
 
+add_subdirectory(external/assimp)
 file(GLOB ImGuizmo_Sources ${CMAKE_SOURCE_DIR}/external/ImGuizmo/*.cpp ${CMAKE_SOURCE_DIR}/external/ImGuizmo/*.h)
 add_library(ImGuizmo ${ImGuizmo_Sources})
 target_include_directories(ImGuizmo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo ${GRASSLAND_INCLUDE_DIRS})
@@ -25,5 +26,6 @@ list(APPEND SPARKS_EXTERNAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/ti
 list(APPEND SPARKS_EXTERNAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo)
 list(APPEND SPARKS_EXTERNAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyxml2)
 list(APPEND SPARKS_EXTERNAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyfiledialogs)
+list(APPEND SPARKS_EXTERNAL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/include)
 
 add_subdirectory(src)
