@@ -7,7 +7,7 @@
 #include "sparks/assets/texture.h"
 #include "sparks/assets/util.h"
 #include "vector"
-
+#include "random"
 namespace sparks {
 class Scene {
  public:
@@ -32,6 +32,7 @@ class Scene {
   [[nodiscard]] const std::vector<Entity> &GetEntities() const;
   [[nodiscard]] int GetEntityCount() const;
   [[nodiscard]] std::vector<const char *> GetEntityNameList() const;
+  
 
   void SetCamera(const Camera &camera);
   Camera &GetCamera();
@@ -70,11 +71,14 @@ class Scene {
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
-
+  glm::vec3 SampleLight(glm::vec3 direction, HitRecord &hit_record,std::mt19937 &rd)const;
+  glm::vec3 SampleEnvmap_Li(std::mt19937 rd,glm::vec3 *wi,float* lightpdf)const;
+  float EnvMapPdfLi(HitRecord &hit_record, glm::vec3 wi)const;
  private:
+  std::vector<float> light_distribution;
+  std::vector<int> light_id;
   std::vector<Texture> textures_;
   std::vector<std::string> texture_names_;
-
   std::vector<Entity> entities_;
 
   int envmap_id_{1};

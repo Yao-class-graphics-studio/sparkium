@@ -14,6 +14,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int x,
                                 int y,
                                 int sample) const {
+  return SampleRay_test(origin, direction, x, y, sample);
   glm::vec3 throughput{1.0f};
   glm::vec3 radiance{0.0f};
   HitRecord hit_record;
@@ -46,6 +47,68 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
       radiance += throughput * glm::vec3{scene_->SampleEnvmap(direction)};
       break;
     }
+  }
+  return radiance;
+}
+glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
+                                     glm::vec3 direction,
+                                     int x,
+                                     int y,
+                                     int sample) const {
+  glm::vec3 throughput{1.0f};
+  glm::vec3 radiance{0.0f};
+  bool specularBounce = false;
+  int bounces;
+  float etaScale = 1;
+  std::mt19937 rd(sample*1000000007+ x*998244353+y);
+  for (bounces = 0;; ++bounces) {
+    HitRecord hit_record;
+    auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit_record);
+    bool intersected = (t > 0.0f);
+    //return glm::vec3(scene_->GetEntity(hit_record.hit_entity_id).GetMaterial().IsEmission());
+    if (bounces == 0 || specularBounce) {
+      if (intersected) {
+        auto &material =
+            scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
+        radiance += throughput * material.emission * material.emission_strength;
+      } else {
+        glm::vec4 env_sample = scene_->SampleEnvmap(direction);
+        env_sample[3] = 0;
+        radiance += throughput * glm::vec3{env_sample};
+      }
+    }
+    if (!intersected || bounces >= render_settings_->num_bounces)
+      break;
+    // sample a light from certain distribution
+    glm::vec3 light = scene_->SampleLight(direction,hit_record,rd);
+    //return light;
+    auto &material = scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
+    if (material.material_type != MATERIAL_TYPE_SPECULAR) {
+      glm::vec3 Ld = throughput * light;
+      Ld = glm::clamp(Ld, glm::vec3(0.0f), glm::vec3(scene_->GetCamera().GetClamp()));
+      radiance += Ld;
+
+    } else {
+      specularBounce = 1;
+    }
+    glm::vec3 wo = -direction, wi;
+    float pdf;
+    glm::vec3 f = material.Sample_f(hit_record,rd,wo,&wi, &pdf);
+    glm::vec3 printvec = hit_record.tangent;
+    //printf("%f %f %f\n", printvec.x, printvec.y, printvec.z);
+    //return f;
+    if (f == glm::vec3(0.0f) || pdf == 0.f)
+      break;
+    throughput *= f * abs(dot(wi, hit_record.normal)) / pdf;
+    origin = hit_record.position;
+    direction = wi;
+    if (bounces > 3) {
+      float q = 0.5f;
+      if (std::uniform_real_distribution<float>(0.0f, 1.0f)(rd) < q)
+        break;
+      throughput /= 1 - q;
+    }
+
   }
   return radiance;
 }

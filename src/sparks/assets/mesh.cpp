@@ -117,6 +117,7 @@ float Mesh::TraceRay(const glm::vec3 &origin,
           hit_record->tex_coord =
               v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
           hit_record->front_face = true;
+          hit_record->index_id = i/3;
         } else {
           hit_record->position = position;
           hit_record->geometry_normal = -geometry_normal;
@@ -126,6 +127,8 @@ float Mesh::TraceRay(const glm::vec3 &origin,
           hit_record->tex_coord =
               v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
           hit_record->front_face = false;
+          hit_record->index_id = i;
+
         }
       }
     }
@@ -368,5 +371,41 @@ Mesh::Mesh(const tinyxml2::XMLElement *element) {
     MergeVertices();
   }
 }
+glm::vec3 Mesh::Sample(std::mt19937 rd,glm::mat4 transform,float* pdf,glm::vec3 *normal) const{
+  int tot_face = indices_.size() / 3;
+  int face_id = std::uniform_int_distribution<unsigned>(0, tot_face-1)(rd);
+  float su0 = std::sqrt(std::uniform_real_distribution<float>(0.0f, 1.0f)(rd));
+  float a = 1 - su0;
+  float b=std::uniform_real_distribution<float>(0.0f, 1.0f)(rd) * su0;
+  glm::vec3 p0 = glm::vec3{
+      transform * glm::vec4{vertices_[indices_[face_id * 3]].position, 1.0f}};
+  glm::vec3 p1 = glm::vec3{
+      transform * glm::vec4{vertices_[indices_[face_id * 3+1]].position, 1.0f}};
+  glm::vec3 p2 = glm::vec3{
+      transform * glm::vec4{vertices_[indices_[face_id * 3+2]].position, 1.0f}};
+  glm::mat4 T_inverse_transform = glm::transpose(glm::inverse(transform));
+  glm::vec3 n0 =
+      glm::vec3{T_inverse_transform *
+                glm::vec4{vertices_[indices_[face_id * 3]].normal, 0.0f}};
+  glm::vec3 n1 =
+      glm::vec3{T_inverse_transform *
+                glm::vec4{vertices_[indices_[face_id * 3 + 1]].normal, 0.0f}};
+  glm::vec3 n2 =
+      glm::vec3{T_inverse_transform *
+                glm::vec4{vertices_[indices_[face_id * 3 + 2]].normal, 0.0f}};
+  
 
+  glm::vec3 position = a * p0 + b * p1 + (1 - a - b) * p2;
+  if (glm::length(vertices_[0].normal)<0.5f) {
+    *normal = glm::normalize(
+        glm::cross(p1 - p0, p2 - p0));
+  } else {
+    *normal = glm::normalize(a * n0 +
+                            b * n1 +
+                            (1 - a - b) *
+                                n2);
+  }
+  *pdf =  1/glm::length(glm::cross(p1 - p0, p2 - p0))/ tot_face;
+  return position;
+}
 }  // namespace sparks

@@ -33,6 +33,10 @@ class Entity {
   [[nodiscard]] Material &GetMaterial();
   [[nodiscard]] const Material &GetMaterial() const;
   [[nodiscard]] const std::string &GetName() const;
+  glm::vec3 Sample_Li(HitRecord &hit_record,
+                      std::mt19937 rd,
+                      glm::vec3 *wi,
+                      float *pdf)const;
 
  private:
   std::unique_ptr<Model> model_;
