@@ -20,6 +20,17 @@ struct TreeSetting {
   int maxPrims = 1;
   int maxDepth = -1;
 };
+enum class EdgeType { Start, End };
+struct BoundEdge {
+  BoundEdge() {
+  }
+  BoundEdge(float t, int primNum, bool starting) : t(t), primNum(primNum) {
+    type = starting ? EdgeType::Start : EdgeType::End;
+  }
+  float t;
+  int primNum;
+  EdgeType type;
+};
 class AcceleratedMesh : public Mesh {
  public:
   AcceleratedMesh() = default;
@@ -34,13 +45,13 @@ class AcceleratedMesh : public Mesh {
   void build_tree(TreeSetting &setting,
                   std::vector<int> &face_ids,
                   std::vector<AxisAlignedBoundingBox> all_aabb,
-                  KdAccelNode &node,
+                  int index,
                   int depth,
                   int failed_time);
  void Init(KdAccelNode &node, std::vector<int> &face_id);
  private:
   std::vector<KdAccelNode> tree_node;
   std::vector<int> ordered;
-
+  BoundEdge *edges[3];
 };
 }  // namespace sparks

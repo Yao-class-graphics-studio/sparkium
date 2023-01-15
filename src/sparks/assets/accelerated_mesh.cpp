@@ -20,7 +20,7 @@ float AcceleratedMesh::TraceRay(const glm::vec3 &origin,
                                 const glm::vec3 &direction,
                                 float t_min,
                                 HitRecord *hit_record) const {
-  return Mesh::TraceRay(origin, direction, t_min, hit_record);
+  //return Mesh::TraceRay(origin, direction, t_min, hit_record);
   float sectMin, sectMax;
   float RayMax = 1e5f;
   bool hit = true;
@@ -128,17 +128,7 @@ float AcceleratedMesh::TraceRay(const glm::vec3 &origin,
     RayMax = -1;
   return RayMax;
 }
-enum class EdgeType { Start, End };
-struct BoundEdge {
-  BoundEdge() {
-  }
-  BoundEdge(float t, int primNum, bool starting) : t(t), primNum(primNum) {
-    type = starting ? EdgeType::Start : EdgeType::End;
-  }
-  float t;
-  int primNum;
-  EdgeType type;
-};
+
 void AcceleratedMesh::Init(KdAccelNode &node, std::vector<int> &face_id) {
   node.start = ordered.size();
   node.offset = face_id.size();
@@ -149,21 +139,18 @@ void AcceleratedMesh::Init(KdAccelNode &node, std::vector<int> &face_id) {
   }
   //printf("\n");
 }
-void AcceleratedMesh::build_tree(TreeSetting &setting, std::vector<int> &face_ids,std::vector<AxisAlignedBoundingBox> all_aabb,KdAccelNode &node,int depth,int failed_time) {
+void AcceleratedMesh::build_tree(TreeSetting &setting, std::vector<int> &face_ids,std::vector<AxisAlignedBoundingBox> all_aabb,int node_id,int depth,int failed_time) {
   int n_face = face_ids.size();
   if (n_face <= setting.maxPrims || depth == setting.maxDepth) {
-    Init(node,face_ids);
+    Init(tree_node[node_id], face_ids);
     return;
   }
   float oldCost = setting.isectCost * n_face;
-  BoundEdge *edges[3];
-  for (int i = 0; i < 3; ++i)
-    edges[i] = new BoundEdge[2*n_face];
   int bestAxis = -1, bestOffset = -1;
   float bestCost = 1e30f;
-  float totalSA = node.box.SurfaceArea();
+  float totalSA = tree_node[node_id].box.SurfaceArea();
   float invTotalSA = 1 / totalSA;
-  glm::vec3 d = node.box.Diagnal();
+  glm::vec3 d = tree_node[node_id].box.Diagnal();
   for (int axis = 0; axis < 3; ++axis) {
     for (int i = 0; i < n_face; ++i) {
       int pid = face_ids[i];
@@ -183,13 +170,14 @@ void AcceleratedMesh::build_tree(TreeSetting &setting, std::vector<int> &face_id
       if (edges[axis][i].type == EdgeType::End)
         --nAbove;
       float edgeT = edges[axis][i].t;
-      if (edgeT > node.box.pMin()[axis] && edgeT < node.box.pMax()[axis]) {
+      if (edgeT > tree_node[node_id].box.pMin()[axis] &&
+          edgeT < tree_node[node_id].box.pMax()[axis]) {
         int otherAxis0 = (axis + 1) % 3, otherAxis1 = (axis + 2) % 3;
         float belowSA = 2 * (d[otherAxis0] * d[otherAxis1] +
-                             (edgeT - node.box.pMin()[axis]) *
+                             (edgeT - tree_node[node_id].box.pMin()[axis]) *
                                  (d[otherAxis0] + d[otherAxis1]));
         float aboveSA = 2 * (d[otherAxis0] * d[otherAxis1] +
-                             (node.box.pMax()[axis] - edgeT) *
+                             (tree_node[node_id].box.pMax()[axis] - edgeT) *
                                  (d[otherAxis0] + d[otherAxis1]));
         float pBelow = belowSA * invTotalSA;
         float pAbove = aboveSA * invTotalSA;
@@ -208,8 +196,8 @@ void AcceleratedMesh::build_tree(TreeSetting &setting, std::vector<int> &face_id
   }
   if (bestCost > oldCost)
     failed_time++;
-  if (bestAxis == -1 || (bestCost > 2*oldCost && n_face<16)||failed_time>=3) {
-    Init(node,face_ids);
+  if (bestAxis == -1 || (bestCost > oldCost && n_face<16)||failed_time>=3) {
+    Init(tree_node[node_id], face_ids);
     return;
   }
   std::vector<int> Lid, Rid;
@@ -220,7 +208,8 @@ void AcceleratedMesh::build_tree(TreeSetting &setting, std::vector<int> &face_id
     if (edges[bestAxis][i].type == EdgeType::End)
       Rid.push_back(edges[bestAxis][i].primNum);
   float tSplit = edges[bestAxis][bestOffset].t;
-  AxisAlignedBoundingBox bounds0 = node.box, bounds1 = node.box;
+  AxisAlignedBoundingBox bounds0 = tree_node[node_id].box,
+                         bounds1 = tree_node[node_id].box;
   if (bestAxis == 0) {
     bounds0.x_high = bounds1.x_low = tSplit;
   }else if (bestAxis == 1) {
@@ -231,19 +220,19 @@ void AcceleratedMesh::build_tree(TreeSetting &setting, std::vector<int> &face_id
   KdAccelNode lson, rson;
   lson.box = bounds0;
   rson.box = bounds1;
-  node.split = bestAxis;
-  node.split_pos = tSplit;
-  node.start = -1;
-  node.s[0] = tree_node.size();
+  tree_node[node_id].split = bestAxis;
+  tree_node[node_id].split_pos = tSplit;
+  tree_node[node_id].start = -1;
+  tree_node[node_id].s[0] = tree_node.size();
   tree_node.push_back(lson);
-  //printf("to %d\n", node.s[0]);
-  build_tree(setting, Lid, all_aabb, tree_node.back(), depth + 1,failed_time);
-  node.s[1] = tree_node.size();
+  //printf("to %d\n", tree_node[node_id].s[0]);
+  build_tree(setting, Lid, all_aabb, tree_node[node_id].s[0], depth + 1,
+             failed_time);
+  tree_node[node_id].s[1] = tree_node.size();
   tree_node.push_back(rson);
-  //printf("to %d\n", node.s[1]);
-  build_tree(setting, Rid, all_aabb, tree_node.back(), depth + 1,failed_time);
-  for (int i = 0; i < 3; ++i)
-    delete edges[i];
+  //printf("to %d\n", tree_node[node_id].s[1]);
+  build_tree(setting, Rid, all_aabb, tree_node[node_id].s[1], depth + 1,
+             failed_time);
 }
 void AcceleratedMesh::BuildAccelerationStructure() {
   TreeSetting setting;
@@ -262,10 +251,15 @@ void AcceleratedMesh::BuildAccelerationStructure() {
   setting.maxDepth = std::round(8 + 1.3f * log2(face_ids.size()));
   tree_node.push_back(KdAccelNode{});
   tree_node[0].box = test;
+  int tot = face_ids.size();
+  printf("tot %d\n", tot);
   //printf("to 0\n");
-  build_tree(setting, face_ids, all_aabb, tree_node[0],0,0);
-
-  
+  for (int i = 0; i < 3; ++i)
+    edges[i] = new BoundEdge[2*tot];
+  build_tree(setting, face_ids, all_aabb, 0,0,0);
+  for (int i = 0; i < 3; ++i)
+    delete edges[i];
+  return;
 }
 
 }  // namespace sparks

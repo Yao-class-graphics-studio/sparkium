@@ -55,12 +55,13 @@ glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
                                      int x,
                                      int y,
                                      int sample) const {
+  //printf("start!\n");
   glm::vec3 throughput{1.0f};
   glm::vec3 radiance{0.0f};
   bool specularBounce = false;
   int bounces;
   float etaScale = 1;
-  std::mt19937 rd(sample*1000000007+ x*998244353+y);
+  std::mt19937 rd(sample*sample+ x*998244353+y*y*y);
   for (bounces = 0;; ++bounces) {
     HitRecord hit_record;
     auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit_record);
@@ -81,8 +82,9 @@ glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
       break;
     // sample a light from certain distribution
     glm::vec3 light = scene_->SampleLight(direction,hit_record,rd);
-    //return light;
     auto &material = scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
+    //if (bounces == 1)
+    //  return light;
     if (material.material_type != MATERIAL_TYPE_SPECULAR) {
       glm::vec3 Ld = throughput * light;
       Ld = glm::clamp(Ld, glm::vec3(0.0f), glm::vec3(scene_->GetCamera().GetClamp()));

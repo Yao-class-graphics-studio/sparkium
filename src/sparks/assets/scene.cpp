@@ -121,7 +121,7 @@ void Scene::UpdateEnvmapConfiguration() {
   auto envmap_id = scene.GetEnvmapId();
   auto &envmap_texture = scene.GetTextures()[envmap_id];
   auto buffer = envmap_texture.GetBuffer();
-
+  envmap_tot_weight_ = 0;
   envmap_minor_color_ = glm::vec3{0.0f};
   envmap_major_color_ = glm::vec3{0.0f};
   envmap_cdf_.resize(envmap_texture.GetWidth() * envmap_texture.GetHeight());
@@ -155,6 +155,7 @@ void Scene::UpdateEnvmapConfiguration() {
       auto major_color = color - minor_color;
       envmap_major_color_ += major_color * (scale * inv_width);
       envmap_minor_color_ += minor_color * (scale * inv_width);
+      envmap_tot_weight_ += length(color)*cos_theta;
       color *= scale;
 
       auto strength = std::max(color.x, std::max(color.y, color.z));
@@ -168,7 +169,6 @@ void Scene::UpdateEnvmapConfiguration() {
       envmap_cdf_[i] = total_weight;
     }
   }
-
   auto inv_total_weight = 1.0f / total_weight;
   for (auto &v : envmap_cdf_) {
     v *= inv_total_weight;
@@ -384,13 +384,16 @@ Scene::Scene(const std::string &filename) : Scene() {
   UpdateEnvmapConfiguration();
   float total_strength = 0;
   light_id.push_back(-1);
-  light_distribution.push_back(1);
-  total_strength += 1;
+  light_distribution.push_back(envmap_tot_weight_);
+  total_strength += envmap_tot_weight_;
   for (int i = 0; i < entities_.size(); ++i) {
     if (entities_[i].GetMaterial().IsEmission()) {
       light_id.push_back(i);
-      light_distribution.push_back(1);
-      total_strength += 1;
+      float light_size = entities_[i].GetMaterial().emission_strength *
+                         glm::pi<float>() *
+          entities_[i].GetModel()->GetAABB(entities_[i].GetTransformMatrix()).SurfaceArea();
+      light_distribution.push_back(light_size);
+      total_strength += light_size;
     }
   }
   
@@ -424,6 +427,7 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
   float lightpdf = 0, scatterpdf = 0;
   bool visible = false;
   glm::vec3 Li;
+  auto &material = GetEntity(hit_record.hit_entity_id).GetMaterial();
   if (index == -1) {
     Li = SampleEnvmap_Li(rd, &wi, &lightpdf);
   } else {
@@ -432,7 +436,6 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
   HitRecord vis_record;
   glm::vec3 tp_direction = wi;
   
-  auto &material = GetEntity(hit_record.hit_entity_id).GetMaterial();
   if (lightpdf > 0 && Li != glm::vec3(0.f)) {
     // Compute BSDF or phase function's value for light sample
     glm::vec3 f;
@@ -525,19 +528,21 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
       glm::vec3 new_origin = hit_record.position;
       glm::vec3 new_direction = wi;
       float t = TraceRay(new_origin, new_direction, 1e-3f, 1e4f, &light_record);
-
+      //return glm::vec3(0, 0, float(light_record.hit_entity_id == 2));
       // Add light contribution from material sampling
       glm::vec3 Li(0.f);
       if (t > 0.0f) {
         auto &new_material = GetEntity(light_record.hit_entity_id).GetMaterial();
-        Li = ((dot(light_record.normal, -wi) > 0.f)^!light_record.front_face)
+        Li = (light_record.hit_entity_id==index)
                  ? new_material.emission * new_material.emission_strength
                  : glm::vec3(0.f);
       } else
         Li = SampleEnvmap(wi);
-      if (Li != glm::vec3(0.0f))
-        //weight = 1;//debug-------------------------------------------------
+      if (Li != glm::vec3(0.0f)) {
+        //return normalize(hit_record.position);
+        //weight = 1;  // debug-------------------------------------------------
         Ld += f * Li * weight / scatterpdf;
+      }
     }
   }
   return Ld / discrete_pdf;

@@ -87,7 +87,7 @@ class Scene {
   glm::vec3 envmap_light_direction_{0.0f, 1.0f, 0.0f};
   glm::vec3 envmap_major_color_{0.5f};
   glm::vec3 envmap_minor_color_{0.3f};
-
+  float envmap_tot_weight_{0.0f};
   glm::vec3 camera_position_{0.0f};
   float camera_speed_{3.0f};
   glm::vec3 camera_pitch_yaw_roll_{0.0f, 0.0f, 0.0f};

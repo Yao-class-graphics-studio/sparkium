@@ -23,10 +23,10 @@ struct Material {
   glm::vec3 emission{0.0f};
   float emission_strength{1.0f};
   float alpha{1.0f};
+  
+  MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
   float etaA{1.00029f};
   float etaB{1.5f};
-  MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
-  float reserve[2]{};
   Material() = default;
   explicit Material(const glm::vec3 &albedo);
   Material(Scene *scene, const tinyxml2::XMLElement *material_element);
@@ -69,7 +69,7 @@ struct Material {
     return material_type == MATERIAL_TYPE_EMISSION;
   }
   glm::vec3 local_f_Lambertian(glm::vec3 wo, glm::vec3 wi) const{
-    return glm::one_over_pi<float>() * albedo_color;
+    return wo.z*wi.z>0?glm::one_over_pi<float>() * albedo_color:glm::vec3(0.0f);
   }
   glm::vec3 local_f_Transmissive(glm::vec3 wo, glm::vec3 wi) const{
     return glm::vec3(0.f);
@@ -79,7 +79,7 @@ struct Material {
   }
   float local_pdf(glm::vec3 wo, glm::vec3 wi) const{
     if (IsLambertian())
-        return wo.z * wi.z > 0 ? abs(wi.z) * glm::one_over_pi<float>() : 0;
+        return (wo.z * wi.z > 0) ? abs(wi.z) * glm::one_over_pi<float>() : 0;
     if (IsSpecular())
       return 0.0f;
     return 0.0f;
@@ -160,7 +160,7 @@ struct Material {
       *wiW = LocalToWorld(hit_record, glm::vec3(-wo.x, -wo.y, wo.z));
       *pdf = 1;  
       f += albedo_color;
-    } else if (false) {
+    } else if (IsTransmissive()) {
       float F = FrDielectric(wo.z, etaA, etaB);
       if (std::uniform_real_distribution<float>(0.0f, 1.0f)(rd) < F) {
         glm::vec3 wi(-wo.x, -wo.y, wo.z);
@@ -173,10 +173,11 @@ struct Material {
         float etaI = entering ? etaA : etaB;
         float etaT = entering ? etaB : etaA;
         glm::vec3 wi;
-        glm::vec3 wo_forward = wo.z < 0 ? -wo : wo;
+        glm::vec3 wo_forward = wo.z < 0 ? glm::vec3(0,0,-1) : glm::vec3(0,0,1);
         if (Refract(wo, wo_forward, etaI / etaT, &wi)) {
             glm::vec3 ft = albedo_color * (1 - F);
-            ft *= (etaI * etaI) / (etaT * etaT);
+            //ft *= (etaI * etaI) / (etaT * etaT);
+            *wiW = LocalToWorld(hit_record, wi);
             *pdf = 1 - F;
             f+=ft / abs(wi.z);
         }
