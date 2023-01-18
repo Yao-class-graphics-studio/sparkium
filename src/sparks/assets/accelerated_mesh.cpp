@@ -88,7 +88,7 @@ float AcceleratedMesh::TraceRay(const glm::vec3 &origin,
           hit = true;
           if (hit_record) {
             auto geometry_normal = glm::normalize(glm::cross(
-                v2.position - v0.position, v1.position - v0.position));
+                v1.position - v0.position, v2.position - v0.position));
             if (glm::dot(geometry_normal, direction) < 0.0f) {
               hit_record->position = position;
               hit_record->geometry_normal = geometry_normal;
@@ -99,7 +99,7 @@ float AcceleratedMesh::TraceRay(const glm::vec3 &origin,
               hit_record->tex_coord =
                   v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
               hit_record->front_face = true;
-              hit_record->index_id = i / 3;
+              hit_record->index_id = index;
             } else {
               hit_record->position = position;
               hit_record->geometry_normal = -geometry_normal;
@@ -110,7 +110,7 @@ float AcceleratedMesh::TraceRay(const glm::vec3 &origin,
               hit_record->tex_coord =
                   v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
               hit_record->front_face = false;
-              hit_record->index_id = i;
+              hit_record->index_id = index;
             }
           }
         }

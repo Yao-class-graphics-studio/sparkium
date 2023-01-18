@@ -107,7 +107,7 @@ float Mesh::TraceRay(const glm::vec3 &origin,
       result = t;
       if (hit_record) {
         auto geometry_normal = glm::normalize(
-            glm::cross(v2.position - v0.position, v1.position - v0.position));
+            glm::cross(v1.position - v0.position, v2.position - v0.position));
         if (glm::dot(geometry_normal, direction) < 0.0f) {
           hit_record->position = position;
           hit_record->geometry_normal = geometry_normal;
@@ -127,7 +127,7 @@ float Mesh::TraceRay(const glm::vec3 &origin,
           hit_record->tex_coord =
               v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
           hit_record->front_face = false;
-          hit_record->index_id = i;
+          hit_record->index_id = i/3;
 
         }
       }
@@ -234,7 +234,7 @@ bool Mesh::LoadObjFile(const std::string &obj_file_path, Mesh &mesh) {
         Vertex v1 = face_vertices[i];
         Vertex v2 = face_vertices[i + 1];
         auto geometry_normal = glm::normalize(
-            glm::cross(v2.position - v0.position, v1.position - v0.position));
+            glm::cross(v1.position - v0.position, v2.position - v0.position));
         if (v0.normal == glm::vec3{0.0f, 0.0f, 0.0f}) {
           v0.normal = geometry_normal;
         } else if (glm::dot(geometry_normal, v0.normal) < 0.0f) {
@@ -354,13 +354,21 @@ Mesh::Mesh(const tinyxml2::XMLElement *element) {
           glm::cross(v1.position - v0.position, v2.position - v0.position));
       if (glm::length(v0.normal) < 0.5f) {
         v0.normal = geom_normal;
+      } else if (glm::dot(geom_normal, v0.normal) < 0.0f) {
+        v0.normal = -v0.normal;
       }
       if (glm::length(v1.normal) < 0.5f) {
         v1.normal = geom_normal;
+      } else if (glm::dot(geom_normal, v0.normal) < 0.0f) {
+        v1.normal = -v1.normal;
       }
       if (glm::length(v2.normal) < 0.5f) {
         v2.normal = geom_normal;
+      } else if (glm::dot(geom_normal, v0.normal) < 0.0f) {
+        v2.normal = -v2.normal;
       }
+      //printf("%f %f %f|%f %f %f\n", v0.normal.x, v0.normal.y, v0.normal.z,
+      //       geom_normal.x, geom_normal.y, geom_normal.z);
       vertices_.push_back(v0);
       vertices_.push_back(v1);
       vertices_.push_back(v2);
@@ -371,7 +379,7 @@ Mesh::Mesh(const tinyxml2::XMLElement *element) {
     MergeVertices();
   }
 }
-glm::vec3 Mesh::Sample(std::mt19937 rd,glm::mat4 transform,float* pdf,glm::vec3 *normal) const{
+glm::vec3 Mesh::Sample(std::mt19937 &rd,glm::mat4 transform,float* pdf,glm::vec3 *normal) const{
   int tot_face = indices_.size() / 3;
   int face_id = std::uniform_int_distribution<unsigned>(0, tot_face-1)(rd);
   float su0 = std::sqrt(std::uniform_real_distribution<float>(0.0f, 1.0f)(rd));
@@ -405,7 +413,7 @@ glm::vec3 Mesh::Sample(std::mt19937 rd,glm::mat4 transform,float* pdf,glm::vec3 
                             (1 - a - b) *
                                 n2);
   }
-  *pdf =  1/glm::length(glm::cross(p1 - p0, p2 - p0))/ tot_face;
+  *pdf =  1.0/(0.5*glm::length(glm::cross(p1 - p0, p2 - p0)))/ tot_face;
   return position;
 }
 }  // namespace sparks

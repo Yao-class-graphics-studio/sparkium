@@ -20,7 +20,7 @@ class Model {
   [[nodiscard]] virtual std::vector<Vertex> GetVertices() const = 0;
   [[nodiscard]] virtual std::vector<uint32_t> GetIndices() const = 0;
   virtual const char *GetDefaultEntityName();
-  virtual glm::vec3 Sample(std::mt19937 rd,
+  virtual glm::vec3 Sample(std::mt19937 &rd,
                          glm::mat4 transform_,
                          float *pdf,glm::vec3 *normal) const {
 

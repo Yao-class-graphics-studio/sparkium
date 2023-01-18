@@ -67,7 +67,7 @@ class Scene {
                  const glm::vec3 &direction,
                  float t_min,
                  float t_max,
-                 HitRecord *hit_record) const;
+                 HitRecord *hit_record,float time=-1.0f) const;
 
   bool TextureCombo(const char *label, int *current_item) const;
   bool EntityCombo(const char *label, int *current_item) const;
@@ -78,7 +78,7 @@ class Scene {
   //Entity processMesh(aiMesh *mesh, const aiScene *scene,glm::mat4 transform);
   //std::vector<int> loadMaterialTextures(aiMaterial *mat,aiTextureType type,std::string typeName);
   glm::vec3 SampleLight(glm::vec3 direction, HitRecord &hit_record,std::mt19937 &rd)const;
-  glm::vec3 SampleEnvmap_Li(std::mt19937 rd,glm::vec3 *wi,float* lightpdf)const;
+  glm::vec3 SampleEnvmap_Li(std::mt19937 &rd,glm::vec3 *wi,float* lightpdf)const;
   float EnvMapPdfLi(HitRecord &hit_record, glm::vec3 wi)const;
  private:
   std::vector<float> light_distribution;

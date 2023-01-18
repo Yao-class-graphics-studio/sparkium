@@ -69,7 +69,7 @@ struct Material {
     return material_type == MATERIAL_TYPE_EMISSION;
   }
   glm::vec3 local_f_Lambertian(glm::vec3 wo, glm::vec3 wi) const{
-    return wo.z*wi.z>0?glm::one_over_pi<float>() * albedo_color:glm::vec3(0.0f);
+    return (wo.z * wi.z > 0) ?glm::one_over_pi<float>() * albedo_color:glm::vec3(0.f);
   }
   glm::vec3 local_f_Transmissive(glm::vec3 wo, glm::vec3 wi) const{
     return glm::vec3(0.f);
@@ -78,13 +78,15 @@ struct Material {
     return glm::vec3(0.f);
   }
   float local_pdf(glm::vec3 wo, glm::vec3 wi) const{
-    if (IsLambertian())
-        return (wo.z * wi.z > 0) ? abs(wi.z) * glm::one_over_pi<float>() : 0;
+    if (IsLambertian()) {
+      //return 1;
+      return (wo.z * wi.z > 0) ? abs(wi.z) * glm::one_over_pi<float>() : 0;
+    }
     if (IsSpecular())
       return 0.0f;
     return 0.0f;
   }
-  glm::vec3 Sample_HemiSphere(std::mt19937 rd) const{
+  glm::vec3 Sample_HemiSphere(std::mt19937 &rd) const{
     glm::vec2 u(std::uniform_real_distribution<float>(0.0f, 1.0f)(rd),
                 std::uniform_real_distribution<float>(0.0f, 1.0f)(rd));
     glm::vec2 offset=2.f * u - glm::vec2(1, 1);
@@ -140,7 +142,7 @@ struct Material {
     return true;
   }
   glm::vec3 Sample_f(HitRecord &hit_record,
-                     std::mt19937 rd,
+                     std::mt19937 &rd,
                      glm::vec3 &woW,
                      glm::vec3 *wiW,
                      float *pdf) const{//note: we are sampling reflection functions
@@ -154,11 +156,10 @@ struct Material {
         wi.z *= -1;
       *pdf = local_pdf(wo, wi);
       *wiW = LocalToWorld(hit_record, wi);
-
       f += local_f_Lambertian(wo, wi);
     } else if (IsMirror()) {
       *wiW = LocalToWorld(hit_record, glm::vec3(-wo.x, -wo.y, wo.z));
-      *pdf = 1;  
+      *pdf = abs(dot(*wiW, hit_record.normal));  
       f += albedo_color;
     } else if (IsTransmissive()) {
       float F = FrDielectric(wo.z, etaA, etaB);
@@ -169,7 +170,7 @@ struct Material {
         f+= F * albedo_color / abs(wi.z);
 
       } else {
-        bool entering = wo.z > 0;
+        bool entering = hit_record.front_face;
         float etaI = entering ? etaA : etaB;
         float etaT = entering ? etaB : etaA;
         glm::vec3 wi;
@@ -202,7 +203,7 @@ struct Material {
     if (reflect && IsLambertian()) {
       f += local_f_Lambertian(wo, wi);
     }
-    if (!reflect && IsTransmissive()) {
+    if (IsTransmissive()) {
       f += local_f_Transmissive(wo, wi);
     }
     if (reflect && IsMirror()) {

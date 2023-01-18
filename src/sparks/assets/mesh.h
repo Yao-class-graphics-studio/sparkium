@@ -28,7 +28,7 @@ class Mesh : public Model {
   static bool LoadObjFile(const std::string &obj_file_path, Mesh &mesh);
   void WriteObjFile(const std::string &file_path) const;
   void MergeVertices();
-  glm::vec3 Sample(std::mt19937 rd, glm::mat4 transform_, float *pdf, glm::vec3 *normal)const;
+  glm::vec3 Sample(std::mt19937 &rd, glm::mat4 transform_, float *pdf, glm::vec3 *normal)const;
  protected:
   std::vector<Vertex> vertices_;
   std::vector<uint32_t> indices_;

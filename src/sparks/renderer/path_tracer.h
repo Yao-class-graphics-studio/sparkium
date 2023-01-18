@@ -16,7 +16,7 @@ class PathTracer {
                       glm::vec3 direction,
                       int x,
                       int y,
-                      int sample) const;
+                      int sample,std::mt19937 rd) const;
 
  private:
   const RendererSettings *render_settings_{};
