@@ -5,8 +5,7 @@
 #include "imgui.h"
 #include "sparks/assets/accelerated_mesh.h"
 #include "sparks/util/util.h"
-#include <glm/gtx/matrix_decompose.hpp>
-#include<glm/gtc/quaternion.hpp>
+
 /*
 #include "assimp/Importer.hpp"     // C++ importer interface
 #include "assimp/scene.h"           // Output data structure
@@ -163,7 +162,7 @@ void Scene::UpdateEnvmapConfiguration() {
       auto major_color = color - minor_color;
       envmap_major_color_ += major_color * (scale * inv_width);
       envmap_minor_color_ += minor_color * (scale * inv_width);
-      envmap_tot_weight_ += length(color)*cos_theta;
+      envmap_tot_weight_ += length(color) * scale * 2 * glm::pi<float>()*inv_width*radius;
       color *= scale;
 
       auto strength = std::max(color.x, std::max(color.y, color.z));
@@ -211,20 +210,7 @@ const glm::vec3 &Scene::GetEnvmapMajorColor() const {
 const std::vector<float> &Scene::GetEnvmapCdf() const {
   return envmap_cdf_;
 }
-glm::mat4 matrix_interpolation(const glm::mat4 &mat,float lambda){
-  glm::vec3 scale;
-  glm::quat rotation;
-  glm::vec3 translation;
-  glm::vec3 skew;
-  glm::vec4 perspective;
-  glm::decompose(mat, scale, rotation, translation, skew,
-                 perspective);
-  rotation = glm::conjugate(rotation);
-  scale = exp(log(scale) * lambda);
-  translation = translation * lambda;
-  rotation = glm::slerp(glm::quat(1.0, 0.0, 0.0, 0.0), rotation, lambda);
-  return glm::mat4{1.0f};
-}
+
 float Scene::TraceRay(const glm::vec3 &origin,
                       const glm::vec3 &direction,
                       float t_min,
@@ -237,8 +223,7 @@ float Scene::TraceRay(const glm::vec3 &origin,
     auto &entity = entities_[entity_id];
     auto transform = entity.GetTransformMatrix();
     if (time > 0 && entity.duration!=0.f)
-      transform =matrix_interpolation(entity.anime_transform_, time / entity.duration) *
-          transform;
+      transform =transform*matrix_interpolation(entity.anime_transform_, time / entity.duration) ;
     auto inv_transform = glm::inverse(transform);
     auto transformed_direction =
         glm::vec3{inv_transform * glm::vec4{direction, 0.0f}};
@@ -434,6 +419,15 @@ Scene::Scene(const std::string &filename) : Scene() {
       light_distribution.push_back(light_size);
       total_strength += light_size;
     }
+    if (entities_[i].GetName() == std::string("Lucy")) {
+      printf("Success!");
+      glm::mat4 trans = glm::translate(glm::mat4{1.0f}, glm::vec3(0,-0.2, 0));
+      glm::mat4 rot =
+      glm::mat4_cast(glm::rotate(glm::quat(1,0,0,0),3.14f*0.8f,glm::vec3(1,1,-0.5)));
+      glm::mat4 scal = glm::scale(glm::mat4{1.0f}, glm::vec3(1,1,1));
+      entities_[i].anime_transform_ = trans * rot * scal;
+      entities_[i].duration = 0.3f;
+    }
   }
 
   if (total_strength != 0) {
@@ -607,7 +601,7 @@ inline float PowerHeuristic(int nf, float fPdf, int ng, float gPdf) {
 }
 glm::vec3 Scene::SampleLight(glm::vec3 direction,
                              HitRecord &hit_record,
-                             std::mt19937 &rd) const {
+                             std::mt19937 &rd,float time) const {
   float test = std::uniform_real_distribution<float>(0.0f, 1.0f)(rd);
   int index = 0;
   for (index = 0; index < light_distribution.size(); ++index) {
@@ -647,7 +641,7 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
     if (f != glm::vec3(0.f)) {
       // Compute effect of visibility for light source sample
       vis_record.hit_entity_id = -1;
-      float t = TraceRay(hit_record.position, tp_direction, 1e-3f, 1e4f, &vis_record);
+      float t = TraceRay(hit_record.position, tp_direction, 1e-3f, 1e4f, &vis_record,time);
       //print(visible)
       //if (index == -1)
         //return 3.0f*f*Li/lightpdf;
@@ -664,7 +658,7 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
           Ld += f * Li / lightpdf;
         else {
           float weight = PowerHeuristic(1, lightpdf, 1, scatterpdf);
-          weight = 1;//debug------------------------------
+          //weight = 0;//debug------------------------------
           Ld += f * Li * weight / lightpdf;
         }
       }
@@ -673,7 +667,7 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
   //return Ld;
   // Sample BSDF with multiple importance sampling
   lightpdf=0;
-  if (false) {  //! Is Delta Light
+  if (true) {  //! Is Delta Light
     glm::vec3 f;
     bool sampledSpecular = false;
     // Sample scattered direction for surface interactions
@@ -685,53 +679,11 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
     if (f != glm::vec3(0.0f) && scatterpdf > 0) {
       // Account for light contributions along sampled direction _wi_
       float weight = 1;
-      if (!sampledSpecular) {
-        if (index == -1) {
-          lightpdf = EnvMapPdfLi(hit_record, wi);
-        } else {
-          HitRecord pdf_record;  // get pdf of current sample
-          glm::mat4 &transform =
-              (glm::mat4)entities_[index].GetTransformMatrix();
-          glm::mat4 inv_transform = glm::inverse(transform);
-          glm::vec3 trans_dir = inv_transform * glm::vec4{wi, 0.0f};
-          float pdf_t = entities_[index].GetModel()->TraceRay(
-              inv_transform * glm::vec4{hit_record.position, 1.0f}, normalize(trans_dir),
-              1e-3f, &pdf_record);
-          if (pdf_t > 0.0f && glm::length(trans_dir) > 1e-6f) {
-            pdf_record.position =
-                transform * glm::vec4{pdf_record.position, 1.0f};
-            pdf_record.normal = normalize(glm::transpose(inv_transform) *
-                                glm::vec4{pdf_record.normal, 0.0f});
-            lightpdf = dot(pdf_record.position - hit_record.position,
-                           pdf_record.position - hit_record.position)/
-                       abs(dot(pdf_record.normal, -wi));
-            int face_id = pdf_record.index_id;
-            auto &indices = entities_[index].GetModel()->GetIndices();
-            auto &vertices = entities_[index].GetModel()->GetVertices();
-            int num_faces = indices.size() / 3;
-            glm::vec3 p0 = glm::vec3{
-                transform *
-                glm::vec4{vertices[indices[face_id * 3]].position, 1.0f}};
-            glm::vec3 p1 = glm::vec3{
-                transform *
-                glm::vec4{vertices[indices[face_id * 3 + 1]].position, 1.0f}};
-            glm::vec3 p2 = glm::vec3{
-                transform *
-                glm::vec4{vertices[indices[face_id * 3 + 2]].position, 1.0f}};
-            lightpdf /= 0.5*glm::length(glm::cross(p1 - p0, p2 - p0)) * num_faces;
-          } else
-            lightpdf = 0;
-        }
-        //printf("prev:%f now:%f\n", tp, lightpdf);
-        if (lightpdf == 0)
-          return Ld / discrete_pdf;
-        weight = PowerHeuristic(1, scatterpdf, 1, lightpdf);
-      }
       // Find intersection and compute transmittance
       HitRecord light_record;
       glm::vec3 new_origin = hit_record.position;
       glm::vec3 new_direction = wi;
-      float t = TraceRay(new_origin, new_direction, 1e-3f, 1e4f, &light_record);
+      float t = TraceRay(new_origin, new_direction, 1e-3f, 1e4f, &light_record,time);
       //return glm::vec3(0, 0, float(light_record.hit_entity_id == 2));
       // Add light contribution from material sampling
       glm::vec3 Li(0.f);
@@ -747,6 +699,39 @@ glm::vec3 Scene::SampleLight(glm::vec3 direction,
           Li = SampleEnvmap(wi);
       }
       if (Li != glm::vec3(0.0f)) {
+        if (!sampledSpecular) {
+          if (index == -1) {
+            lightpdf = EnvMapPdfLi(hit_record, wi);
+          } else {
+            glm::mat4 transform =
+                (glm::mat4)entities_[index].GetTransformMatrix();
+            if (time > 0 && entities_[index].duration != 0.0f)
+              transform = transform*matrix_interpolation(
+                  entities_[index].anime_transform_, time / entities_[index].duration);
+            lightpdf = dot(light_record.position - hit_record.position,
+                           light_record.position - hit_record.position) /
+                       abs(dot(light_record.normal, -wi));
+            int face_id = light_record.index_id;
+            auto &indices = entities_[index].GetModel()->GetIndices();
+            auto &vertices = entities_[index].GetModel()->GetVertices();
+            int num_faces = indices.size() / 3;
+            glm::vec3 p0 = glm::vec3{
+                transform *
+                glm::vec4{vertices[indices[face_id * 3]].position, 1.0f}};
+            glm::vec3 p1 = glm::vec3{
+                transform *
+                glm::vec4{vertices[indices[face_id * 3 + 1]].position, 1.0f}};
+            glm::vec3 p2 = glm::vec3{
+                transform *
+                glm::vec4{vertices[indices[face_id * 3 + 2]].position, 1.0f}};
+            lightpdf /=
+                0.5 * glm::length(glm::cross(p1 - p0, p2 - p0)) * num_faces;
+          }
+          // printf("prev:%f now:%f\n", tp, lightpdf);
+          if (lightpdf == 0)
+            return Ld / discrete_pdf;
+          weight = PowerHeuristic(1, scatterpdf, 1, lightpdf);
+        }
         //return normalize(hit_record.position);
         //weight = 1;  // debug-------------------------------------------------
         Ld += f * Li * weight / scatterpdf;

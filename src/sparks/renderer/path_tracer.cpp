@@ -55,7 +55,7 @@ glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
                                      int x,
                                      int y,
                                      int sample,std::mt19937 rd) const {
-  //printf("start!\n");
+  
   glm::vec3 throughput{1.0f};
   glm::vec3 radiance{0.0f};
   bool specularBounce = false;
@@ -64,9 +64,10 @@ glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
   std::random_device raad;
   rd=std::mt19937((sample * 182741431) ^ (x * 1239239423) ^ (y * 129423741));
   //std::mt19937 rd(sample*sample*sample^x);
+  float time = std::uniform_real_distribution<float>(0.0f, scene_->GetCamera().shutter_speed)(rd);
   for (bounces = 0;; ++bounces) {
     HitRecord hit_record;
-    auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit_record);
+    auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit_record,time);
     bool intersected = (t > 0.0f);
     //return glm::vec3(scene_->GetEntity(hit_record.hit_entity_id).GetMaterial().IsEmission());
     if (bounces == 0 || specularBounce) {
@@ -86,17 +87,9 @@ glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
     // sample a light from certain distribution
     auto &material = scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
     if (material.material_type != MATERIAL_TYPE_SPECULAR) {
-      glm::vec3 light = scene_->SampleLight(direction,hit_record,rd);
+      glm::vec3 light = scene_->SampleLight(direction,hit_record,rd,time);
       glm::vec3 Ld = throughput * light;
-      
-      //Ld = throughput*material.emission * material.emission_strength;
       radiance += Ld;
-      /* if (bounces == 1 && material.albedo_color[1] == 0 &&
-          material.albedo_color[0] > 0) {
-        return light;
-      }
-      else if (bounces==1) 
-        return glm::vec3(0.f);*/
     } else {
       bounces -= 1;
       specularBounce = 1;
@@ -105,15 +98,9 @@ glm::vec3 PathTracer::SampleRay_test(glm::vec3 origin,
     glm::vec3 wo = -direction, wi;
     float pdf;
     glm::vec3 f = material.Sample_f(hit_record,rd,wo,&wi, &pdf);
-    //wi = normalize(glm::vec3(std::uniform_real_distribution<float>(0.f,1.f)(rd),std::uniform_real_distribution<float>(0.f,1.f)(rd),(std::uniform_real_distribution<float>(0.f,1.f)(rd))));
-    //return wi;
     glm::vec3 printvec = hit_record.tangent;
-    //printf("%f %f %f\n", printvec.x, printvec.y, printvec.z);
-    //return f;
     if (f == glm::vec3(0.0f) || pdf == 0.f)
       break;
-    //printf("w:%f n:%f d:%f", length(wi),length(hit_record.normal),length(wo));
-    //return -hit_record.normal;
     throughput *= f * abs(dot(wi, hit_record.normal)) / pdf;
     origin = hit_record.position;
     direction = wi;

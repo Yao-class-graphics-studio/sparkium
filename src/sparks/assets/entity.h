@@ -3,6 +3,9 @@
 #include "sparks/assets/material.h"
 #include "sparks/assets/mesh.h"
 #include "sparks/assets/model.h"
+#include <glm/gtx/matrix_decompose.hpp>
+#include<glm/gtc/quaternion.hpp>
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace sparks {
 class Entity {
@@ -36,10 +39,12 @@ class Entity {
   [[nodiscard]] glm::vec3 Sample_Li(HitRecord &hit_record,
                       std::mt19937 &rd,
                       glm::vec3 *wi,
-                      float *pdf)const;
-
-glm::mat4 anime_transform_{1.0f};
-float duration{0.f};
+                      float *pdf,float time=-1.0f)const;
+//  glm::mat4 trans = glm::translate(glm::mat4{1.0f}, glm::vec3(0,0,0));
+//  glm::mat4 rot = glm::mat4_cast(glm::rotate(glm::quat(1,0,0,0),3.14f,glm::vec3(1,0,0)));
+//  glm::mat4 scal = glm::scale(glm::mat4{1.0f}, glm::vec3(1,1,1));
+  glm::mat4 anime_transform_{1.0f};
+float duration{0.0f};
 
  private:
   std::unique_ptr<Model> model_;

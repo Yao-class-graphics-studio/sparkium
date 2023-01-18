@@ -17,5 +17,5 @@ glm::vec4 StringToVec4(const std::string &s);
 glm::mat4 XmlTransformMatrix(tinyxml2::XMLElement *transform_element);
 
 glm::mat4 XmlComposeTransformMatrix(tinyxml2::XMLElement *object_element);
-
+glm::mat4 matrix_interpolation(const glm::mat4 &mat, float lambda);
 }  // namespace sparks

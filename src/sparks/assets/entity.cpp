@@ -1,5 +1,6 @@
 #include "sparks/assets/entity.h"
 #include "sparks/assets/model.h"
+#include "sparks/assets/scene.h"
 namespace sparks {
 
 const Model *Entity::GetModel() const {
@@ -28,10 +29,14 @@ const std::string &Entity::GetName() const {
 glm::vec3 Entity::Sample_Li(HitRecord &hit_record,
                     std::mt19937 &rd,
                     glm::vec3 *wi,
-                    float *pdf) const{
+                    float *pdf,float time) const{
   //printf("hello");
   glm::vec3 normal(0,0,1);
+  glm::mat4 transform = transform_;
+  if (time > 0 && duration != 0.0f)
+    transform = transform*matrix_interpolation(anime_transform_, time/duration);
   glm::vec3 p_sample = GetModel()->Sample(rd,transform_,pdf,&normal);
+  
    
   *wi = glm::normalize(p_sample - hit_record.position);
   *pdf=(*pdf)*glm::dot(p_sample - hit_record.position, p_sample - hit_record.position) /
