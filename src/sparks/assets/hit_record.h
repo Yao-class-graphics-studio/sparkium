@@ -10,5 +10,6 @@ struct HitRecord {
   glm::vec3 tangent{};
   glm::vec2 tex_coord{};
   bool front_face{};
+  int index_id{};
 };
 }  // namespace sparks

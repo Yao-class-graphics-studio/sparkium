@@ -12,9 +12,15 @@ class PathTracer {
                                     int x,
                                     int y,
                                     int sample) const;
+  glm::vec3 SampleRay_test(glm::vec3 origin,
+                      glm::vec3 direction,
+                      int x,
+                      int y,
+                      int sample,std::mt19937 rd) const;
 
  private:
   const RendererSettings *render_settings_{};
   const Scene *scene_{};
+
 };
 }  // namespace sparks

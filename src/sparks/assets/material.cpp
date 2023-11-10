@@ -1,4 +1,5 @@
 #include "sparks/assets/material.h"
+#include "sparks/assets/model.h"
 
 #include "grassland/grassland.h"
 #include "sparks/assets/scene.h"

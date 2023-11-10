@@ -34,7 +34,7 @@ class Camera {
   [[nodiscard]] float GetGamma() const {
     return gamma_;
   }
-
+  float shutter_speed{1.0f / 30};
  private:
   float fov_{60.0f};
   float aperture_{0.0f};

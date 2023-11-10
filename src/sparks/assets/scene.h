@@ -7,7 +7,9 @@
 #include "sparks/assets/texture.h"
 #include "sparks/assets/util.h"
 #include "vector"
+/*#include "assimp/scene.h"*/           // Output data structure
 
+#include "random"
 namespace sparks {
 class Scene {
  public:
@@ -32,6 +34,7 @@ class Scene {
   [[nodiscard]] const std::vector<Entity> &GetEntities() const;
   [[nodiscard]] int GetEntityCount() const;
   [[nodiscard]] std::vector<const char *> GetEntityNameList() const;
+  
 
   void SetCamera(const Camera &camera);
   Camera &GetCamera();
@@ -64,17 +67,24 @@ class Scene {
                  const glm::vec3 &direction,
                  float t_min,
                  float t_max,
-                 HitRecord *hit_record) const;
+                 HitRecord *hit_record,float time=-1.0f) const;
 
   bool TextureCombo(const char *label, int *current_item) const;
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
-
+  //bool LoadAssimp(const std::string &file_path,glm::mat4 transform);
+  //void FindMesh(aiScene *scene, aiNode *node,glm::mat4 transform);
+  //Entity processMesh(aiMesh *mesh, const aiScene *scene,glm::mat4 transform);
+  //std::vector<int> loadMaterialTextures(aiMaterial *mat,aiTextureType type,std::string typeName);
+  glm::vec3 SampleLight(glm::vec3 direction, HitRecord &hit_record,std::mt19937 &rd,float time=-1.0f)const;
+  glm::vec3 SampleEnvmap_Li(std::mt19937 &rd,glm::vec3 *wi,float* lightpdf)const;
+  float EnvMapPdfLi(HitRecord &hit_record, glm::vec3 wi)const;
  private:
+  std::vector<float> light_distribution;
+  std::vector<int> light_id;
   std::vector<Texture> textures_;
   std::vector<std::string> texture_names_;
-
   std::vector<Entity> entities_;
 
   int envmap_id_{1};
@@ -83,10 +93,11 @@ class Scene {
   glm::vec3 envmap_light_direction_{0.0f, 1.0f, 0.0f};
   glm::vec3 envmap_major_color_{0.5f};
   glm::vec3 envmap_minor_color_{0.3f};
-
+  float envmap_tot_weight_{0.0f};
   glm::vec3 camera_position_{0.0f};
   float camera_speed_{3.0f};
   glm::vec3 camera_pitch_yaw_roll_{0.0f, 0.0f, 0.0f};
   Camera camera_{};
+  float radius{300.f};
 };
 }  // namespace sparks

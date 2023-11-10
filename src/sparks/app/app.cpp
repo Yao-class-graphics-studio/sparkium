@@ -462,7 +462,7 @@ void App::UpdateImGui() {
           "Samples", &renderer_->GetRendererSettings().num_samples, 1, 128);
     } else {
       reset_accumulation_ |= ImGui::SliderInt(
-          "Samples", &renderer_->GetRendererSettings().num_samples, 1, 16);
+          "Samples", &renderer_->GetRendererSettings().num_samples, 1, 8192);
     }
     reset_accumulation_ |= ImGui::SliderInt(
         "Bounces", &renderer_->GetRendererSettings().num_bounces, 1, 128);

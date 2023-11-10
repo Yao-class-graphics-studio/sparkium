@@ -6,13 +6,31 @@
 #include "sstream"
 #include "unordered_map"
 #include "vector"
-
+#include <glm/gtx/matrix_decompose.hpp>
+#include<glm/gtc/quaternion.hpp>
 // clang-format off
 #include "imgui.h"
 #include "ImGuizmo.h"
 // clang-format on
 
 namespace sparks {
+glm::mat4 matrix_interpolation(const glm::mat4 &mat, float lambda) {
+  //return glm::mat4{1.0f};
+  glm::vec3 scale;
+  glm::quat rotation;
+  glm::vec3 translation;
+  glm::vec3 skew;
+  glm::vec4 perspective;
+  glm::decompose(mat, scale, rotation, translation, skew, perspective);
+  rotation = glm::conjugate(rotation);
+  scale = exp(log(scale) * lambda);
+  translation = translation * lambda;
+  rotation = glm::slerp(glm::quat(1.0, 0.0, 0.0, 0.0), rotation, lambda);
+  glm::mat4 trans = glm::translate(glm::mat4{1.0f}, translation);
+  glm::mat4 rot = glm::mat4_cast(rotation);
+  glm::mat4 scal = glm::scale(glm::mat4{1.0f}, scale);
+  return trans*rot*scal;
+}
 glm::vec3 DecomposeRotation(glm::mat3 R) {
   return {
       std::atan2(-R[2][1], std::sqrt(R[0][1] * R[0][1] + R[1][1] * R[1][1])),
