@@ -13,10 +13,14 @@ class PathTracer {
                                     int y,
                                     int sample,
                                     bool moreBounces = true,
-                                    float weight = 1.0f);
-  void SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &pdf);
+                                    float weight = 1.0f,
+                                    int bounces = 0);
+  void SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, int except);
   void SampleFromCosine(glm::vec3 &res, float &pdf, glm::vec3 localNorm);
-  void MultipleImportanceSample(glm::vec3 &res, float &pdf);
+  void Sample(glm::vec3 &res, float &pdf, glm::vec3 in, glm::vec3 localNorm, Material &material);
+  float getPdfByMaterial(glm::vec3 sample, glm::vec3 in, glm::vec3 norm, Material &material);
+  float getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area);
+  glm::vec3 getBRDF(Material &material, HitRecord &hit, glm::vec3 norm, glm::vec3 in, glm::vec3 out);
  private:
   const RendererSettings *render_settings_{};
   const Scene *scene_{};
