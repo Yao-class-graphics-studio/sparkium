@@ -77,6 +77,56 @@ AxisAlignedBoundingBox Mesh::GetAABB(const glm::mat4 &transform) const {
   return result;
 }
 
+void Mesh::TraceRayTriangleUpdate(const glm::vec3 &origin,
+                            const glm::vec3 &direction,
+                            float t_min,
+                            HitRecord *hit_record,
+                            const Vertex &v0,
+                            const Vertex &v1,
+                            const Vertex &v2,
+                            float &result) const {
+  glm::mat3 A = glm::mat3(v1.position - v0.position, v2.position - v0.position,
+                          -direction);
+  if (std::abs(glm::determinant(A)) < 1e-9f) {
+    return;
+  }
+  A = glm::inverse(A);
+  auto uvt = A * (origin - v0.position);
+  auto &t = uvt.z;
+  if (t < t_min || (result > 0.0f && t > result)) {
+    return;
+  }
+  auto &u = uvt.x;
+  auto &v = uvt.y;
+  auto w = 1.0f - u - v;
+  auto position = origin + t * direction;
+  if (u >= 0.0f && v >= 0.0f && u + v <= 1.0f) {
+    result = t;
+    if (hit_record) {
+      auto geometry_normal = glm::normalize(
+          glm::cross(v2.position - v0.position, v1.position - v0.position));
+      if (glm::dot(geometry_normal, direction) < 0.0f) {
+        hit_record->position = position;
+        hit_record->geometry_normal = geometry_normal;
+        hit_record->normal = v0.normal * w + v1.normal * u + v2.normal * v;
+        hit_record->tangent = v0.tangent * w + v1.tangent * u + v2.tangent * v;
+        hit_record->tex_coord =
+            v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
+        hit_record->front_face = true;
+      } else {
+        hit_record->position = position;
+        hit_record->geometry_normal = -geometry_normal;
+        hit_record->normal = -(v0.normal * w + v1.normal * u + v2.normal * v);
+        hit_record->tangent =
+            -(v0.tangent * w + v1.tangent * u + v2.tangent * v);
+        hit_record->tex_coord =
+            v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
+        hit_record->front_face = false;
+      }
+    }
+  }
+}
+
 float Mesh::TraceRay(const glm::vec3 &origin,
                      const glm::vec3 &direction,
                      float t_min,
@@ -87,48 +137,9 @@ float Mesh::TraceRay(const glm::vec3 &origin,
     const auto &v0 = vertices_[indices_[i]];
     const auto &v1 = vertices_[indices_[j]];
     const auto &v2 = vertices_[indices_[k]];
-
-    glm::mat3 A = glm::mat3(v1.position - v0.position,
-                            v2.position - v0.position, -direction);
-    if (std::abs(glm::determinant(A)) < 1e-9f) {
-      continue;
-    }
-    A = glm::inverse(A);
-    auto uvt = A * (origin - v0.position);
-    auto &t = uvt.z;
-    if (t < t_min || (result > 0.0f && t > result)) {
-      continue;
-    }
-    auto &u = uvt.x;
-    auto &v = uvt.y;
-    auto w = 1.0f - u - v;
-    auto position = origin + t * direction;
-    if (u >= 0.0f && v >= 0.0f && u + v <= 1.0f) {
-      result = t;
-      if (hit_record) {
-        auto geometry_normal = glm::normalize(
-            glm::cross(v2.position - v0.position, v1.position - v0.position));
-        if (glm::dot(geometry_normal, direction) < 0.0f) {
-          hit_record->position = position;
-          hit_record->geometry_normal = geometry_normal;
-          hit_record->normal = v0.normal * w + v1.normal * u + v2.normal * v;
-          hit_record->tangent =
-              v0.tangent * w + v1.tangent * u + v2.tangent * v;
-          hit_record->tex_coord =
-              v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
-          hit_record->front_face = true;
-        } else {
-          hit_record->position = position;
-          hit_record->geometry_normal = -geometry_normal;
-          hit_record->normal = -(v0.normal * w + v1.normal * u + v2.normal * v);
-          hit_record->tangent =
-              -(v0.tangent * w + v1.tangent * u + v2.tangent * v);
-          hit_record->tex_coord =
-              v0.tex_coord * w + v1.tex_coord * u + v2.tex_coord * v;
-          hit_record->front_face = false;
-        }
-      }
-    }
+    TraceRayTriangleUpdate(origin, direction, t_min, hit_record, v0, v1, v2,
+                           result);
+    
   }
   return result;
 }

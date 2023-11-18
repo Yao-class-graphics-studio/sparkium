@@ -30,6 +30,14 @@ class Mesh : public Model {
   void MergeVertices();
 
  protected:
+  void TraceRayTriangleUpdate(const glm::vec3 &origin,
+                              const glm::vec3 &direction,
+                              float t_min,
+                              HitRecord *hit_record,
+                              const Vertex &v0,       
+                              const Vertex &v1,
+                              const Vertex &v2,
+                              float &result) const;
   std::vector<Vertex> vertices_;
   std::vector<uint32_t> indices_;
 };
