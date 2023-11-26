@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <memory>
 
 #include <cassert>
 
@@ -110,53 +111,6 @@ void PathTracer::SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, i
   area = totalArea;
 }
 
-// sample from cosine(among the hemisphere)
-void PathTracer::SampleFromCosine(glm::vec3 &res, float &pdf, glm::vec3 localNorm) {
-  float t1 = uniform(rd), t2 = uniform(rd);
-  float theta = acos(sqrt(1 - t1)), phi = 2 * PI * t2;
-  glm::vec3 localRes(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
-  float dotProduct = glm::dot(localNorm, glm::vec3(0, 0, 1));
-  if(std::fabs(dotProduct) == 1.0f)
-    res = dotProduct > 0 ? localRes : -1.0f * localRes;
-  else {
-    glm::mat4 local2World = glm::rotate(glm::mat4(1.0f), acos(glm::dot(glm::vec3(0, 0, 1), localNorm)), glm::normalize(glm::cross(glm::vec3(0, 0, 1), localNorm)));
-    res = glm::vec3(local2World * glm::vec4(localRes, 1.0f));
-  }
-  res = glm::normalize(res);
-  pdf = cos(theta) * sin(theta) / PI;
-}
-
-void PathTracer::Sample(glm::vec3 &res, float &pdf, glm::vec3 in, glm::vec3 localNorm, Material &material) {
-  switch(material.material_type) {
-    case MATERIAL_TYPE_LAMBERTIAN: 
-      SampleFromCosine(res, pdf, localNorm);
-      break;
-    case MATERIAL_TYPE_EMISSION:
-      SampleFromCosine(res, pdf, localNorm);
-      break;
-    case MATERIAL_TYPE_SPECULAR:
-      res = -2.0f * dot(localNorm, in) * localNorm + in, pdf = 1000.0f;
-      res = glm::normalize(res);
-      break;
-  }
-}
-
-float PathTracer::getPdfByMaterial(glm::vec3 sample, glm::vec3 in, glm::vec3 norm, Material &material) {
-  float theta = 0;
-  switch(material.material_type) {
-    case MATERIAL_TYPE_LAMBERTIAN: 
-      theta = std::max(glm::dot(sample, norm), 0.0f);
-      return cos(theta) * sin(theta) / PI;
-    case MATERIAL_TYPE_EMISSION:
-      theta = std::max(glm::dot(sample, norm), 0.0f);
-      return cos(theta) * sin(theta) / PI;
-    case MATERIAL_TYPE_SPECULAR:
-      return sample == glm::normalize(-2.0f * dot(norm, in) * norm + in) ? 1000.0f : 0;
-    default:
-      return 0.0f;
-  }
-}
-
 float PathTracer::getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area) {
   HitRecord tmp;
   float t = scene_->TraceRay(pos, sample, 1e-3f, 1e4f, &tmp);
@@ -166,19 +120,8 @@ float PathTracer::getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area) {
     return 0.0f;
 }
 
-glm::vec3 PathTracer::getBRDF(Material &material, HitRecord &hit, glm::vec3 norm, glm::vec3 in, glm::vec3 out) {
-  glm::vec3 color = material.albedo_color * glm::vec3(scene_->GetTexture(material.albedo_texture_id).Sample(hit.tex_coord));
-  // std::cerr << color.x << std::endl;
-  switch(material.material_type) {
-    case MATERIAL_TYPE_LAMBERTIAN: 
-      return color / PI;
-    case MATERIAL_TYPE_EMISSION:
-      return color / PI;
-    case MATERIAL_TYPE_SPECULAR:
-      return out == glm::normalize(-2.0f * dot(norm, in) * norm + in) ? glm::vec3{1.0f} * 1000.0f / glm::dot(out, norm) : glm::vec3{0.0f};
-    default:
-      return glm::vec3{0.0f}; 
-  }
+static float PowerHeuristic(float pdf1, float pdf2) {
+  return pdf1 * pdf1 / (pdf1 * pdf1 + pdf2 * pdf2);
 }
 
 // path trace main algorithm
@@ -187,30 +130,76 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int x,
                                 int y,
                                 int sample,
-                                bool moreBounces,
-                                float weight,
                                 int bounces) {           
   glm::vec3 emission{0.0f}, direct{0.0f}, env{0.0f}, incident{0.0f};
   HitRecord hit;
   float intersection = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit);
+  auto FirstBounceClamp = [bounces](const glm::vec3 &L) -> glm::vec3 {
+    return bounces == 0 ? glm::clamp(L, 0.0f, 1.0f) : L;
+  };
   if(intersection <= 0.0f)
-    return bounces == 0 ? glm::vec3(scene_->SampleEnvmap(direction)) : glm::vec3{0.0f};
+    return FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
+
   glm::vec3 pos = hit.position + 3e-5f * hit.geometry_normal;
   glm::vec3 norm = hit.geometry_normal;
-  Material material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
+  const Material &material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
+  std::unique_ptr<BSDF> bsdf(material.ComputeBSDF(hit, scene_));
+
+  //sample incident
+  glm::vec3 incidentSample;
+  float incidentPdf;
+  BxDFType sampledType;
+  glm::vec3 brdf;
+
+  float actualContinueProb = bounces > 2 ? continueProb : 1;
+  float russianRoulette = uniform(rd);
+  if (russianRoulette > actualContinueProb || bounces >= render_settings_->num_bounces) {
+    incidentPdf = 0;
+    sampledType = BxDFType(0);
+    brdf = glm::vec3{0.0f};
+    incidentSample = glm::vec3{0.0f};
+    incident = glm::vec3{0.0f};
+  } else {
+    brdf = bsdf->Sample_f(-direction, incidentSample,
+                          glm::vec2{uniform(rd), uniform(rd)}, incidentPdf,
+                          BxDFType(BSDF_ALL), sampledType);
+    if (incidentPdf > 0.0f)
+      incident = SampleRay(hit.position + 3e-5f * incidentSample,
+                           incidentSample, x, y, sample, bounces + 1) *
+                 brdf *
+                 std::max(((sampledType & BSDF_TRANSMISSION) ? -1 : 1) *
+                              glm::dot(norm, incidentSample),
+                          0.0f) /
+                 (actualContinueProb * incidentPdf);
+        //TODO: BSSRDF
+    else
+      incident = glm::vec3{0.0f};
+  }
+  if (sampledType & BSDF_SPECULAR) {
+    return FirstBounceClamp(incident);
+  }
+
   // emission
-  emission = material.emission * material.emission_strength * weight;
-  if(!moreBounces)
-    return emission; // only direct illumination is effected by MIS
+  emission = material.material_type == MATERIAL_TYPE_EMISSION
+                    ? material.emission * material.emission_strength
+                    : glm::vec3{0.0f};
+
   // direct illumination (from environment map)
-  glm::vec3 throughput = material.albedo_color * glm::vec3(scene_->GetTexture(material.albedo_texture_id).Sample(hit.tex_coord));
-  glm::vec3 envDirection = scene_->GetEnvmapLightDirection();
-  env += throughput * scene_->GetEnvmapMinorColor();
-  if(scene_->TraceRay(pos, envDirection, 1e-3f, 1e4f, nullptr) < 0.0f)
-    env += throughput * scene_->GetEnvmapMajorColor() * std::max(glm::dot(envDirection, norm), 0.0f) * 2.0f;
+  // diffuse reflection only
+  if (hit.front_face) {
+    env += bsdf->f(-direction, -direction, BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) * scene_->GetEnvmapMinorColor();
+    glm::vec3 envDirection = scene_->GetEnvmapLightDirection();
+    if (scene_->TraceRay(pos, envDirection, 1e-3f, 1e4f, nullptr) < 0.0f) {
+      env += bsdf->f(-direction, envDirection,
+                     BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) *
+             scene_->GetEnvmapMajorColor() *
+             std::max(glm::dot(envDirection, norm), 0.0f) * 2.0f;
+    }
+  }
+
   // direct illumination (from emitting entities)
   glm::vec3 directSample, directDir = glm::vec3(0, 0, 1);
-  float directPdf, lightArea;
+  float directPdf = 0, lightArea;
   glm::vec3 directNorm;
   SampleFromLight(directSample, directNorm, lightArea, hit.hit_entity_id);
   if(lightArea != 0) {
@@ -220,32 +209,39 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     if(glm::length(pos + check * directDir - directSample) < 0.01f) {
       directPdf = 1 / lightArea * glm::dot(directSample - pos, directSample - pos) / std::fabs(glm::dot(directNorm, -directDir));
       Material lightMaterial = scene_->GetEntity(tmpHit.hit_entity_id).GetMaterial();
-      direct = lightMaterial.emission * lightMaterial.emission_strength *
-              getBRDF(material, hit, norm, direction, directDir) *
+      direct = lightMaterial.emission * lightMaterial.emission_strength * bsdf->f(-direction, directDir, BxDFType(BSDF_ALL)) *
               std::max(glm::dot(norm, directDir), 0.0f) /
               directPdf;
+
+      float directPdfX = bsdf->Pdf(-direction, directDir);
+
+      float directRatio =
+          directPdf == 0 ? 0 : PowerHeuristic(directPdf, directPdfX);
+      direct *= directRatio;
     }
   } else {
     directPdf = 0;
   }
-  float russianRoulette = uniform(rd);
-  if(russianRoulette > continueProb)
-    return bounces == 0 ? material.emission + glm::clamp(direct + env, 0.0f, 1.0f) : emission + direct + env;
+  //float russianRoulette = uniform(rd);
+  //if (russianRoulette > continueProb) {
+  //  return bounces == 0
+  //             ? material.emission + glm::clamp(direct + env, 0.0f, 1.0f)
+  //             : emission + direct + env;
+  //}
   // incident illumination
-  glm::vec3 incidentSample;
-  float incidentPdf;
-  Sample(incidentSample, incidentPdf, direction, norm, material);
+  
   float incidentPdfX = getPdfByLight(pos, incidentSample, lightArea);
-  float directPdfX = getPdfByMaterial(directDir, direction, norm, material);
-  float directRatio = directPdf == 0 ? 0 : directPdf * directPdf / (directPdf * directPdf + directPdfX * directPdfX);
-  float incidentRatio = incidentPdf * incidentPdf / (incidentPdf * incidentPdf + incidentPdfX * incidentPdfX);
-  incident = SampleRay(pos, incidentSample, x, y, sample, true, incidentRatio, bounces + 1) *
-             getBRDF(material, hit, norm, direction, incidentSample) * 
-             std::max(glm::dot(norm, incidentSample), 0.0f) /
-             incidentPdf;
-  if(bounces == 0)
-    return glm::clamp(material.emission + (directRatio * direct + env + incident) / continueProb, 0.0f, 1.0f);
-  else
-    return emission + (directRatio * direct + env + incident) / continueProb;
+
+  float incidentRatio =
+      incidentPdf == 0 ? 0 : PowerHeuristic(incidentPdf, incidentPdfX);
+  //float directRatio = directPdf == 0 ? 0 : directPdf / (directPdf + directPdfX);
+  //float incidentRatio = incidentPdf / (incidentPdf + incidentPdfX);
+  //printf_s("%f %f %f %f\n", directPdf, directPdfX, incidentPdf, incidentPdfX);
+  incident *= incidentRatio;
+
+  glm::vec3 L = emission + direct + env + incident;
+  if (bounces == 0)
+    L = glm::clamp(L, 0.0f, 1.0f);
+  return L;
 }
 }  // namespace sparks

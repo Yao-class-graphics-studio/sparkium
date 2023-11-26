@@ -199,8 +199,9 @@ void Renderer::RayGeneration(int x,
   std::mt19937 xrd(x);
   std::mt19937 yrd(y + std::uniform_int_distribution<int>()(xrd));
   std::mt19937 rd(sample + std::uniform_int_distribution<int>()(yrd));
-  glm::vec2 pos{(float(x) + 0.5f) / float(width_),
-                (float(y) + 0.5f) / float(height_)};
+  //anti-aliasing: add random number in [-0.5,0.5] to x and y
+  glm::vec2 pos{(float(x) + 0.5f +std::uniform_real_distribution<float>(-0.5f,0.5f)(rd) ) / float(width_),
+                (float(y) + 0.5f +std::uniform_real_distribution<float>(-0.5f,0.5f)(rd)) / float(height_)};
   glm::vec2 range_low{float(x) / float(width_), float(y) / float(height_)};
   glm::vec2 range_high{(float(x) + 1.0f) / float(width_),
                        (float(y) + 1.0f) / float(height_)};
