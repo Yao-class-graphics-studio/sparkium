@@ -27,6 +27,7 @@
 		<material type="lambertian">
 			<albedo value="1 1 1"/>
 			<albedo_texture value="../../textures/earth.jpg"/>
+			<normal_texture value="../../textures/earth_normal.png"/>
 		</material>
 	</model>
 

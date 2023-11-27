@@ -41,6 +41,17 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     }
   }
 
+  child_element = material_element->FirstChildElement("normal_texture");
+  if (child_element) {
+    std::string path = child_element->FindAttribute("value")->Value();
+    Texture normal_texture(1, 1);
+    if (Texture::Load(path, normal_texture)) {
+      use_normal_texture = true;
+      normal_texture_id =
+          scene->AddTexture(normal_texture, PathToFilename(path));
+    }
+  }
+
   child_element = material_element->FirstChildElement("emission");
   if (child_element) {
     emission = StringToVec3(child_element->FindAttribute("value")->Value());
@@ -138,10 +149,16 @@ Material::Material(const glm::vec3 &albedo) : Material() {
 
 BSDF* Material::ComputeBSDF(const HitRecord &hit,
                          const Scene* scene) const {
-  glm::vec3 color = albedo_color * glm::vec3(
-          scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord)
-  );
-  BSDF* bsdf = new BSDF(hit);
+  glm::vec3 color = albedo_color;
+  //if (albedo_texture_id != -1)
+    color *=
+        glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
+  HitRecord textureHit = hit;
+  if (use_normal_texture)
+    textureHit.normal =
+        glm::vec3(scene->GetTexture(normal_texture_id).Sample(hit.tex_coord));
+
+  BSDF* bsdf = new BSDF(textureHit);
   switch (material_type) { 
     case MATERIAL_TYPE_LAMBERTIAN: {
       bsdf->Add(new LambertianReflection(color), 1);
