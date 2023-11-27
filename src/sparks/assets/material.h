@@ -24,11 +24,11 @@ struct Material {
   float emission_strength{1.0f};
   float alpha{1.0f};
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
-  float metallic{0.0f}, eta{1.0f};
-  float roughness{0.0f};
+  float metallic{0.0f}, eta{1.45f};
+  float roughness{0.5f};
   float specularTint{0.0f};
   float anisotropic{0.0f};
-  float sheen{0.0f}, sheenTint{0.0f};
+  float sheen{0.0f}, sheenTint{0.5f};
   float clearcoat{0.0f}, clearcoatGloss{0.0f};
   float specTrans{0.0f};
   float flatness{0.0f}, diffTrans{0.0f}; //used by thin surface

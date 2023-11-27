@@ -217,6 +217,8 @@ glm::vec3 BSDF::Sample_f(const glm::vec3 &woWorld,
     float matchingWeight = 0.0f;
     for (auto [bxdf, weight] : bxdfs_) {
           if (bxdf->MatchesFlags(type)) {
+            matchingWeight += weight;
+
             if (bxdf != chosenBxdf)
               restPdf += weight * bxdf->Pdf(wo, wi);
             else

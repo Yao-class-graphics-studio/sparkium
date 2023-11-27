@@ -518,6 +518,35 @@ void App::UpdateImGui() {
                              0.0f, 1e5f, "%.3f", ImGuiSliderFlags_Logarithmic);
       reset_accumulation_ |=
           ImGui::SliderFloat("Alpha", &material.alpha, 0.0f, 1.0f, "%.3f");
+      if (material.material_type == MaterialType(MATERIAL_TYPE_PRINCIPLED)) {
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Metallic", &material.metallic, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |=
+            ImGui::SliderFloat("IOR", &material.eta, 1.0f, 3.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Roughness", &material.roughness, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "SpecularTint", &material.specularTint, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Anisotropic", &material.anisotropic, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |=
+            ImGui::SliderFloat("Sheen", &material.sheen, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "SheenTint", &material.sheenTint, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Clearcoat", &material.clearcoat, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "ClearcoatGloss", &material.clearcoatGloss, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "SpecularTrans", &material.specTrans, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::Checkbox("Thin", &material.thin);
+        if (material.thin) {
+          reset_accumulation_ |= ImGui::SliderFloat(
+              "Flatness", &material.flatness, 0.0f, 1.0f, "%.3f");
+          reset_accumulation_ |= ImGui::SliderFloat(
+              "DiffuseTrans", &material.diffTrans, 0.0f, 1.0f, "%.3f");
+        }
+      }
     }
 
 #if !defined(NDEBUG)

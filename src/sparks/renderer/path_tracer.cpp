@@ -80,9 +80,9 @@ void PathTracer::SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, i
     glm::mat4 transform = object.GetTransformMatrix();
     for(int i = 0; i < indices.size(); i += 3) {
       int j = i + 1, k = i + 2;
-      glm::vec4 v0(vertices[i].position, 1.0f);
-      glm::vec4 v1(vertices[j].position, 1.0f);
-      glm::vec4 v2(vertices[k].position, 1.0f);
+      glm::vec4 v0(vertices[indices[i]].position, 1.0f);
+      glm::vec4 v1(vertices[indices[j]].position, 1.0f);
+      glm::vec4 v2(vertices[indices[k]].position, 1.0f);
       glm::vec3 u0 = glm::vec3(transform * v0);
       glm::vec3 u1 = glm::vec3(transform * v1);
       glm::vec3 u2 = glm::vec3(transform * v2);
@@ -140,8 +140,6 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
   if(intersection <= 0.0f)
     return FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
 
-  glm::vec3 pos = hit.position + 3e-5f * hit.geometry_normal;
-  glm::vec3 norm = hit.geometry_normal;
   const Material &material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
   std::unique_ptr<BSDF> bsdf(material.ComputeBSDF(hit, scene_));
 
@@ -163,13 +161,13 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     brdf = bsdf->Sample_f(-direction, incidentSample,
                           glm::vec2{uniform(rd), uniform(rd)}, incidentPdf,
                           BxDFType(BSDF_ALL), sampledType);
+    assert(!std::isinf(incidentPdf));
     if (incidentPdf > 0.0f)
       incident = SampleRay(hit.position + 3e-5f * incidentSample,
                            incidentSample, x, y, sample, bounces + 1) *
                  brdf *
-                 std::max(((sampledType & BSDF_TRANSMISSION) ? -1 : 1) *
-                              glm::dot(norm, incidentSample),
-                          0.0f) /
+                 std::fabs(glm::dot(hit.normal, incidentSample))
+                           /
                  (actualContinueProb * incidentPdf);
         //TODO: BSSRDF
     else
@@ -184,18 +182,21 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                     ? material.emission * material.emission_strength
                     : glm::vec3{0.0f};
 
+  // direct illumination
+    glm::vec3 pos = hit.position + 3e-5f * incidentSample;
+  glm::vec3 norm = hit.front_face ? hit.normal : -hit.normal;
+
   // direct illumination (from environment map)
-  // diffuse reflection only
-  if (hit.front_face) {
-    env += bsdf->f(-direction, -direction, BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) * scene_->GetEnvmapMinorColor();
+ 
+    // minor color used for diffuse reflection only
+    env += bsdf->f(-direction, norm, BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) * scene_->GetEnvmapMinorColor();
     glm::vec3 envDirection = scene_->GetEnvmapLightDirection();
     if (scene_->TraceRay(pos, envDirection, 1e-3f, 1e4f, nullptr) < 0.0f) {
-      env += bsdf->f(-direction, envDirection,
-                     BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) *
-             scene_->GetEnvmapMajorColor() *
-             std::max(glm::dot(envDirection, norm), 0.0f) * 2.0f;
+    env += bsdf->f(-direction, envDirection,
+                    BxDFType(BSDF_ALL)) *
+            scene_->GetEnvmapMajorColor() *
+            std::fabs(glm::dot(envDirection, norm)) * 2.0f;
     }
-  }
 
   // direct illumination (from emitting entities)
   glm::vec3 directSample, directDir = glm::vec3(0, 0, 1);
@@ -210,14 +211,16 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
       directPdf = 1 / lightArea * glm::dot(directSample - pos, directSample - pos) / std::fabs(glm::dot(directNorm, -directDir));
       Material lightMaterial = scene_->GetEntity(tmpHit.hit_entity_id).GetMaterial();
       direct = lightMaterial.emission * lightMaterial.emission_strength * bsdf->f(-direction, directDir, BxDFType(BSDF_ALL)) *
-              std::max(glm::dot(norm, directDir), 0.0f) /
+              std::fabs(glm::dot(norm, directDir)) /
               directPdf;
 
       float directPdfX = bsdf->Pdf(-direction, directDir);
+      
 
       float directRatio =
           directPdf == 0 ? 0 : PowerHeuristic(directPdf, directPdfX);
       direct *= directRatio;
+      assert(!std::isnan(direct[0]));
     }
   } else {
     directPdf = 0;
@@ -231,15 +234,18 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
   // incident illumination
   
   float incidentPdfX = getPdfByLight(pos, incidentSample, lightArea);
+  assert(!std::isinf(incidentPdf));
 
   float incidentRatio =
       incidentPdf == 0 ? 0 : PowerHeuristic(incidentPdf, incidentPdfX);
+  //std::cerr << incidentPdf << " " << incidentPdfX << "\n";
   //float directRatio = directPdf == 0 ? 0 : directPdf / (directPdf + directPdfX);
   //float incidentRatio = incidentPdf / (incidentPdf + incidentPdfX);
   //printf_s("%f %f %f %f\n", directPdf, directPdfX, incidentPdf, incidentPdfX);
   incident *= incidentRatio;
 
   glm::vec3 L = emission + direct + env + incident;
+  assert(!std::isnan(L[0]));
   if (bounces == 0)
     L = glm::clamp(L, 0.0f, 1.0f);
   return L;
