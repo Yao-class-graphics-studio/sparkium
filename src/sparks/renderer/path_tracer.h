@@ -1,6 +1,7 @@
 #pragma once
 #include "random"
 #include "sparks/assets/scene.h"
+#include "sparks/assets/bssrdf.h"
 #include "sparks/renderer/renderer_settings.h"
 
 namespace sparks {
@@ -12,9 +13,11 @@ class PathTracer {
                                     int x,
                                     int y,
                                     int sample,
-                                    int bounces = 0);
+                                    int bounces = 0,
+                                    Medium *currentMedium = nullptr);
   void SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, int except);
   float getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area);
+  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, int except);
  private:
   const RendererSettings *render_settings_{};
   const Scene *scene_{};

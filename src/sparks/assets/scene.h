@@ -2,7 +2,7 @@
 #include "memory"
 #include "sparks/assets/camera.h"
 #include "sparks/assets/entity.h"
-#include "sparks/assets/material.h"
+// #include "sparks/assets/material.h"
 #include "sparks/assets/mesh.h"
 #include "sparks/assets/texture.h"
 #include "sparks/assets/util.h"
