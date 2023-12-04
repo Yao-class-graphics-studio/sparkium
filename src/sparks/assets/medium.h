@@ -55,7 +55,7 @@ class GridDensityMedium: public Medium {
     float g;
     int nx, ny, nz;
     glm::mat4 world2Medium;
-    std::unique_ptr<float[]> density;
+    float* density;
     float sigma_t;
     float invMaxDensity;
 public:
@@ -63,7 +63,7 @@ public:
                       int nx_, int ny_, int nz_, glm::mat4 transform_, float *d_):
         sigma_a(a_), sigma_s(s_), emission(emission_), g(g_), nx(nx_), ny(ny_), nz(nz_), 
         world2Medium(transform_), density(new float[nx * ny * nz]) {
-            memcpy((float*)density.get(), d_, sizeof(float) * nx * ny * nz);
+            memcpy(density, d_, sizeof(float) * nx * ny * nz);
             sigma_t = (sigma_a + sigma_s)[0];
             float maxDensity = 0;
             for(int i = 0; i < nx * ny * nz; i++)

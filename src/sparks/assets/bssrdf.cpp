@@ -6,7 +6,7 @@ namespace sparks {
 
 template <typename Predicate>
 int FindInterval(int n, const Predicate &f) {
-    int left = 0, right = size - 1, res = -1;
+    int left = 0, right = n - 1, res = -1;
     while(left <= right) {
         int mid = (left + right) >> 1;
         if(f(mid))
@@ -14,7 +14,7 @@ int FindInterval(int n, const Predicate &f) {
         else
             right = mid - 1;
     }
-    return std::max(std::min(res, size - 2), 0);
+    return std::max(std::min(res, n - 2), 0);
 }
 
 float FrFirstMoment(float eta) {
@@ -177,10 +177,10 @@ float InvertCatmullRom(int n, const float *x, const float *values, float u) {
     return x0 + t * w;
 }
 
-float PhaseHG(float cosTheta, float g) {
-    float den = 1 + g * g + 2 * g * cosTheta;
-    return (1 - g * g) / (4 * PI * den * glm::sqrt(den));
-}
+// float PhaseHG(float cosTheta, float g) {
+//     float den = 1 + g * g + 2 * g * cosTheta;
+//     return (1 - g * g) / (4 * PI * den * glm::sqrt(den));
+// }
 
 float BeamDiffusionMS(float sigma_s, float sigma_a, float g, float eta, float r) {
     const int nSamples = 50;
@@ -236,7 +236,7 @@ void ComputeBeamDiffusionBSSRDF(float g, float eta, BSSRDFTable &table) {
             table.profile[i * table.nRadiusSamples + j] = 2 * PI * r * 
                                                           (BeamDiffusionSS(rho, 1 - rho, g, eta, r) + 
                                                            BeamDiffusionMS(rho, 1 - rho, g, eta, r));
-            table.rhoEff[i] = IntegrateCatmullRom(table.nRadiusSamples, table.radiusSamples.get(), 
+            table.rhoEff[i] = IntegrateCatmullRom(table.nRadiusSamples, table.radiusSamples, 
                                                   &table.profile[i * table.nRadiusSamples], &table.profileCDF[i * table.nRadiusSamples]);
         }
     }
@@ -244,7 +244,7 @@ void ComputeBeamDiffusionBSSRDF(float g, float eta, BSSRDFTable &table) {
 
 void SubsurfaceFromDiffuse(const BSSRDFTable &table, const glm::vec3 rhoEff, const glm::vec3 &mfp, glm::vec3 &sigma_a, glm::vec3 &sigma_s) {
     for(int ch = 0; ch <= 2; ch++) {
-        float rho = InvertCatmullRom(table.nRhoSamples, table.rhoSamples.get(), table.rhoEff.get(), rhoEff[ch]);
+        float rho = InvertCatmullRom(table.nRhoSamples, table.rhoSamples, table.rhoEff, rhoEff[ch]);
         sigma_s[ch] = rho / mfp[ch];
         sigma_a[ch] = (1 - rho) / mfp[ch];
     }
@@ -257,26 +257,28 @@ glm::vec3 SeparableBSSRDF::S(const glm::vec3 pi, const glm::vec3 wi) const {
 }
 
 glm::vec3 SeparableBSSRDF::Sw(const glm::vec3 wi) const {
+    glm::vec3 wwi = world2Local * wi;
     float c = 1 - 2 * FrFirstMoment(1 / eta);
-    return (glm::vec3{1.0f} - FrDielectric(CosTheta(wi), 1, eta)) / (c * PI);
+    return (glm::vec3{1.0f} - FrDielectric(CosTheta(wwi), 1, eta)) / (c * PI);
 }
 
 glm::vec3 SeparableBSSRDF::Sp(const glm::vec3 pi) const {
     return Sr(glm::dot(pi - po, pi - po));
 }
 
-glm::vec3 SeparableBSSRDF::Sample_S(const Scene *scene, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf,  
+glm::vec3 SeparableBSSRDF::Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf,  
                                     const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const {
-    glm::vec3 sp = Sample_Sp(scene, pi, rawPdf, entity, rd, uniform);
+    glm::vec3 sp = Sample_Sp(trace, pi, rawPdf, entity, rd, uniform);
     if(sp != glm::vec3{0.0f}) {
         glm::vec2 args(uniform(rd), uniform(rd));
         glm::vec3 wi = SampleFromCosine(args);
         fullPdf = rawPdf * AbsCosTheta(wi) * INV_PI;
+        wi = local2World * wi;
     }
     return sp;
 }
 
-glm::vec3 SeparableBSSRDF::Sample_Sp(const Scene *scene, glm::vec3 &pi, float &pdf, 
+glm::vec3 SeparableBSSRDF::Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, float &pdf, 
                                      const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const {
     float u1 = uniform(rd);
     glm::vec3 vx, vy, vz;
@@ -299,7 +301,7 @@ glm::vec3 SeparableBSSRDF::Sample_Sp(const Scene *scene, glm::vec3 &pi, float &p
     glm::vec3 origin = po + r * (vx * glm::cos(phi) + vy * glm::sin(phi)) - l * vz / 2.0f;
     while(glm::distance(origin, po) <= rMax + 0.0001f) {
         HitRecord currentHit;
-        float t = scene->TraceRay(origin, vz, 0.0001f, 1e10f, &currentHit);
+        float t = trace(origin, vz, 0.0001f, 1e10f, &currentHit);
         if(t < 0)
             break;
         if(currentHit.hit_entity_id == entity)
@@ -337,8 +339,8 @@ glm::vec3 TabulatedBSSRDF::Sr(const float r) const {
         float rOptical = r / sigma_t[ch];
         int rhoOffset, radiusOffset;
         float rhoWeights[4], radiusWeights[4];
-        bool flag1 = CatmullRomWeights(table.nRhoSamples, table.rhoSamples.get(), rho[ch], rhoOffset, rhoWeights);
-        bool flag2 = CatmullRomWeights(table.nRadiusSamples, table.radiusSamples.get(), rOptical, radiusOffset, radiusWeights);
+        bool flag1 = CatmullRomWeights(table.nRhoSamples, table.rhoSamples, rho[ch], rhoOffset, rhoWeights);
+        bool flag2 = CatmullRomWeights(table.nRadiusSamples, table.radiusSamples, rOptical, radiusOffset, radiusWeights);
         if(!flag1 || !flag2)
             continue;
         float res = 0;
@@ -357,16 +359,16 @@ glm::vec3 TabulatedBSSRDF::Sr(const float r) const {
 float TabulatedBSSRDF::Sample_Sr(int ch, float u) const {
     if(sigma_t[ch] == 0)
         return -1;
-    return SampleCatmullRom2D(table.nRhoSamples, table.nRadiusSamples, table.rhoSamples.get(), table.radiusSamples.get(),
-                              table.profile.get(), table.profileCDF.get(), rho[ch], u) / sigma_t[ch];
+    return SampleCatmullRom2D(table.nRhoSamples, table.nRadiusSamples, table.rhoSamples, table.radiusSamples,
+                              table.profile, table.profileCDF, rho[ch], u) / sigma_t[ch];
 }
 
 float TabulatedBSSRDF::Pdf_Sr(int ch, float r) const {
     float rOptical = r * sigma_t[ch];
     int rhoOffset, radiusOffset;
     float rhoWeights[4], radiusWeights[4];
-    bool flag1 = CatmullRomWeights(table.nRhoSamples, table.rhoSamples.get(), rho[ch], rhoOffset, rhoWeights);
-    bool flag2 = CatmullRomWeights(table.nRadiusSamples, table.radiusSamples.get(), rOptical, radiusOffset, radiusWeights);
+    bool flag1 = CatmullRomWeights(table.nRhoSamples, table.rhoSamples, rho[ch], rhoOffset, rhoWeights);
+    bool flag2 = CatmullRomWeights(table.nRadiusSamples, table.radiusSamples, rOptical, radiusOffset, radiusWeights);
     if(!flag1 || !flag2)
         return 0.0f;
     float sr = 0, rhoEff = 0;

@@ -22,7 +22,7 @@ std::unordered_map<std::string, MaterialType> material_name_map{
 }
 
 Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
-    : table(100, 64)  {
+    : table(new BSSRDFTable(100, 64))  {
   if (!material_element) {
     return;
   }
@@ -195,7 +195,7 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
       material_name_map[material_element->FindAttribute("type")->Value()];
 
   if (material_type == MATERIAL_TYPE_SUBSURFACE || material_type == MATERIAL_TYPE_KDSUBSURFACE) {
-    ComputeBeamDiffusionBSSRDF(g, eta, table);
+    ComputeBeamDiffusionBSSRDF(g, eta, *table);
   }
 
   if (material_type == MATERIAL_TYPE_MEDIUM) {
@@ -339,11 +339,13 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
   return bsdf;
 }
 
-BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene) const {
+BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene) {
     if(material_type != MATERIAL_TYPE_SUBSURFACE && material_type != MATERIAL_TYPE_KDSUBSURFACE)
       return nullptr;
+    if(material_type == MATERIAL_TYPE_KDSUBSURFACE)
+      SubsurfaceFromDiffuse(*table, albedo_color, mfp, sigma_a, sigma_s);
     BSSRDF *newBSSRDF = new TabulatedBSSRDF(hit.position, direction, eta, BSSRDF_TABULATED, hit.geometry_normal, 
-                                            this, sigma_a, sigma_s, table);
+                                            this, sigma_a, sigma_s, *table);
     return newBSSRDF;
 }
 

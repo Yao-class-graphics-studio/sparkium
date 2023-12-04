@@ -1,13 +1,19 @@
 #pragma once
 #include "sparks/assets/bxdf.h"
-#include "sparks/assets/scene.h"
+// #include "sparks/assets/scene.h"
 #include "sparks/assets/medium.h"
 #include <memory>
 #include <random>
+#include <functional>
 
 // all w are local direction
 
 namespace sparks {
+
+class Scene;
+class Material;
+typedef std::function<float(const glm::vec3&, const glm::vec3&, float, float, HitRecord*)> TraceMethod;
+// typedef std::function<float(const glm::vec3&, const glm::vec3&, float, float, HitRecord*)> TraceMethod;
 
 enum BSSRDFType: int {
     BSSRDF_TABULATED = 1 << 0,
@@ -21,7 +27,7 @@ public:
     BSSRDF(const glm::vec3 po_, const glm::vec3 wo_, float eta_, BSSRDFType type_): 
            po(po_), wo(wo_), eta(eta_), type(type_) {}
     virtual glm::vec3 S(const glm::vec3 pi, const glm::vec3 wi) const = 0;
-    virtual glm::vec3 Sample_S(const Scene *scene, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf, 
+    virtual glm::vec3 Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf, 
                                const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const = 0;
 protected:
     glm::vec3 po, wo;
@@ -37,13 +43,15 @@ public:
              glm::normalize(glm::cross(normal, glm::vec3(0.0f, 1.0f, 0.0f))) :
              glm::normalize(glm::cross(normal, glm::vec3(0.0f, 0.0f, 1.0f)));
         ty = glm::normalize(glm::cross(normal, tx));
+        local2World = glm::mat3{tx, ty, normal};
+        world2Local = glm::inverse(local2World);
     }
     glm::vec3 S(const glm::vec3 pi, const glm::vec3 wi) const override;
     glm::vec3 Sw(const glm::vec3 wi) const;
     glm::vec3 Sp(const glm::vec3 pi) const;
-    glm::vec3 Sample_S(const Scene *scene, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf, 
+    glm::vec3 Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf, 
                        const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const;
-    glm::vec3 Sample_Sp(const Scene *scene, glm::vec3 &pi, float &pdf, 
+    glm::vec3 Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, float &pdf, 
                         const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const;
     float Pdf_Sp(const HitRecord &pi) const;
     virtual glm::vec3 Sr(float r) const = 0;
@@ -51,7 +59,33 @@ public:
     virtual float Pdf_Sr(int ch, float sample) const = 0;
 protected:
     glm::vec3 normal, tx, ty;
+    glm::mat3 local2World, world2Local;
     const Material *material;
+};
+
+class BSSRDFTable {
+   public:
+    const int nRhoSamples, nRadiusSamples;
+    float *rhoSamples, *radiusSamples;
+    float *profile;
+    float *rhoEff;
+    float *profileCDF;
+
+    BSSRDFTable() : nRhoSamples(0), nRadiusSamples(0) {}
+    BSSRDFTable(int nRhoSamples, int nRadiusSamples)
+        : nRhoSamples(nRhoSamples),
+          nRadiusSamples(nRadiusSamples),
+          rhoSamples(new float[nRhoSamples]),
+          radiusSamples(new float[nRadiusSamples]),
+          profile(new float[nRadiusSamples * nRhoSamples]),
+          rhoEff(new float[nRhoSamples]),
+          profileCDF(new float[nRadiusSamples * nRhoSamples]) {
+    }
+    // BSSRDFTable(const BSSRDFTable&) = default;
+    // BSSRDFTable& operator = (const BSSRDFTable&) = default;
+    float EvalProfile(int rhoIndex, int radiusIndex) const {
+        return profile[rhoIndex * nRadiusSamples + radiusIndex];
+    }
 };
 
 class TabulatedBSSRDF: public SeparableBSSRDF {
@@ -71,28 +105,8 @@ public:
     float Pdf_Sr(int ch, float sample) const override;
 };
 
-class BSSRDFTable {
-public:
-    const int nRhoSamples, nRadiusSamples;
-    std::unique_ptr<float[]> rhoSamples, radiusSamples;
-    std::unique_ptr<float[]> profile;
-    std::unique_ptr<float[]> rhoEff;
-    std::unique_ptr<float[]> profileCDF;
-
-    BSSRDFTable(): nRhoSamples(0), nRadiusSamples(0) {}
-    BSSRDFTable(int nRhoSamples, int nRadiusSamples)
-    : nRhoSamples(nRhoSamples),
-      nRadiusSamples(nRadiusSamples),
-      rhoSamples(new float[nRhoSamples]),
-      radiusSamples(new float[nRadiusSamples]),
-      profile(new float[nRadiusSamples * nRhoSamples]),
-      rhoEff(new float[nRhoSamples]),
-      profileCDF(new float[nRadiusSamples * nRhoSamples]) {}
-    float EvalProfile(int rhoIndex, int radiusIndex) const {
-        return profile[rhoIndex * nRadiusSamples + radiusIndex];
-    }
-};
-
 void ComputeBeamDiffusionBSSRDF(float g, float eta, BSSRDFTable &table);
+void SubsurfaceFromDiffuse(const BSSRDFTable &table, const glm::vec3 rhoEff, const glm::vec3 &mfp, 
+                           glm::vec3 &sigma_a, glm::vec3 &sigma_s);
 
 }

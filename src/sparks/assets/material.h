@@ -48,7 +48,7 @@ public:
   Medium *medium{nullptr};
   glm::vec3 sigma_a{0.0f}, sigma_s{0.0f};
   glm::vec3 mfp{0.0f};
-  BSSRDFTable table;
+  BSSRDFTable *table{nullptr};
   float reserve[2]{};
   Material() = default;
   Material(const Material &) = default;
@@ -56,6 +56,6 @@ public:
   explicit Material(const glm::vec3 &albedo);
   Material(Scene *scene, const tinyxml2::XMLElement *material_element);
   BSDF* ComputeBSDF(const HitRecord &hit, const Scene* scene) const;
-  BSSRDF* ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene) const;
+  BSSRDF* ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene);
 };
 }  // namespace sparks

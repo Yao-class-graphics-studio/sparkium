@@ -9,7 +9,7 @@
 #include "vector"
 
 namespace sparks {
-class Scene {
+class Scene{
  public:
   Scene();
   explicit Scene(const std::string &filename);

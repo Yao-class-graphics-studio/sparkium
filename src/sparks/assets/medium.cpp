@@ -26,6 +26,10 @@ float PhaseHG(float cosTheta, float g) {
     return (1 - g * g) / (4 * PI * den * glm::sqrt(den));
 }
 
+float lerp(float x, float f0, float f1) {
+    return (1 - x) * f0 + x * f1;
+}
+
 glm::vec3 HomogeneousMedium::Tr(glm::vec3 origin, glm::vec3 direction, float tMax,
                                 std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const {
     return glm::exp(-sigma_t * std::min(tMax, MAX_FLOAT));
@@ -111,6 +115,19 @@ glm::vec3 GridDensityMedium::Sample(const glm::vec3 origin, const glm::vec3 dire
         }
     }
     return glm::vec3{1.0f};
+}
+
+float GridDensityMedium::Density(const glm::vec3 &p) const {
+    glm::vec3 pSamples(p[0] * nx - 0.5f, p[1] * ny - 0.5f, p[2] * nz - 0.5f);
+    glm::ivec3 pi = glm::ivec3((int)pSamples[0], (int)pSamples[1], (int)pSamples[2]);
+    glm::vec3 d = pSamples - glm::vec3(pi[0], pi[1], pi[2]);
+    float d00 = lerp(d[0], D(pi), D(pi + glm::ivec3(1, 0, 0)));
+    float d01 = lerp(d[0], D(pi + glm::ivec3(0, 1, 0)), D(pi + glm::ivec3(1, 1, 0)));
+    float d10 = lerp(d[0], D(pi + glm::ivec3(0, 0, 1)), D(pi + glm::ivec3(1, 0, 1)));
+    float d11 = lerp(d[0], D(pi + glm::ivec3(0, 1, 1)), D(pi + glm::ivec3(1, 1, 1)));
+    float d0 = lerp(d[1], d00, d10);
+    float d1 = lerp(d[1], d01, d11);
+    return lerp(d[2], d0, d1);
 }
 
 }
