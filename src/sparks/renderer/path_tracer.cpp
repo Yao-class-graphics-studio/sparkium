@@ -204,24 +204,29 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     } else {
       // Coming into an entiy with BSSRDF
       if(bssrdf != nullptr && hit.front_face) {
-        std::cerr << "test" << std::endl;
-        glm::vec3 ssSample, ssDir;
+        // std::cerr << "test" << std::endl;
+        glm::vec3 ssSample, ssDir, ssNormal;
         float rawPdf = 0.0f, fullPdf = 0.0f;
-        glm::vec3 ss = bssrdf->Sample_S(TraceRayMethod, ssSample, ssDir, rawPdf, fullPdf,
+        glm::vec3 ss = bssrdf->Sample_S(TraceRayMethod, ssSample, ssDir, ssNormal, rawPdf, fullPdf,
                                         hit.hit_entity_id, rd, uniform);
-        if(ss != glm::vec3{0.0f} || rawPdf != 0.0f) {
+        if(ss != glm::vec3{0.0f} && rawPdf != 0.0f && fullPdf != 0.0f) {
+          // std::cerr << "t" << std::endl;
           // direct illumination on the point ray leaving
           glm::vec3 ssDirect{0.0f}, ssDirectDir{0.0f};
           float ssDirectPdf;
           ssDirect = directIllumination(ssSample, ssDirectPdf, ssDirectDir, -1);
-          std::cerr << ss[0] << std::endl;
-          float cosTheta = glm::dot(ssDirectDir, hit.geometry_normal);
+          // if(ssSample[1] == 165.0f)
+          //   std::cerr << ss[1] << std::endl;
+          float cosTheta = glm::dot(ssDirectDir, ssNormal);
           float surfacePdf = glm::sqrt(1 - cosTheta * cosTheta) * cosTheta * INV_PI;
           incident += ss * ssDirect * cosTheta * INV_PI / (surfacePdf * rawPdf); // we assume the brdf at the point is lambertian
           // incident illumination on the point ray leaving
-          incident += ss * SampleRay(ssSample, ssDir, x, y, sample, bounces + 1, nullptr) *
-                      glm::dot(ssDir, hit.geometry_normal) * INV_PI / fullPdf;
+          incident += ss * SampleRay(ssSample + 3e-5f * ssDir, ssDir, x, y, sample, bounces + 1, nullptr) *
+                      glm::dot(ssDir, ssNormal) * INV_PI / fullPdf;
           incident /= actualContinueProb;
+          // if(bounces == 0)
+          //   std::cerr << incident[1] << std::endl;
+          // incident = glm::vec3(0.0f, 0.0f, 1.0f);
         }
       } else {
         // std::cerr << "go" << std::endl;
@@ -231,8 +236,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         assert(!std::isinf(incidentPdf));
         if (incidentPdf > 0.0f) {
           Medium *newMedium = (hit.front_face && currentMedium == nullptr) ? material.medium : nullptr; 
-          if(newMedium != nullptr)
-            std::cerr << "f" << std::endl;
+          // if(newMedium != nullptr)
+          //   std::cerr << "f" << std::endl;
           incident = SampleRay(hit.position + 3e-5f * incidentSample,
                               incidentSample, x, y, sample, bounces + 1, newMedium) *
                     brdf *
@@ -302,9 +307,10 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     incident *= incidentRatio;
 
     glm::vec3 L = emission + direct + env + incident;
-    assert(!std::isnan(L[0]));
+    assert(!std::isnan(L[0]) && !std::isnan(L[1]) && !std::isnan(L[2]));
     if (bounces == 0)
       L = glm::clamp(L, 0.0f, 1.0f);
+    // std::cerr << incident[1] << std::endl;
     return L;
   }
 

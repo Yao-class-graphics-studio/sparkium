@@ -344,7 +344,7 @@ BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction,
       return nullptr;
     if(material_type == MATERIAL_TYPE_KDSUBSURFACE)
       SubsurfaceFromDiffuse(*table, albedo_color, mfp, sigma_a, sigma_s);
-    BSSRDF *newBSSRDF = new TabulatedBSSRDF(hit.position, direction, eta, BSSRDF_TABULATED, hit.geometry_normal, 
+    BSSRDF *newBSSRDF = new TabulatedBSSRDF(hit.position, -direction, eta, BSSRDF_TABULATED, hit.geometry_normal, 
                                             this, sigma_a, sigma_s, *table);
     return newBSSRDF;
 }

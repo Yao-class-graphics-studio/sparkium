@@ -27,7 +27,7 @@ public:
     BSSRDF(const glm::vec3 po_, const glm::vec3 wo_, float eta_, BSSRDFType type_): 
            po(po_), wo(wo_), eta(eta_), type(type_) {}
     virtual glm::vec3 S(const glm::vec3 pi, const glm::vec3 wi) const = 0;
-    virtual glm::vec3 Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf, 
+    virtual glm::vec3 Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, glm::vec3 &wiNormal, float &rawPdf, float &fullPdf, 
                                const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const = 0;
 protected:
     glm::vec3 po, wo;
@@ -49,9 +49,9 @@ public:
     glm::vec3 S(const glm::vec3 pi, const glm::vec3 wi) const override;
     glm::vec3 Sw(const glm::vec3 wi) const;
     glm::vec3 Sp(const glm::vec3 pi) const;
-    glm::vec3 Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf, 
+    glm::vec3 Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, glm::vec3 &wiNormal, float &rawPdf, float &fullPdf, 
                        const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const;
-    glm::vec3 Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, float &pdf, 
+    glm::vec3 Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wiNormal, float &pdf, 
                         const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const;
     float Pdf_Sp(const HitRecord &pi) const;
     virtual glm::vec3 Sr(float r) const = 0;

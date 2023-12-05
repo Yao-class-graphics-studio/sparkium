@@ -6,15 +6,16 @@ namespace sparks {
 
 template <typename Predicate>
 int FindInterval(int n, const Predicate &f) {
-    int left = 0, right = n - 1, res = -1;
-    while(left <= right) {
-        int mid = (left + right) >> 1;
-        if(f(mid))
-            left = mid + 1, res = mid;
-        else
-            right = mid - 1;
+  int first = 0, len = n;
+    while(len > 0) {
+        int half = len >> 1, middle = first + half;
+        if (f(middle)) {
+            first = middle + 1;
+            len -= half + 1;
+        } else
+            len = half;
     }
-    return std::max(std::min(res, n - 2), 0);
+    return std::min(std::max(first - 1, 0), n - 2);
 }
 
 float FrFirstMoment(float eta) {
@@ -49,6 +50,7 @@ bool CatmullRomWeights(int size, const float *nodes, float x, int &offset, float
     float x0 = nodes[idx], x1 = nodes[idx + 1];
     float t = (x - x0) / (x1 - x0), t2 = t * t, t3 = t2 * t;
     float w0, w3;
+    weights[0] = weights[3] = 0.0f;
     weights[1] = 2 * t3 - 3 * t2 + 1;
     weights[2] = -2 * t3 + 3 * t2;
     if(idx > 0) {
@@ -64,7 +66,7 @@ bool CatmullRomWeights(int size, const float *nodes, float x, int &offset, float
         weights[3] = w3;
     } else {
         w3 = t3 - t2;
-        weights[3] = 0, weights[1] -= w3, weights[2] += w3;
+        weights[3] = 0.0f, weights[1] -= w3, weights[2] += w3;
     }
     return true;
 }
@@ -117,6 +119,7 @@ float SampleCatmullRom2D(int size1, int size2, const float *nodes1, const float 
             b = t;
         t -= (Fhat - u) / fhat;
     }
+    return x0 + w * t;
 }
 
 float IntegrateCatmullRom(int n, const float *x, const float *values, float *cdf) {
@@ -159,10 +162,11 @@ float InvertCatmullRom(int n, const float *x, const float *values, float u) {
         d1 = w * (values[i + 2] - f0) / (x[i + 2] - x0);
     else
         d1 = f1 - f0;
-    float a = 0, b = 1, t = .5f;
+    float a = 0, b = 1, t = 0.5f;
     float Fhat, fhat;
     while(true) {
-        if (!(t > a && t < b)) t = 0.5f * (a + b);
+        if (!(t > a && t < b)) 
+            t = 0.5f * (a + b);
         float t2 = t * t, t3 = t2 * t;
         Fhat = (2 * t3 - 3 * t2 + 1) * f0 + (-2 * t3 + 3 * t2) * f1 + (t3 - 2 * t2 + t) * d0 + (t3 - t2) * d1;
         fhat = (6 * t2 - 6 * t) * f0 + (-6 * t2 + 6 * t) * f1 + (3 * t2 - 4 * t + 1) * d0 + (3 * t2 - 2 * t) * d1;
@@ -197,7 +201,7 @@ float BeamDiffusionMS(float sigma_s, float sigma_a, float g, float eta, float r)
         float zr = -std::log(1 - (i + 0.5f) / nSamples) / sigmap_t;
         float zv = -zr + 2 * ze;
         float dr = glm::sqrt(r * r + zr * zr), dv = glm::sqrt(r * r + zv * zv);
-        float phiD = INV_PI / (4 * Dg) * (glm::exp(-sigma_tr * dr) - std::exp(-sigma_tr * dv) / dv);
+        float phiD = INV_PI / (4 * Dg) * (glm::exp(-sigma_tr * dr) / dr - std::exp(-sigma_tr * dv) / dv);
         float EDn = INV_PI / 4 * (zr * (1 + sigma_tr * dr) * glm::exp(-sigma_tr * dr) / (dr * dr * dr) - 
                                   zv * (1 + sigma_tr * dv) * glm::exp(-sigma_tr * dv) / (dv * dv * dv));
         float E = phiD * cPhi + EDn * cE;
@@ -236,6 +240,7 @@ void ComputeBeamDiffusionBSSRDF(float g, float eta, BSSRDFTable &table) {
             table.profile[i * table.nRadiusSamples + j] = 2 * PI * r * 
                                                           (BeamDiffusionSS(rho, 1 - rho, g, eta, r) + 
                                                            BeamDiffusionMS(rho, 1 - rho, g, eta, r));
+            // std::cerr << table.profile[i * table.nRadiusSamples + j] << std::endl;
             table.rhoEff[i] = IntegrateCatmullRom(table.nRadiusSamples, table.radiusSamples, 
                                                   &table.profile[i * table.nRadiusSamples], &table.profileCDF[i * table.nRadiusSamples]);
         }
@@ -263,22 +268,28 @@ glm::vec3 SeparableBSSRDF::Sw(const glm::vec3 wi) const {
 }
 
 glm::vec3 SeparableBSSRDF::Sp(const glm::vec3 pi) const {
-    return Sr(glm::dot(pi - po, pi - po));
+    return Sr(glm::length(pi - po));
 }
 
-glm::vec3 SeparableBSSRDF::Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, float &rawPdf, float &fullPdf,  
+glm::vec3 SeparableBSSRDF::Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wi, glm::vec3 &wiNormal, float &rawPdf, float &fullPdf,  
                                     const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const {
-    glm::vec3 sp = Sample_Sp(trace, pi, rawPdf, entity, rd, uniform);
+    glm::vec3 sp = Sample_Sp(trace, pi, wiNormal, rawPdf, entity, rd, uniform);
     if(sp != glm::vec3{0.0f}) {
         glm::vec2 args(uniform(rd), uniform(rd));
         glm::vec3 wi = SampleFromCosine(args);
-        fullPdf = rawPdf * AbsCosTheta(wi) * INV_PI;
-        wi = local2World * wi;
+        fullPdf = rawPdf * SinTheta(wi) * AbsCosTheta(wi) * INV_PI;
+        // std::cerr << rawPdf << " " << fullPdf << std::endl;
+        glm::vec3 sx = wiNormal == glm::vec3(0.0f, 0.0f, 1.0f) ? 
+                       glm::normalize(glm::cross(wiNormal, glm::vec3(0.0f, 1.0f, 0.0f))) :
+                       glm::normalize(glm::cross(wiNormal, glm::vec3(0.0f, 0.0f, 1.0f)));
+        glm::vec3 sy = glm::normalize(glm::cross(wiNormal, tx));
+        glm::mat3 wiLocal2World = glm::mat3{sx, sy, wiNormal};
+        wi = glm::normalize(wiLocal2World * wi);
     }
     return sp;
 }
 
-glm::vec3 SeparableBSSRDF::Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, float &pdf, 
+glm::vec3 SeparableBSSRDF::Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, glm::vec3 &wiNormal, float &pdf, 
                                      const int entity, std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const {
     float u1 = uniform(rd);
     glm::vec3 vx, vy, vz;
@@ -299,20 +310,27 @@ glm::vec3 SeparableBSSRDF::Sample_Sp(const TraceMethod &trace, glm::vec3 &pi, fl
     float l = 2 * glm::sqrt(rMax * rMax - r * r);
     std::vector<HitRecord> isects;
     glm::vec3 origin = po + r * (vx * glm::cos(phi) + vy * glm::sin(phi)) - l * vz / 2.0f;
+    // std::cerr << r << std::endl;
     while(glm::distance(origin, po) <= rMax + 0.0001f) {
         HitRecord currentHit;
         float t = trace(origin, vz, 0.0001f, 1e10f, &currentHit);
         if(t < 0)
             break;
-        if(currentHit.hit_entity_id == entity)
+        if(currentHit.hit_entity_id == entity) {
             isects.emplace_back(currentHit);
-        origin = currentHit.position;
+            // if(currentHit.position[1] == 165.0f)
+            //     std::cerr << origin[1] << std::endl;
+        }
+        origin = currentHit.position + vz * 0.0001f;
     }
     int isectCnt = isects.size();
     if(isectCnt == 0)
         return glm::vec3{0.0f};
     int selected = std::min(isectCnt - 1, (int)(uniform(rd) * isectCnt));
     pi = isects[selected].position;
+    wiNormal = isects[selected].geometry_normal;
+    if(!isects[selected].front_face)
+        wiNormal *= -1.0f;
     pdf = Pdf_Sp(isects[selected]) / isectCnt;
     return Sp(isects[selected].position);
 }
@@ -336,7 +354,7 @@ float SeparableBSSRDF::Pdf_Sp(const HitRecord &pi) const {
 glm::vec3 TabulatedBSSRDF::Sr(const float r) const {
     glm::vec3 sr{0.0f};
     for(int ch = 0; ch <= 2; ch++) {
-        float rOptical = r / sigma_t[ch];
+        float rOptical = r * sigma_t[ch];
         int rhoOffset, radiusOffset;
         float rhoWeights[4], radiusWeights[4];
         bool flag1 = CatmullRomWeights(table.nRhoSamples, table.rhoSamples, rho[ch], rhoOffset, rhoWeights);
@@ -347,10 +365,12 @@ glm::vec3 TabulatedBSSRDF::Sr(const float r) const {
         for(int i = 0; i < 4; i++)
             for(int j = 0; j < 4; j++) {
                 float w = rhoWeights[i] * radiusWeights[j];
+                // std::cerr << w << std::endl;
                 if(w != 0)
                     res += w * table.EvalProfile(rhoOffset + i, radiusOffset + j);
             }
-        res /= 2 * PI * rOptical;
+        if(rOptical != 0.0f)
+            res /= 2 * PI * rOptical;
         sr[ch] = std::max(res * sigma_t[ch] * sigma_t[ch], 0.0f);
     }
     return sr;
