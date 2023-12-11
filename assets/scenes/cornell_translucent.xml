@@ -177,8 +177,11 @@
         <index value="19"/>
         <index value="18"/>
 
-        <material type="lambertian">
-            <albedo value="1 1 1"/>
+        <material type="kdsubsurface">
+            <albedo value="0.1 0.3 1"/>
+            <mfp value="50 50 50"/>
+            <g value="0.25"/>
+            <eta value="1.5"/>
         </material>
     </model>
 

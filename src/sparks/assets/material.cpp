@@ -15,11 +15,14 @@ std::unordered_map<std::string, MaterialType> material_name_map{
     {"specular", MATERIAL_TYPE_SPECULAR},
     {"transmissive", MATERIAL_TYPE_TRANSMISSIVE},
     {"principled", MATERIAL_TYPE_PRINCIPLED},
-    {"emission", MATERIAL_TYPE_EMISSION}};
+    {"emission", MATERIAL_TYPE_EMISSION},
+    {"subsurface", MATERIAL_TYPE_SUBSURFACE},
+    {"kdsubsurface", MATERIAL_TYPE_KDSUBSURFACE},
+    {"medium", MATERIAL_TYPE_MEDIUM}};
 }
 
 Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
-    : Material() {
+    : table(new BSSRDFTable(100, 64))  {
   if (!material_element) {
     return;
   }
@@ -139,11 +142,68 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     thin = StringToBool(child_element->FindAttribute("value")->Value());
   }
 
+  float g = 0.0f;
+
+  child_element = material_element->FirstChildElement("sigma_a");
+  if (child_element) {
+    sigma_a = StringToVec3(child_element->FindAttribute("value")->Value());
+  }
+
+  child_element = material_element->FirstChildElement("sigma_s");
+  if (child_element) {
+    sigma_s = StringToVec3(child_element->FindAttribute("value")->Value());
+  }
+
+  child_element = material_element->FirstChildElement("mfp");
+  if (child_element) {
+    mfp = StringToVec3(child_element->FindAttribute("value")->Value());
+  }
+
+  child_element = material_element->FirstChildElement("sigma_a_texture");
+  if (child_element) {
+    std::string path = child_element->FindAttribute("value")->Value();
+    Texture sigma_a_texture(1, 1);
+    if (Texture::Load(path, sigma_a_texture)) {
+      sigma_a_texture =
+          scene->AddTexture(sigma_a_texture, PathToFilename(path));
+    }
+    use_ss_texture = true;
+  }
+
+  child_element = material_element->FirstChildElement("sigma_s_texture");
+  if (child_element) {
+    std::string path = child_element->FindAttribute("value")->Value();
+    Texture sigma_a_texture(1, 1);
+    if (Texture::Load(path, sigma_a_texture)) {
+      sigma_a_texture =
+          scene->AddTexture(sigma_a_texture, PathToFilename(path));
+    }
+    use_ss_texture = true;
+  }
+
+  child_element = material_element->FirstChildElement("g");
+  if (child_element) {
+    g = std::stof(child_element->FindAttribute("value")->Value());
+  }
+
+  child_element = material_element->FirstChildElement("volumetric_emission");
+  if (child_element) {
+    volumetric_emission = StringToVec3(child_element->FindAttribute("value")->Value());
+  }
+
   material_type =
       material_name_map[material_element->FindAttribute("type")->Value()];
+
+  if (material_type == MATERIAL_TYPE_SUBSURFACE || material_type == MATERIAL_TYPE_KDSUBSURFACE) {
+    ComputeBeamDiffusionBSSRDF(g, eta, *table);
+  }
+
+  if (material_type == MATERIAL_TYPE_MEDIUM) {
+    medium = new HomogeneousMedium(sigma_a, sigma_s, volumetric_emission, g);
+  }
 }
 
-Material::Material(const glm::vec3 &albedo) : Material() {
+Material::Material(const glm::vec3 &albedo) {
   albedo_color = albedo;
 }
 
@@ -278,4 +338,15 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
   }
   return bsdf;
 }
+
+BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene) {
+    if(material_type != MATERIAL_TYPE_SUBSURFACE && material_type != MATERIAL_TYPE_KDSUBSURFACE)
+      return nullptr;
+    if(material_type == MATERIAL_TYPE_KDSUBSURFACE)
+      SubsurfaceFromDiffuse(*table, albedo_color, mfp, sigma_a, sigma_s);
+    BSSRDF *newBSSRDF = new TabulatedBSSRDF(hit.position, -direction, eta, BSSRDF_TABULATED, hit.geometry_normal, 
+                                            this, sigma_a, sigma_s, *table);
+    return newBSSRDF;
+}
+
 }  // namespace sparks
