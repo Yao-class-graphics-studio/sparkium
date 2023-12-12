@@ -46,6 +46,7 @@ public:
   int sigma_s_texture_id{0};
   glm::vec3 volumetric_emission{0.0f};
   Medium *medium{nullptr};
+  bool false_surface{false};
   glm::vec3 sigma_a{0.0f}, sigma_s{0.0f};
   glm::vec3 mfp{0.0f};
   BSSRDFTable *table{nullptr};

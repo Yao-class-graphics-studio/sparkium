@@ -26,6 +26,7 @@ public:
     virtual float Sample_p(const glm::vec3 &wo, glm::vec3 &wi, 
                            std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const = 0;
     virtual float p(glm::vec3 wo, glm::vec3 wi) const = 0;
+    virtual glm::vec3 getEmission() const = 0;
 protected:
     const float MAX_FLOAT = 1e10f;
 };
@@ -46,6 +47,9 @@ public:
                    std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const;
     float p(glm::vec3 wo, glm::vec3 wi) const {
         return PhaseHG(glm::dot(wo, wi), g);
+    }
+    glm::vec3 getEmission() const {
+        return emission;
     }
 };
 

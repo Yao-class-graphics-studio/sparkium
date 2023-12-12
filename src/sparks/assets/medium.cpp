@@ -45,7 +45,9 @@ glm::vec3 HomogeneousMedium::Sample(const glm::vec3 origin, const glm::vec3 dire
     if(insideMedium) {
         sample = origin + d * direction;
     }
-    glm::vec3 tr = glm::exp(-sigma_t * std::min(t, MAX_FLOAT));
+    glm::vec3 tr;
+    for(int i = 0; i <= 2; i++)
+        tr[i] = glm::exp(-sigma_t[i] * std::min(t, MAX_FLOAT));
     glm::vec3 density = insideMedium ? sigma_t * tr : tr;
     pdf = 0;
     for(int i = 0; i <= 2; i++)
@@ -60,7 +62,7 @@ float HomogeneousMedium::Sample_p(const glm::vec3 &wo, glm::vec3 &wi,
     if(std::fabs(g) < 1e-3)
         cosTheta = 1 - 2 * uniform(rd);
     else {
-        float sqrTerm = (1 - g * g) / (1 - g + 2 * g * uniform(rd));
+        float sqrTerm = (1 - g * g) / (1 + g - 2 * g * uniform(rd));
         cosTheta = (1 + g * g - sqrTerm * sqrTerm) / (2 * g);
     }
     float sinTheta = glm::sqrt(std::max(0.0f, 1 - cosTheta * cosTheta));

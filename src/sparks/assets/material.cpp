@@ -154,6 +154,11 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     sigma_s = StringToVec3(child_element->FindAttribute("value")->Value());
   }
 
+  child_element = material_element->FirstChildElement("false_surface");
+  if (child_element) {
+    false_surface = StringToBool(child_element->FindAttribute("value")->Value());
+  }
+
   child_element = material_element->FirstChildElement("mfp");
   if (child_element) {
     mfp = StringToVec3(child_element->FindAttribute("value")->Value());
@@ -224,6 +229,10 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       bsdf->Add(new LambertianReflection(color), 1);
       break;
     }
+    case MATERIAL_TYPE_KDSUBSURFACE: {
+      bsdf->Add(new LambertianReflection(glm::vec3{0.0f}), 0);
+      break;
+    }
     case MATERIAL_TYPE_EMISSION:{
       bsdf->Add(new LambertianReflection(color),1);
       break;
@@ -233,7 +242,11 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       break;
     }
     case MATERIAL_TYPE_TRANSMISSIVE: {
-      bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, 1.5f), 1);
+      bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, eta), 1);
+      break;
+    }
+    case MATERIAL_TYPE_MEDIUM: {
+      bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
       break;
     }
     case MATERIAL_TYPE_PRINCIPLED: {
