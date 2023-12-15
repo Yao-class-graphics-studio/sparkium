@@ -25,7 +25,7 @@
 
         <material type="emission">
             <emission value="1.0 1.0 1.0"/>
-            <emission_strength value="30.0"/>
+            <emission_strength value="200.0"/>
         </material>
     </model>
 
@@ -43,7 +43,7 @@
         <index value="2"/>
 
         <material type="lambertian">
-            <albedo value="0.8 0.8 0.8"/>
+            <albedo value="0.5 0.5 0.5"/>
         </material>
     </model>
 
@@ -61,7 +61,7 @@
         <index value="2"/>
 
         <material type="lambertian">
-            <albedo value="0.8 0.8 0.8"/>
+            <albedo value="0.5 0.5 0.5"/>
         </material>
     </model>
 
@@ -79,7 +79,7 @@
         <index value="2"/>
 
         <material type="lambertian">
-            <albedo value="0.8 0.8 0.8"/>
+            <albedo value="0.5 0.5 0.5"/>
         </material>
     </model>
 
@@ -97,7 +97,7 @@
         <index value="2"/>
 
         <material type="lambertian">
-            <albedo value="0.0 0.8 0.0"/>
+            <albedo value="0.0 0.5 0.0"/>
         </material>
     </model>
 
@@ -115,36 +115,36 @@
         <index value="2"/>
 
         <material type="lambertian">
-            <albedo value="0.8 0.0 0.0"/>
+            <albedo value="0.5 0.0 0.0"/>
         </material>
     </model>
 
     <!--short block-->
     <model name="Short Block">
-        <vertex position="130.0 165.0  65.0"/>
-        <vertex position="82.0 165.0 225.0"/>
-        <vertex position="240.0 165.0 272.0"/>
-        <vertex position="290.0 165.0 114.0"/>
+        <vertex position="130.0 265.0  65.0"/>
+        <vertex position="82.0 265.0 225.0"/>
+        <vertex position="240.0 265.0 272.0"/>
+        <vertex position="290.0 265.0 114.0"/>
 
-        <vertex position="290.0   0.0 114.0"/>
-        <vertex position="290.0 165.0 114.0"/>
-        <vertex position="240.0 165.0 272.0"/>
-        <vertex position="240.0   0.0 272.0"/>
+        <vertex position="290.0 100.0 114.0"/>
+        <vertex position="290.0 265.0 114.0"/>
+        <vertex position="240.0 265.0 272.0"/>
+        <vertex position="240.0 100.0 272.0"/>
 
-        <vertex position="130.0   0.0  65.0"/>
-        <vertex position="130.0 165.0  65.0"/>
-        <vertex position="290.0 165.0 114.0"/>
-        <vertex position="290.0   0.0 114.0"/>
+        <vertex position="130.0 100.0  65.0"/>
+        <vertex position="130.0 265.0  65.0"/>
+        <vertex position="290.0 265.0 114.0"/>
+        <vertex position="290.0 100.0 114.0"/>
 
-        <vertex position="82.0   0.0 225.0"/>
-        <vertex position="82.0 165.0 225.0"/>
-        <vertex position="130.0 165.0  65.0"/>
-        <vertex position="130.0   0.0  65.0"/>
+        <vertex position="82.0 100.0 225.0"/>
+        <vertex position="82.0 265.0 225.0"/>
+        <vertex position="130.0 265.0  65.0"/>
+        <vertex position="130.0 100.0  65.0"/>
 
-        <vertex position="240.0   0.0 272.0"/>
-        <vertex position="240.0 165.0 272.0"/>
-        <vertex position=" 82.0 165.0 225.0"/>
-        <vertex position="82.0   0.0 225.0"/>
+        <vertex position="240.0 100.0 272.0"/>
+        <vertex position="240.0 265.0 272.0"/>
+        <vertex position=" 82.0 265.0 225.0"/>
+        <vertex position="82.0 100.0 225.0"/>
 
         <index value="0"/>
         <index value="3"/>
@@ -176,12 +176,26 @@
         <index value="17"/>
         <index value="19"/>
         <index value="18"/>
+        <index value="12"/>
+        <index value="4"/>
+        <index value="8"/>
+        <index value="4"/>
+        <index value="12"/>
+        <index value="16"/>
 
-        <material type="kdsubsurface">
-            <albedo value="0.1 0.3 1"/>
-            <mfp value="50 50 50"/>
+        <material type="grid_medium">
+            <albedo value="1 1 1"/>
+            <sigma_a value="0.0002 0.0002 0.0002"/>
+            <sigma_s value="0.001 0.001 0.001"/>
+            <false_surface value="TRUE"/>
+            <volumetric_emission value="0 0 0"/>
             <g value="0"/>
-            <eta value="1.3"/>
+            <eta value="1"/>
+            <density_grid_path value="../../textures/random_grid.txt"/>
+            <pos000 value="295.0 99.0 110.0"/>
+            <pos100 value="125.0 99.0  60.0"/>
+            <pos010 value="245.0 99.0 275.0"/>
+            <pos001 value="295.0 266.0 110.0"/>
         </material>
     </model>
 
