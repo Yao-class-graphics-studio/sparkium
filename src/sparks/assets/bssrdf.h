@@ -17,6 +17,7 @@ typedef std::function<float(const glm::vec3&, const glm::vec3&, float, float, Hi
 
 enum BSSRDFType: int {
     BSSRDF_TABULATED = 1 << 0,
+    BSSRDF_DISNEY = 1 << 1
 };
 
 class BSSRDF {
@@ -103,6 +104,32 @@ public:
     glm::vec3 Sr(float r) const override;
     float Sample_Sr(int ch, float distance) const override;
     float Pdf_Sr(int ch, float sample) const override;
+};
+
+class DisneyBSSRDF : public SeparableBSSRDF {
+   public:
+    DisneyBSSRDF(const glm::vec3 &R,
+                 const glm::vec3 &d,
+                 const glm::vec3 &po,
+                 const glm::vec3 &wo, 
+                 const glm::vec3 &normal,
+                 float eta,
+                 const Material *material)
+        : SeparableBSSRDF(po,
+                          wo,
+                          eta,
+                          BSSRDFType(BSSRDF_DISNEY),
+                          normal,
+                          material),
+          R_(R),
+          d_(glm::vec3{0.2f} * d) {
+    }
+    //glm::vec3 S(const glm::vec3 pi, const glm::vec3 wi) const override;
+    glm::vec3 Sr(float d) const override;
+    float Sample_Sr(int ch, float u) const override;
+    float Pdf_Sr(int ch, float r) const override;
+   private:
+    glm::vec3 R_, d_;
 };
 
 void ComputeBeamDiffusionBSSRDF(float g, float eta, BSSRDFTable &table);

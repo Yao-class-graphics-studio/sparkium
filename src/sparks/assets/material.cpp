@@ -214,6 +214,12 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
     color *=
         glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
   HitRecord textureHit = hit;
+  if (!textureHit.front_face) {
+    textureHit.front_face = true;
+    textureHit.geometry_normal *= -1;
+    textureHit.normal *= -1;
+    textureHit.tangent *= -1;
+  }
   if (use_normal_texture)
     textureHit.normal =
         glm::vec3(scene->GetTexture(normal_texture_id).Sample(hit.tex_coord));
@@ -233,7 +239,10 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       break;
     }
     case MATERIAL_TYPE_TRANSMISSIVE: {
-      bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, 1.5f), 1);
+      bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, eta), 1);
+      bsdf->Add(new SpecularReflection(glm::vec3{1.0f},
+                                       new FresnelDielectric(1.0f, eta)),
+                1.0f);
       break;
     }
     case MATERIAL_TYPE_PRINCIPLED: {
@@ -340,13 +349,42 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
 }
 
 BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene) {
-    if(material_type != MATERIAL_TYPE_SUBSURFACE && material_type != MATERIAL_TYPE_KDSUBSURFACE)
+  if (material_type != MATERIAL_TYPE_SUBSURFACE &&
+      material_type != MATERIAL_TYPE_KDSUBSURFACE &&
+      (material_type != MATERIAL_TYPE_PRINCIPLED ||
+       scatterDistance == glm::vec3{0.0f}))
       return nullptr;
-    if(material_type == MATERIAL_TYPE_KDSUBSURFACE)
-      SubsurfaceFromDiffuse(*table, albedo_color, mfp, sigma_a, sigma_s);
-    BSSRDF *newBSSRDF = new TabulatedBSSRDF(hit.position, -direction, eta, BSSRDF_TABULATED, hit.geometry_normal, 
-                                            this, sigma_a, sigma_s, *table);
+  if (material_type == MATERIAL_TYPE_KDSUBSURFACE) {
+    SubsurfaceFromDiffuse(*table, albedo_color, mfp, sigma_a, sigma_s);
+    BSSRDF *newBSSRDF = new TabulatedBSSRDF(
+        hit.position, -direction, eta, BSSRDF_TABULATED, hit.geometry_normal,
+        this, sigma_a, sigma_s, *table);
     return newBSSRDF;
+  }
+  if (material_type == MATERIAL_TYPE_PRINCIPLED &&
+      scatterDistance != glm::vec3{0.0f} && !thin) {
+    float diffuseWeight = (1 - metallic) * (1 - specTrans);
+    if (diffuseWeight == 0.0f)
+      return nullptr;
+    glm::vec3 color = albedo_color;
+    // if (albedo_texture_id != -1)
+    color *=
+        glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
+    HitRecord textureHit = hit;
+    if (!textureHit.front_face) {
+      textureHit.front_face = true;
+      textureHit.geometry_normal *= -1;
+      textureHit.normal *= -1;
+      textureHit.tangent *= -1;
+    }
+    if (use_normal_texture)
+      textureHit.normal =
+          glm::vec3(scene->GetTexture(normal_texture_id).Sample(hit.tex_coord));
+    return new DisneyBSSRDF(albedo_color * diffuseWeight, scatterDistance,
+                            hit.position, -direction, textureHit.normal, eta,
+                            this);
+  }
+  return nullptr;
 }
 
 }  // namespace sparks

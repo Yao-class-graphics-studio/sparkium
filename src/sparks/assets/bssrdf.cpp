@@ -402,4 +402,42 @@ float TabulatedBSSRDF::Pdf_Sr(int ch, float r) const {
     return std::max(sr * sigma_t[ch] * sigma_t[ch] / rhoEff, 0.0f);
 }
 
+//glm::vec3 DisneyBSSRDF::S(const glm::vec3 pi, const glm::vec3 wi) const {
+//    glm::vec3 a = glm::normalize(pi - po);
+//    float fade = 1;
+//    glm::vec3 n = normal;
+//    float cosTheta = glm::dot(a, n);
+//    if (cosTheta > 0) {
+//        float sinTheta = std::sqrt(std::max(0.0f, 1 - cosTheta * cosTheta));
+//        glm::vec3 a2 = n * sinTheta - (a - n * cosTheta) * cosTheta / sinTheta;
+//        fade = std::max(0.0f, glm::dot())
+//    }
+//}
+
+glm::vec3 DisneyBSSRDF::Sr(float r) const {
+    if (r < 1e-6f)
+        r = 1e-6f;
+    return R_ *
+           (glm::exp(-glm::vec3{r} / d_) +
+            glm::exp(-glm::vec3{r} / (glm::vec3{3.0f} * d_))) /
+           (8 * PI * d_ * r);
+}
+
+float DisneyBSSRDF::Sample_Sr(int ch, float u) const {
+    if (u < 0.25f) {
+        u = std::min(u * 4, 1 - 1e-6f);
+        return d_[ch] * std::log(1 / (1 - u));
+    } else {
+        u = std::min((u - 0.25f) / 0.75f, 1-1e-6f);
+        return 3 * d_[ch] * std::log(1 / (1 - u));
+    }
+}
+
+float DisneyBSSRDF::Pdf_Sr(int ch, float r) const {
+    if (r < 1e-6f)
+        r = 1e-6f;
+    return (0.25f * std::exp(-r / d_[ch]) / (2 * PI * d_[ch] * r) +
+            0.75 * std::exp(-r / (3 * d_[ch])) / (6 * PI * d_[ch] * r));
+}
+
 }
