@@ -6,9 +6,28 @@
 #include "sparks/util/util.h"
 #include "sparks/assets/bxdf.h"
 #include "sparks/assets/disney_material.h"
+#include "glm/gtc/matrix_transform.hpp"
+#include <fstream>
 
 namespace sparks {
 
+// utility
+
+float* readDensityGrid(const std::string &path, int &nx, int &ny, int &nz) {
+  std::ifstream in;
+  in.open(path, std::ios::in);
+  if(!in.is_open())
+    return nullptr;
+  in >> nx >> ny >> nz;
+  std::cerr << nx << " " << ny << " " << nz << " " << path << std::endl;
+  float *grid = new float[nx * ny * nz];
+  for(int i = 0; i < nz; i++) 
+    for(int j = 0; j < ny; j++)
+      for(int k = 0; k < nx; k++)
+        in >> grid[i * ny * nx + j * nx + k];
+  in.close();
+  return grid;
+}
 namespace {
 std::unordered_map<std::string, MaterialType> material_name_map{
     {"lambertian", MATERIAL_TYPE_LAMBERTIAN},
@@ -18,7 +37,8 @@ std::unordered_map<std::string, MaterialType> material_name_map{
     {"emission", MATERIAL_TYPE_EMISSION},
     {"subsurface", MATERIAL_TYPE_SUBSURFACE},
     {"kdsubsurface", MATERIAL_TYPE_KDSUBSURFACE},
-    {"medium", MATERIAL_TYPE_MEDIUM}};
+    {"medium", MATERIAL_TYPE_MEDIUM},
+    {"grid_medium", MATERIAL_TYPE_GRID_MEDIUM}};
 }
 
 Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
@@ -154,6 +174,11 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     sigma_s = StringToVec3(child_element->FindAttribute("value")->Value());
   }
 
+  child_element = material_element->FirstChildElement("false_surface");
+  if (child_element) {
+    false_surface = StringToBool(child_element->FindAttribute("value")->Value());
+  }
+
   child_element = material_element->FirstChildElement("mfp");
   if (child_element) {
     mfp = StringToVec3(child_element->FindAttribute("value")->Value());
@@ -201,6 +226,45 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
   if (material_type == MATERIAL_TYPE_MEDIUM) {
     medium = new HomogeneousMedium(sigma_a, sigma_s, volumetric_emission, g);
   }
+
+  if (material_type == MATERIAL_TYPE_GRID_MEDIUM) {
+    std::string path;
+    child_element = material_element->FirstChildElement("density_grid_path");
+    if (child_element) {
+      path = child_element->FindAttribute("value")->Value();
+    }
+
+    glm::vec3 pos000, pos001, pos010, pos100;
+    child_element = material_element->FirstChildElement("pos000");
+    if (child_element) {
+      pos000 = StringToVec3(child_element->FindAttribute("value")->Value());
+    }
+    child_element = material_element->FirstChildElement("pos001");
+    if (child_element) {
+      pos001 = StringToVec3(child_element->FindAttribute("value")->Value());
+    }
+    child_element = material_element->FirstChildElement("pos010");
+    if (child_element) {
+      pos010 = StringToVec3(child_element->FindAttribute("value")->Value());
+    }
+    child_element = material_element->FirstChildElement("pos100");
+    if (child_element) {
+      pos100 = StringToVec3(child_element->FindAttribute("value")->Value());
+    }
+
+    int nx, ny, nz;
+    float *grid = readDensityGrid(path, nx, ny, nz);
+    assert(grid != nullptr);
+    glm::mat3 scale{pos100 - pos000, pos010 - pos000, pos001 - pos000};
+    glm::mat4 transform{
+        glm::vec4{scale[0], 0.0f},
+        glm::vec4{scale[1], 0.0f},
+        glm::vec4{scale[2], 0.0f},
+        glm::vec4(pos000[0], pos000[1], pos000[2], 1.0f)
+    };
+    medium = new GridDensityMedium(sigma_a, sigma_s, volumetric_emission, g, 
+                                   nx, ny, nz, glm::inverse(transform), glm::inverse(scale), grid);
+  }
 }
 
 Material::Material(const glm::vec3 &albedo) {
@@ -230,6 +294,10 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       bsdf->Add(new LambertianReflection(color), 1);
       break;
     }
+    case MATERIAL_TYPE_KDSUBSURFACE: {
+      bsdf->Add(new LambertianReflection(glm::vec3{0.0f}), 0);
+      break;
+    }
     case MATERIAL_TYPE_EMISSION:{
       bsdf->Add(new LambertianReflection(color),1);
       break;
@@ -240,9 +308,20 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
     }
     case MATERIAL_TYPE_TRANSMISSIVE: {
       bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, eta), 1);
+<<<<<<< HEAD
       bsdf->Add(new SpecularReflection(glm::vec3{1.0f},
                                        new FresnelDielectric(1.0f, eta)),
                 1.0f);
+=======
+      break;
+    }
+    case MATERIAL_TYPE_MEDIUM: {
+      bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
+      break;
+    }
+    case MATERIAL_TYPE_GRID_MEDIUM: {
+      bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
+>>>>>>> 3eeef21d51bf83cc4a70687c661707024f6e2bba
       break;
     }
     case MATERIAL_TYPE_PRINCIPLED: {

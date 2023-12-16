@@ -17,12 +17,12 @@ class PathTracer {
                                     Medium *currentMedium = nullptr);
   void SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, int except);
   float getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area);
-  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, int except);
+  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, int except, Medium *currentMedium = nullptr);
  private:
   const RendererSettings *render_settings_{};
   const Scene *scene_{};
   std::mt19937 rd;
   std::uniform_real_distribution<float> uniform;
-  const float continueProb = 0.8f;
+  const float continueProb = 0.95f;
 };
 }  // namespace sparks

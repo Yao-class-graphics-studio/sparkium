@@ -16,7 +16,8 @@ enum MaterialType : int {
   MATERIAL_TYPE_EMISSION = 4,
   MATERIAL_TYPE_SUBSURFACE = 5,
   MATERIAL_TYPE_KDSUBSURFACE = 6,
-  MATERIAL_TYPE_MEDIUM = 7
+  MATERIAL_TYPE_MEDIUM = 7,
+  MATERIAL_TYPE_GRID_MEDIUM = 8
 };
 
 class Scene;
@@ -46,6 +47,7 @@ public:
   int sigma_s_texture_id{0};
   glm::vec3 volumetric_emission{0.0f};
   Medium *medium{nullptr};
+  bool false_surface{false};
   glm::vec3 sigma_a{0.0f}, sigma_s{0.0f};
   glm::vec3 mfp{0.0f};
   BSSRDFTable *table{nullptr};
