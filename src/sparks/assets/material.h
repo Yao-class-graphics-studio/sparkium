@@ -57,6 +57,9 @@ public:
   Material& operator = (const Material &) = default;
   explicit Material(const glm::vec3 &albedo);
   Material(Scene *scene, const tinyxml2::XMLElement *material_element);
+  glm::vec3 GetAlbedoColor(const HitRecord &hit, const Scene *scene) const;
+  glm::vec3 GetShaderNormal(const HitRecord &hit, const Scene *scene) const;
+  HitRecord GetShaderHit(const HitRecord &hit, const Scene *scene) const;
   BSDF* ComputeBSDF(const HitRecord &hit, const Scene* scene) const;
   BSSRDF* ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene);
 };

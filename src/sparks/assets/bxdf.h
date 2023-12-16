@@ -124,6 +124,35 @@ struct BxDF {
   const BxDFType type_{BSDF_REFLECTION};
 };
 
+// scaled BxDF
+class ScaledBxDF final : public BxDF {
+ public:
+  ScaledBxDF() = delete;
+  ScaledBxDF(const BxDF *bxdf, const glm::vec3 &scale)
+      : bxdf_(bxdf), scale_(scale) {
+  }
+  ~ScaledBxDF() {
+    delete bxdf_;
+  }
+  // calculate bxdf
+  glm::vec3 f(const glm::vec3 &wo, const glm::vec3 &wi) const override {
+    return scale_ * bxdf_->f(wo, wi);
+  }
+  // Sample wi by bxdf and return the F result
+  glm::vec3 Sample_f(const glm::vec3 &wo,
+                     glm::vec3 &wi,
+                     const glm::vec2 &args,
+                     float &pdf) const override {
+    return scale_ * bxdf_->Sample_f(wo, wi, args, pdf);
+  }
+  float Pdf(const glm::vec3 &wo, const glm::vec3 &wi) const override {
+    return bxdf_->Pdf(wo, wi);
+  }
+ private:
+  const BxDF *bxdf_;
+  glm::vec3 scale_;
+};
+
 //a collection of BRDFs & BTDFs 
 struct BSDF {
   BSDF() = delete;
@@ -186,6 +215,7 @@ class MicrofacetDistribution {
   virtual glm::vec3 Sample_wh(const glm::vec3 &wo,
                               const glm::vec2 &args) const = 0;
   float Pdf(const glm::vec3 &wo, const glm::vec3 &wh) const {
+    assert(!std::isnan(wh[0]) && !std::isnan(wh[1]) && !std::isnan(wh[2]));
     if (sampleVisibleArea_)
       return D(wh) * G1(wo) * std::fabs(glm::dot(wo, wh)) / AbsCosTheta(wo);
     else
@@ -237,7 +267,7 @@ static void TrowbridgeReitzSample11(float cosTheta,
   float z = (U2 * (U2 * (U2 * 0.27385f - 0.73369f) + 0.46341f)) /
             (U2 * (U2 * (U2 * 0.093073f + 0.309420f) - 1.000000f) + 0.597999f);
   slope_y = S * z * std::sqrt(1.f + slope_x * slope_x);
-
+  //std::cerr << slope_x << " " << slope_y << std::endl;
   assert(!std::isinf(slope_y));
   assert(!std::isnan(slope_y));
 }
@@ -276,19 +306,23 @@ class TrowbridgeReitzDistribution : public MicrofacetDistribution {
         alphay_(std::max(1e-3f, alphay)) {
   }
   float D(const glm::vec3 &wh) const override {
+    assert(!std::isnan(wh[0]) && !std::isnan(wh[1]) && !std::isnan(wh[2]));
     float tan2Theta = Tan2Theta(wh);
+
     if (std::isinf(tan2Theta))
       return 0.0f;
     const float cos4Theta = sqr(Cos2Theta(wh));
     float e = (Cos2Phi(wh) / (alphax_ * alphax_) +
                Sin2Phi(wh) / (alphay_ * alphay_)) *
               tan2Theta;
+    assert(!std::isnan(e));
     return 1 / (PI * alphax_ * alphay_ * cos4Theta * sqr(1 + e));
   }
   glm::vec3 Sample_wh(const glm::vec3 &wo,
                       const glm::vec2 &args) const override {
     glm::vec3 wh;
     if (!sampleVisibleArea_) {
+      assert(0);
       float cosTheta = 0, phi = (2 * PI) * args[1];
       if (alphax_ == alphay_) {
         float tanTheta2 = alphax_ * alphax_ * args[0] / (1.0f - args[0]);

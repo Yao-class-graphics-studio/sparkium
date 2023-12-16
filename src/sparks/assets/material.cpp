@@ -271,12 +271,12 @@ Material::Material(const glm::vec3 &albedo) {
   albedo_color = albedo;
 }
 
-BSDF* Material::ComputeBSDF(const HitRecord &hit,
-                         const Scene* scene) const {
-  glm::vec3 color = albedo_color;
-  //if (albedo_texture_id != -1)
-    color *=
-        glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
+glm::vec3 Material::GetAlbedoColor(const HitRecord &hit,
+                                   const Scene *scene) const {
+  return albedo_color * glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
+}
+
+HitRecord Material::GetShaderHit(const HitRecord &hit, const Scene *scene) const{
   HitRecord textureHit = hit;
   if (!textureHit.front_face) {
     textureHit.front_face = true;
@@ -284,11 +284,38 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
     textureHit.normal *= -1;
     textureHit.tangent *= -1;
   }
-  if (use_normal_texture)
-    textureHit.normal =
-        glm::vec3(scene->GetTexture(normal_texture_id).Sample(hit.tex_coord));
+  if (use_normal_texture) {
+      // seems not very correct, to be checked.....
+    glm::mat3 local_to_world;
+    glm::vec3 norm = textureHit.normal;
+    if (std::fabs(norm.z) > 1.0f - 1e-6) {
+      local_to_world = glm::mat3(1.0f);
+    } else {
+      glm::vec3 y =
+          glm::normalize(glm::cross(norm, glm::vec3(0.0f, 0.0f, 1.0f)));
+      glm::vec3 x = glm::normalize(glm::cross(y, norm));
+      local_to_world = glm::mat3(x, y, norm);
+    }
+    glm::vec3 textureValue =
+        scene->GetTexture(normal_texture_id).Sample(hit.tex_coord);
+    textureValue = glm::normalize(textureValue - glm::vec3{0.5f});
+    textureHit.normal = glm::normalize(local_to_world * textureValue);
+  }
+  return textureHit;
+}
 
-  BSDF* bsdf = new BSDF(textureHit);
+glm::vec3 Material::GetShaderNormal(const HitRecord &hit,
+                                    const Scene *scene) const {
+  if (!use_normal_texture)
+    return hit.front_face ? hit.normal : -hit.normal;
+  else
+    return GetShaderHit(hit, scene).normal;
+}
+
+BSDF* Material::ComputeBSDF(const HitRecord &hit,
+                         const Scene* scene) const {
+  glm::vec3 color = GetAlbedoColor(hit, scene);
+  BSDF* bsdf = new BSDF(GetShaderHit(hit,scene));
   switch (material_type) { 
     case MATERIAL_TYPE_LAMBERTIAN: {
       bsdf->Add(new LambertianReflection(color), 1);
@@ -307,22 +334,19 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       break;
     }
     case MATERIAL_TYPE_TRANSMISSIVE: {
-      bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, eta), 1);
-<<<<<<< HEAD
-      bsdf->Add(new SpecularReflection(glm::vec3{1.0f},
-                                       new FresnelDielectric(1.0f, eta)),
-                1.0f);
-=======
-      break;
+        bsdf->Add(new SpecularTransmission(glm::vec3{ 1.0f }, 1.0f, eta), 1);
+        bsdf->Add(new SpecularReflection(glm::vec3{ 1.0f },
+            new FresnelDielectric(1.0f, eta)),
+            1.0f);
+        break;
     }
     case MATERIAL_TYPE_MEDIUM: {
-      bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
-      break;
+        bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
+        break;
     }
     case MATERIAL_TYPE_GRID_MEDIUM: {
-      bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
->>>>>>> 3eeef21d51bf83cc4a70687c661707024f6e2bba
-      break;
+        bsdf->Add(new SpecularTransmission(color, 1.0f, eta), 1);
+        break;
     }
     case MATERIAL_TYPE_PRINCIPLED: {
       // Diffuse
@@ -354,7 +378,7 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
             // diffuse.
             bsdf->Add(new DisneyDiffuse(diffuseWeight * color), diffuseWeight);
           else {
-              //TODO: BSSRDF
+            bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, eta),diffuseWeight);
             // Use a BSSRDF instead.
             //si->bsdf->Add(
             //    ARENA_ALLOC(arena, SpecularTransmission)(1.f, 1.f, e, mode));
@@ -403,18 +427,25 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
         // by sqrt(color), so that after two refractions, we're back to the
         // provided color.
         glm::vec3 T = specTrans * glm::sqrt(color);
-        if (thin) {
-          // Scale roughness based on IOR (Burley 2015, Figure 15).
-          float rscaled = (0.65f * eta - 0.35f) * roughness;
-          float ax = std::max(1e-3f, sqr(rscaled) / aspect);
-          float ay = std::max(1e-3f, sqr(rscaled) * aspect);
-          MicrofacetDistribution *scaledDistrib = new TrowbridgeReitzDistribution(ax, ay);
-          bsdf->Add(new MicrofacetTransmission(T, scaledDistrib, 1., eta),
-                    specTrans);
+        if (eta > 1.0f) {
+          if (thin) {
+            // Scale roughness based on IOR (Burley 2015, Figure 15).
+            float rscaled = (0.65f * eta - 0.35f) * roughness;
+            float ax = std::max(1e-3f, sqr(rscaled) / aspect);
+            float ay = std::max(1e-3f, sqr(rscaled) * aspect);
+            MicrofacetDistribution *scaledDistrib =
+                new TrowbridgeReitzDistribution(ax, ay);
+            bsdf->Add(new MicrofacetTransmission(T, scaledDistrib, 1., eta),
+                      specTrans);
+          } else {
+            MicrofacetDistribution *distribTransmission =
+                new DisneyMicrofacetDistribution(ax, ay);
+            bsdf->Add(
+                new MicrofacetTransmission(T, distribTransmission, 1., eta),
+                specTrans);
+          }
         } else {
-          MicrofacetDistribution *distribTransmission =
-              new DisneyMicrofacetDistribution(ax, ay);
-          bsdf->Add(new MicrofacetTransmission(T, distribTransmission, 1., eta), specTrans);
+          bsdf->Add(new SpecularTransmission(T, 1.0f, 1.0f), specTrans);
         }
       }
       if (thin) {
@@ -423,6 +454,13 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       }
       break;
     }
+  }
+  if (alpha != 1.0f) {
+    for (auto &[bxdf, weight] : bsdf->bxdfs_) {
+      bxdf = new ScaledBxDF(bxdf, glm::vec3{alpha});
+      weight *= alpha;
+    }
+    bsdf->Add(new SpecularTransmission(glm::vec3{1.0f-alpha}, 1.0f, 1.0f), 1 - alpha);
   }
   return bsdf;
 }
@@ -434,34 +472,21 @@ BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction,
        scatterDistance == glm::vec3{0.0f}))
       return nullptr;
   if (material_type == MATERIAL_TYPE_KDSUBSURFACE) {
-    SubsurfaceFromDiffuse(*table, albedo_color, mfp, sigma_a, sigma_s);
+    SubsurfaceFromDiffuse(*table, GetAlbedoColor(hit,scene), mfp, sigma_a, sigma_s);
     BSSRDF *newBSSRDF = new TabulatedBSSRDF(
         hit.position, -direction, eta, BSSRDF_TABULATED, hit.geometry_normal,
         this, sigma_a, sigma_s, *table);
     return newBSSRDF;
-  }
-  if (material_type == MATERIAL_TYPE_PRINCIPLED &&
+  } else if (material_type == MATERIAL_TYPE_PRINCIPLED &&
       scatterDistance != glm::vec3{0.0f} && !thin) {
     float diffuseWeight = (1 - metallic) * (1 - specTrans);
     if (diffuseWeight == 0.0f)
       return nullptr;
-    glm::vec3 color = albedo_color;
-    // if (albedo_texture_id != -1)
-    color *=
-        glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
-    HitRecord textureHit = hit;
-    if (!textureHit.front_face) {
-      textureHit.front_face = true;
-      textureHit.geometry_normal *= -1;
-      textureHit.normal *= -1;
-      textureHit.tangent *= -1;
-    }
-    if (use_normal_texture)
-      textureHit.normal =
-          glm::vec3(scene->GetTexture(normal_texture_id).Sample(hit.tex_coord));
-    return new DisneyBSSRDF(albedo_color * diffuseWeight, scatterDistance,
-                            hit.position, -direction, textureHit.normal, eta,
-                            this);
+    glm::vec3 color = GetAlbedoColor(hit,scene);
+    HitRecord textureHit = GetShaderHit(hit,scene);
+    return new DisneyBSSRDF(color * diffuseWeight, scatterDistance,
+                            textureHit.position, -direction, textureHit.normal,
+                            eta, this);
   }
   return nullptr;
 }

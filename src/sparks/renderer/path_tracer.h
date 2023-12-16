@@ -17,7 +17,7 @@ class PathTracer {
                                     Medium *currentMedium = nullptr);
   void SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, int except);
   float getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area);
-  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, int except, Medium *currentMedium = nullptr);
+  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, float &lightArea, int except, Medium *currentMedium = nullptr);
  private:
   const RendererSettings *render_settings_{};
   const Scene *scene_{};

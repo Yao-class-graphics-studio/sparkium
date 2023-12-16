@@ -28,7 +28,7 @@ glm::vec3 FresnelDielectric::Evaluate(float cosThetaI) const {
 glm::vec3 MicrofacetReflection::f(const glm::vec3 &wo,
                                   const glm::vec3 &wi) const {
   float cosThetaO = AbsCosTheta(wo), cosThetaI = AbsCosTheta(wi);
-  if (cosThetaO == 0.0f || cosThetaO == 0.0f)
+  if (cosThetaO == 0.0f || cosThetaI == 0.0f)
     return glm::vec3{0.0f};
   glm::vec3 wh = wi + wo;
   if (wh == glm::vec3(0.0f))
@@ -74,7 +74,11 @@ glm::vec3 MicrofacetTransmission::f(const glm::vec3 &wo, const glm::vec3 &wi) co
     if (cosThetaI == 0 || cosThetaO == 0)
         return glm::vec3{0.0f};
     float eta = cosThetaO > 0 ? (etaB_ / etaA_) : (etaA_ / etaB_);
-    glm::vec3 wh = glm::normalize(wo + wi * eta);
+    glm::vec3 wh = wo + wi * eta;
+    if (glm::length(wh) > 1e-6f)
+        glm::normalize(wh);
+    else
+        wh = glm::vec3{0.0f, 0.0f, 1.0f};
     if (wh.z < 0)
         wh = -wh;
     float dotOH = glm::dot(wo, wh), dotIH = glm::dot(wi,wh);
@@ -106,6 +110,8 @@ glm::vec3 MicrofacetTransmission::Sample_f(const glm::vec3 &wo,
     if (!Refract(wo, wh, eta, wi))
         return glm::vec3{0.0f};
     pdf = Pdf(wo, wi);
+    assert(!std::isnan(pdf));
+    assert(!std::isinf(pdf));
     return f(wo, wi);
 }
 
@@ -114,7 +120,12 @@ float MicrofacetTransmission::Pdf(const glm::vec3 &wo,
     if (SameHemiSphere(wo, wi))
         return 0;
     float eta = CosTheta(wo) > 0 ? (etaB_ / etaA_) : (etaA_ / etaB_);
-    glm::vec3 wh = glm::normalize(wo + wi * eta);
+    glm::vec3 wh = wo + wi * eta;
+    if (glm::length(wh) > 1e-6f)
+        glm::normalize(wh);
+    else
+        wh = glm::vec3{0.0f, 0.0f, 1.0f};
+    assert(!std::isnan(-wh[0]) && !std::isnan(wh[1]) && !std::isnan(wh[2]));
     if (glm::dot(wo, wh) * glm::dot(wi, wh) > 0)
         return 0;
     float sqrtDenom = glm::dot(wo, wh) + eta * glm::dot(wi, wh);
@@ -209,20 +220,23 @@ glm::vec3 BSDF::Sample_f(const glm::vec3 &woWorld,
   }
   wiWorld = LocalToWorld(wi);
 
+  float matchingWeight = 0.0f;
+  for (auto [bxdf, weight] : bxdfs_) {
+    if (bxdf->MatchesFlags(type)) {
+          matchingWeight += weight;
+          if (bxdf == chosenBxdf)
+            pdf *= weight;
+    }
+  }
+
   if (!(chosenBxdf->type_ & BSDF_SPECULAR) && matchingComps > 1) {
     bool reflect = dot(wiWorld, hit_.geometry_normal) *
                        glm::dot(woWorld, hit_.geometry_normal) >
                    0;
-    float restPdf = 0.0f;
-    float matchingWeight = 0.0f;
     for (auto [bxdf, weight] : bxdfs_) {
           if (bxdf->MatchesFlags(type)) {
-            matchingWeight += weight;
-
             if (bxdf != chosenBxdf)
-              restPdf += weight * bxdf->Pdf(wo, wi);
-            else
-              pdf *= weight;
+              pdf += weight * bxdf->Pdf(wo, wi);
 
             if ((reflect && (bxdf->type_ & BSDF_REFLECTION)) ||
                 (!reflect && (bxdf->type_ & BSDF_TRANSMISSION))) {
@@ -231,9 +245,8 @@ glm::vec3 BSDF::Sample_f(const glm::vec3 &woWorld,
             }
           }
     }
-    pdf += restPdf;
-    pdf /= matchingWeight;
   }
+  pdf /= matchingWeight;
   return f;
 }
 
