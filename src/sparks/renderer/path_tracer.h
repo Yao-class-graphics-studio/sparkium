@@ -12,6 +12,8 @@ class PathTracer {
                                     int x,
                                     int y,
                                     int sample) const;
+  glm::vec3 Shade(glm::vec3 origin, glm::vec3 dirction) const;
+  bool RR(double p) const;
 
  private:
   const RendererSettings *render_settings_{};

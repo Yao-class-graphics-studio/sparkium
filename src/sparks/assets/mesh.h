@@ -28,6 +28,24 @@ class Mesh : public Model {
   static bool LoadObjFile(const std::string &obj_file_path, Mesh &mesh);
   void WriteObjFile(const std::string &file_path) const;
   void MergeVertices();
+  double area(int idx) const{
+    Vertex a = vertices_[indices_[3 * idx]], b = vertices_[3 * idx + 1],
+           c = vertices_[3 * idx + 2];
+    auto pa = a.position, pb = b.position, pc = c.position;
+    auto v_ab = pb - pa;
+    auto v_ac = pc - pa;
+    auto cross = glm::cross(v_ab, v_ac);
+    return glm::length(cross) / 2;
+  };
+  Vertex vertice(int idx) {
+    return vertices_[indices_[idx]];
+  }
+  const std::vector<Vertex> &Get_vertices() const{
+    return vertices_;
+  };
+  const std::vector<uint32_t> &Get_indices() const{
+    return indices_;
+  };
 
  protected:
   std::vector<Vertex> vertices_;
