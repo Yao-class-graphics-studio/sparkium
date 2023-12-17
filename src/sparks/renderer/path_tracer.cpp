@@ -50,8 +50,7 @@ glm::vec3 PathTracer::Shade(glm::vec3 origin, glm::vec3 direction) const {
         static std::uniform_real_distribution<double> u1(0, total_area);
         double rnd = u1(e);
         for (int j = 0; j < n_triangle_face; j++) {
-          if (rnd < triangle_area[j]) {
-            // sample a vertex on triangle mesh j
+          if (rnd < triangle_area[j] && (j == 0 || rnd >= triangle_area[j-1])) {
             auto v1 = vertices[indices[3 * j]],
                  v2 = vertices[indices[3 * j + 1]],
                  v3 = vertices[indices[3 * j + 2]];
@@ -71,7 +70,7 @@ glm::vec3 PathTracer::Shade(glm::vec3 origin, glm::vec3 direction) const {
         new_direction = glm::normalize(new_direction);
         float visible = 1;
         HitRecord intersection;
-        auto vt = scene_->TraceRay(xl, vn, 1e-3f, 1e4f, &intersection);
+        auto vt = scene_->TraceRay(xl, new_direction, 1e-3f, 1e4f, &intersection);
         if (intersection.hit_entity_id != i)
           visible = 0;
         hit_record.normal = glm::normalize(hit_record.normal);
@@ -99,10 +98,24 @@ glm::vec3 PathTracer::Shade(glm::vec3 origin, glm::vec3 direction) const {
       auto t = scene_->TraceRay(hit_record.position, next_ray, 1e-3f, 1e4f, &intersection);
       if (t > 0) {
         glm::vec3 intensity = Shade(hit_record.position, next_ray) / p_rr;
-        auto &material =
-            scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
-        L_ind += intensity * material.albedo_color;
+        auto &material = scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
+        L_ind += intensity * material.albedo_color * glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(hit_record.tex_coord)};
+      } else { 
+        return material.albedo_color * glm::vec3{scene_->SampleEnvmap(next_ray)} * glm::vec3{
+                   scene_->GetTextures()[material.albedo_texture_id].Sample(hit_record.tex_coord)};
       }
+    }
+    auto light_direction = scene_->GetEnvmapLightDirection();
+    L_dir += material.albedo_color *
+             glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(
+                 hit_record.tex_coord)} *scene_->GetEnvmapMinorColor();
+    if (scene_->TraceRay(origin, light_direction, 1e-3f, 1e4f, nullptr) < 0.0f) {
+      L_dir +=
+          material.albedo_color *
+          glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(
+              hit_record.tex_coord)} *
+          scene_->GetEnvmapMajorColor() *
+               std::max(glm::dot(light_direction, hit_record.normal), 0.0f) * 2.0f;
     }
     return L_dir + L_ind;
 
@@ -117,7 +130,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int x,
                                 int y,
                                 int sample) const {
-  const int num_sample_per_pixel = 1;
+  const int num_sample_per_pixel = 6;
   glm::vec3 current_radiance(0, 0, 0);
   for (int k = 0; k < num_sample_per_pixel; k++) {
     glm::vec3 radiance = sparks::PathTracer::Shade(origin, direction);
