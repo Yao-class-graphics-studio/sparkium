@@ -28,6 +28,27 @@ AxisAlignedBoundingBox::AxisAlignedBoundingBox(const glm::vec3 &position) {
   z_high = position.z;
 }
 
+AxisAlignedBoundingBox::AxisAlignedBoundingBox(const glm::vec3& pos1,
+                                               const glm::vec3& pos2,
+                                               const glm::vec3& pos3) {
+  x_low = std::min(std::min(pos1.x, pos2.x), pos3.x);
+  x_high = std::max(std::max(pos1.x, pos2.x), pos3.x);
+  y_low = std::min(std::min(pos1.y, pos2.y), pos3.y);
+  y_high = std::max(std::max(pos1.y, pos2.y), pos3.y);
+  z_low = std::min(std::min(pos1.z, pos2.z), pos3.z);
+  z_high = std::max(std::max(pos1.z, pos2.z), pos3.z);
+}
+
+AxisAlignedBoundingBox::AxisAlignedBoundingBox(
+    const AxisAlignedBoundingBox &aabb) {
+  x_low = aabb.x_low;
+	x_high = aabb.x_high;
+	y_low = aabb.y_low;
+	y_high = aabb.y_high;
+	z_low = aabb.z_low;
+	z_high = aabb.z_high;
+}
+
 bool AxisAlignedBoundingBox::IsIntersect(const glm::vec3 &origin,
                                          const glm::vec3 &direction,
                                          float t_min,
@@ -62,6 +83,50 @@ bool AxisAlignedBoundingBox::IsIntersect(const glm::vec3 &origin,
   TestIntersection(z, x, y);
   TestIntersection(y, z, x);
   return intersection_range_high >= t_min && intersection_range_low <= t_max;
+}
+
+bool AxisAlignedBoundingBox::OverlapWith(
+    const AxisAlignedBoundingBox &aabb) const {
+  return x_low <= aabb.x_high && aabb.x_low <= x_high && y_low <= aabb.y_high &&
+         aabb.y_low <= y_high && z_low <= aabb.z_high && aabb.z_low <= z_high;
+}
+
+std::optional<std::pair<float, float>> AxisAlignedBoundingBox::Intersect(
+    const glm::vec3 &origin,
+    const glm::vec3 &direction,
+    float t_min,
+    float t_max) const {
+  float intersection_range_low = t_max * (1.0f + t_min);
+  float intersection_range_high = 0.0f;
+  float t;
+  glm::vec3 intersection;
+#define TestIntersection(x, y, z)                                     \
+  if (std::abs(direction.x) > 1e-5) {                                 \
+    float inv_d = 1.0f / direction.x;                                 \
+    t = (x##_low - origin.x) * inv_d;                                 \
+    intersection = origin + direction * t;                            \
+    if (y##_low <= intersection.y && intersection.y <= y##_high &&    \
+        z##_low <= intersection.z && intersection.z <= z##_high) {    \
+      intersection_range_low = std::min(intersection_range_low, t);   \
+      intersection_range_high = std::max(intersection_range_high, t); \
+    }                                                                 \
+    t = (x##_high - origin.x) * inv_d;                                \
+    intersection = origin + direction * t;                            \
+    if (y##_low <= intersection.y && intersection.y <= y##_high &&    \
+        z##_low <= intersection.z && intersection.z <= z##_high) {    \
+      intersection_range_low = std::min(intersection_range_low, t);   \
+      intersection_range_high = std::max(intersection_range_high, t); \
+    }                                                                 \
+  }
+  TestIntersection(x, y, z);
+  TestIntersection(z, x, y);
+  TestIntersection(y, z, x);
+  if (intersection_range_high >= t_min && intersection_range_low <= t_max) {
+    return std::make_pair(std::max(intersection_range_low, t_min),
+                          std::min(intersection_range_high, t_max));
+  } else {
+    return {};
+  }
 }
 
 AxisAlignedBoundingBox AxisAlignedBoundingBox::operator&(
