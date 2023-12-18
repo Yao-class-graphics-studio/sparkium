@@ -12,7 +12,7 @@ class PathTracer {
                                     int x,
                                     int y,
                                     int sample) const;
-  glm::vec3 Shade(glm::vec3 origin, glm::vec3 dirction) const;
+  glm::vec3 Shade(HitRecord interseciton, glm::vec3 wo, int depth) const;
   bool RR(double p) const;
 
  private:
