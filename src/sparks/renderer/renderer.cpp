@@ -28,6 +28,7 @@ const RendererSettings &Renderer::GetRendererSettings() const {
 void Renderer::StartWorkerThreads() {
   uint32_t num_threads = std::thread::hardware_concurrency() - 2u;
   num_threads = std::max(num_threads, 1u);
+  //num_threads = 1u;
   for (int i = 0; i < num_threads; i++) {
     worker_threads_.emplace_back(&Renderer::WorkerThread, this);
   }

@@ -77,7 +77,7 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
         float cos_theta_hat = abs(glm::dot(wi, intersection.geometry_normal));
         float dist = glm::distance(xl, intersection.position);
         float dist2 = dist * dist;
-        glm::vec3 intensity = material.emission * material.emission_strength *
+        glm::vec3 intensity = material_i.emission * material_i.emission_strength *
                               cos_theta * cos_theta_hat / dist2 / pdf_light *
                               visible;
         L_dir += intensity * material.albedo_color * dots / pi;
@@ -121,7 +121,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int x,
                                 int y,
                                 int sample) const {
-  const float num_sample_per_pixel = 16;
+  const float num_sample_per_pixel = sample;
   glm::vec3 current_radiance(0, 0, 0);
   HitRecord intersection;
   auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &intersection);
