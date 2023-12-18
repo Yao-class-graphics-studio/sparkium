@@ -4,6 +4,7 @@
 
 const int MAX_TRIANGLE = 5;
 const float MIN_VOLUME = 1e-9;
+const float eps = 1e-3;
 
 namespace sparks {
 AcceleratedMesh::AcceleratedMesh(const Mesh &mesh) : Mesh(mesh) {
@@ -124,7 +125,7 @@ float AcceleratedMesh::TraceRay(const glm::vec3 &origin,
       A = glm::inverse(A);
       auto uvt = A * (origin - v0.position);
       auto &t = uvt.z;
-      if (t < t_min || t > t_max || (result > 0.0f && t > result)) {
+      if (t < t_min - eps || t > t_max + eps || (result > 0.0f && t > result)) {
         continue;
       }
       auto &u = uvt.x;
