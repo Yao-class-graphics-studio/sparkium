@@ -3,7 +3,7 @@
 #include "algorithm"
 
 const int MAX_TRIANGLE = 5;
-const float MIN_VOLUME = 1e-9;
+const float MIN_VOLUME = 1e-3;
 const float eps = 1e-3;
 
 namespace sparks {
