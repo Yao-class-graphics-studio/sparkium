@@ -246,16 +246,19 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           if(cosTheta == 0.0f)
             std::cerr << glm::length(ssDirectDir) << std::endl;
           if(cosTheta < 1.0f && cosTheta > 0.0f) {
-            incident += ss * ssDirect * cosTheta * INV_PI / (surfacePdf * glm::clamp(rawPdf, pdfClamp, 1e10f)); // we assume the brdf at the point is lambertian
+            incident += ss * ssDirect * cosTheta * INV_PI / (surfacePdf * rawPdf); // we assume the brdf at the point is lambertian
           }
           // incident illumination on the point ray leaving
           incident += ss * SampleRay(ssSample + 3e-5f * ssDir, ssDir, x, y, sample, bounces + 1, nullptr) *
-                      glm::dot(ssDir, ssNormal) * INV_PI / (glm::clamp(fullPdf, pdfClamp, 1e10f));
+                      glm::dot(ssDir, ssNormal) * INV_PI / fullPdf;
           incident /= actualContinueProb;
           // reflection on surface of bssrdf material is not implemented yet
           // it should be identical to other material (in fact lambertian material, as assumed)
           // but unknown bug exists so I cannot reuse the existing code
           // TODO
+          incident = glm::clamp(incident, 0.0f, 1.0f); 
+          // it shouldn't appear since we don't have clamp in procedure. but removing it produces BLOODY scene in translucent example.
+          // BSSRDF is really confusing for debugging and parameter setting. I will try to fix it (or at least understand it) later. 
         }
       } else {
         // incident illumination
