@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+	<camera>
+		<transform type="lookat">
+			<eye value="2.0 1.0 3.0"/>
+			<center value="0.0 0.0 0.0"/>
+			<up value="0.0 1.0 0.0"/>
+		</transform>
+	</camera>
+
+	<envmap type="file" value="../../textures/envmap_clouds_4k.hdr"/>
+
+	<model type="obj">
+		<filename value="../../meshes/plane.obj"/>
+
+		<material type="lambertian">
+			<albedo value="0.8 0.8 0.8"/>
+		</material>
+	</model>
+	
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.001.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.002.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.003.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.004.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.005.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.006.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.007.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.008.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.009.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.010.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/face.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.011.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.012.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.013.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.014.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.015.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.016.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.017.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.018.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.019.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.020.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/hair.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.021.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.022.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.023.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.024.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.025.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.026.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.027.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.028.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.029.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+	<model type="obj">
+		<filename value="../../meshes/furina/sit_test.030.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo_texture value="../../textures/furina/body_1.png"/>
+		</material>
+	</model>
+</scene>

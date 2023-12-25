@@ -175,7 +175,10 @@ std::vector<uint32_t> Mesh::GetIndices() const {
 
 bool Mesh::LoadObjFile(const std::string &obj_file_path, Mesh &mesh) {
   tinyobj::ObjReaderConfig reader_config;
-  reader_config.mtl_search_path = "./";  // Path to material files
+  std::string mtl_file_path = obj_file_path;
+  while (mtl_file_path.size()>0 && mtl_file_path.back() != '\\')
+    mtl_file_path.pop_back();
+  reader_config.mtl_search_path = mtl_file_path;  // Path to material files
 
   tinyobj::ObjReader reader;
 

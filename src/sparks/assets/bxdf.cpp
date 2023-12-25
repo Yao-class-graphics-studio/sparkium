@@ -76,7 +76,7 @@ glm::vec3 MicrofacetTransmission::f(const glm::vec3 &wo, const glm::vec3 &wi) co
     float eta = cosThetaO > 0 ? (etaB_ / etaA_) : (etaA_ / etaB_);
     glm::vec3 wh = wo + wi * eta;
     if (glm::length(wh) > 1e-6f)
-        glm::normalize(wh);
+        wh = glm::normalize(wh);
     else
         wh = glm::vec3{0.0f, 0.0f, 1.0f};
     if (wh.z < 0)
@@ -122,7 +122,7 @@ float MicrofacetTransmission::Pdf(const glm::vec3 &wo,
     float eta = CosTheta(wo) > 0 ? (etaB_ / etaA_) : (etaA_ / etaB_);
     glm::vec3 wh = wo + wi * eta;
     if (glm::length(wh) > 1e-6f)
-        glm::normalize(wh);
+        wh = glm::normalize(wh);
     else
         wh = glm::vec3{0.0f, 0.0f, 1.0f};
     assert(!std::isnan(-wh[0]) && !std::isnan(wh[1]) && !std::isnan(wh[2]));

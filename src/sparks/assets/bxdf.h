@@ -484,8 +484,8 @@ class SpecularReflection : public BxDF {
   }
   glm::vec3 Sample_f(const glm::vec3 &wo, glm::vec3 &wi, const glm::vec2 &args, float& pdf) const override {
     wi = glm::vec3{-wo.x, -wo.y, wo.z};
-    pdf = 1;
-    return fresnel_->Evaluate(CosTheta(wi)) * R_ / AbsCosTheta(wi);
+    pdf = 10000000.0f;
+    return pdf * fresnel_->Evaluate(CosTheta(wi)) * R_ / AbsCosTheta(wi);
   }
   float Pdf(const glm::vec3 &wo, const glm::vec3 &wi) const override {
     return 0;

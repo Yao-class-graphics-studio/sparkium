@@ -107,6 +107,8 @@ glm::vec3 GridDensityMedium::Tr(glm::vec3 origin, glm::vec3 direction, float tMa
     glm::vec3 localDirection = glm::vec3(scale * glm::vec4{direction, 1.0f});
     // glm::vec3 tmp = glm::vec3(world2Medium * glm::vec4(0, 0, 0, 1.0f));
     // std::cerr << localOrigin[0] << std::endl;
+    // if(origin[1] >= 248.7f && origin[1] <= 248.8f)
+    //     std::cerr << localOrigin[0] << std::endl;
     float gridMin, gridMax;
     if(!IntersectWithGrid(localOrigin, localDirection, gridMin, gridMax))
         return glm::vec3{1.0f};
