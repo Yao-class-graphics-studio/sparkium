@@ -306,7 +306,6 @@ class TrowbridgeReitzDistribution : public MicrofacetDistribution {
         alphay_(std::max(1e-3f, alphay)) {
   }
   float D(const glm::vec3 &wh) const override {
-    assert(!std::isnan(wh[0]) && !std::isnan(wh[1]) && !std::isnan(wh[2]));
     float tan2Theta = Tan2Theta(wh);
 
     if (std::isinf(tan2Theta))

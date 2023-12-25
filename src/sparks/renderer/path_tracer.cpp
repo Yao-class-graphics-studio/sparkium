@@ -116,7 +116,7 @@ float PathTracer::getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area) {
   HitRecord tmp;
   float t = scene_->TraceRay(pos, sample, 1e-3f, 1e4f, &tmp);
   if(t > 0.0f && scene_->GetEntity(tmp.hit_entity_id).GetMaterial().material_type == MATERIAL_TYPE_EMISSION)
-    return 1 / area * t * t / glm::dot(tmp.geometry_normal, -sample);
+    return 1 / area * t * t / std::fabs(glm::dot(tmp.normal, sample));
   else  
     return 0.0f;
 }
@@ -168,6 +168,7 @@ glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &d
 static float PowerHeuristic(float pdf1, float pdf2) {
   if (pdf1 == 0.0f)
     return 0.0f;
+  return pdf1 / (pdf1 + pdf2);
   return pdf1 * pdf1 / (pdf1 * pdf1 + pdf2 * pdf2);
 }
 
@@ -209,7 +210,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     return direct + volWeight * SampleRay(volSample, incidentSample, x, y, sample, bounces + 1, currentMedium) + currentMedium->getEmission();
   } else { // otherwise, do normal sampling
     auto FirstBounceClamp = [bounces](const glm::vec3 &L) -> glm::vec3 {
-      return bounces == 0 ? glm::clamp(L, 0.0f, 1.0f) : L;
+      return bounces == 0 ? glm::clamp(L, 0.0f, 3.0f) : L;
     };
     if(intersection <= 0.0f)
       return FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
@@ -275,11 +276,13 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         }
         else
           incident = glm::vec3{0.0f};
+        if (sampledType & BSDF_SPECULAR) {
+          return FirstBounceClamp(incident);
+        }
         // emission
         emission = material.material_type == MATERIAL_TYPE_EMISSION
                           ? material.emission * material.emission_strength
                           : glm::vec3{0.0f};
-
 
 
         // direct illumination (from environment map)
@@ -310,22 +313,23 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         float incidentPdfX = getPdfByLight(pos, incidentSample, lightArea);
         assert(!std::isinf(incidentPdf));
         float incidentRatio = incidentPdf == 0 ? 0 : PowerHeuristic(incidentPdf, incidentPdfX);
-        if (std::isnan(incidentRatio)) {
-          std::cerr << incidentPdf << " " << incidentPdfX << std::endl;
-        }
+        //if (std::isnan(incidentRatio)) {
+        //  std::cerr << incidentPdf << " " << incidentPdfX << std::endl;
+        //}
         assert(!std::isnan(incidentRatio));
         incident *= incidentRatio;
       }
     }
     if (sampledType & BSDF_SPECULAR) {
+      //printf("incident %f %f %f\n", incident[0], incident[1], incident[2]);
       return FirstBounceClamp(incident);
     }
-
     glm::vec3 L = (emission + direct + env + incident) * volWeight;
+      //printf("%f %f %f\n", incident[0], incident[1], incident[2]);
     assert(!std::isnan(L[0]) && !std::isnan(L[1]) && !std::isnan(L[2]));
-    if (bounces == 0)
-      L = glm::clamp(L, 0.0f, 1.0f);
-    return L;
+    //if (bounces == 0)
+    //  L = glm::clamp(L, 0.0f, 1.0f);
+    return FirstBounceClamp(L);
   }
 
 }
