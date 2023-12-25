@@ -138,8 +138,11 @@ glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &d
         return glm::vec3{0.0f};
       }
       Material isectMaterial = scene_->GetEntity(tmpHit.hit_entity_id).GetMaterial();
-      if(tmpMedium != nullptr)
+      if(tmpMedium != nullptr) {
           throughput *= tmpMedium->Tr(currentPos, directDir, check, rd, uniform); // direct light get attenuated while passing through scattering medium
+          // if(pos[1] == 0.0f && glm::floor(pos[0]) == 200 && glm::floor(pos[2]) == 200)
+          //   std::cerr << throughput[0] << std::endl;
+      }
       if(glm::length(currentPos + check * directDir - directSample) < 0.01f) {
         pdf = 1 / lightArea * glm::dot(directSample - pos, directSample - pos) / std::fabs(glm::dot(directNorm, -directDir));
         res = isectMaterial.emission * isectMaterial.emission_strength / pdf * throughput;
@@ -175,7 +178,9 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int y,
                                 int sample,
                                 int bounces,
-                                Medium *currentMedium) {           
+                                Medium *currentMedium, 
+                                float currentRatio) {           
+  const float pdfClamp = 0.05f;
   glm::vec3 emission{0.0f}, direct{0.0f}, env{0.0f}, incident{0.0f};
   HitRecord hit;
   glm::vec3 volSample, volWeight = glm::vec3{1.0f};
@@ -211,7 +216,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     if(intersection <= 0.0f)
       return FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
     Material material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
-    std::unique_ptr<BSDF> bsdf(material.ComputeBSDF(hit, scene_));
+    std::unique_ptr<BSDF> bsdf(material.ComputeBSDF(hit, scene_)); 
     std::unique_ptr<BSSRDF> bssrdf(material.ComputeBSSRDF(hit, direction, scene_));
     //sample incident
     glm::vec3 incidentSample;
@@ -251,17 +256,25 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           // it should be identical to other material (in fact lambertian material, as assumed)
           // but unknown bug exists so I cannot reuse the existing code
           // TODO
+          incident = glm::clamp(incident, 0.0f, 1.0f); 
+          // it shouldn't appear since we don't have clamp in procedure. but removing it produces BLOODY scene in translucent example.
+          // BSSRDF is really confusing for debugging and parameter setting. I will try to fix it (or at least understand it) later. 
         }
       } else {
+        // incident illumination
         brdf = bsdf->Sample_f(-direction, incidentSample,
                               glm::vec2{uniform(rd), uniform(rd)}, incidentPdf,
                               BxDFType(BSDF_ALL), sampledType);
         assert(!std::isinf(incidentPdf));
         if (incidentPdf > 0.0f) {
+          float incidentPdfX = getPdfByLight(hit.position, incidentSample, lightArea);
+          assert(!std::isinf(incidentPdf)); 
+          float incidentRatio = incidentPdf == 0 ? 0 : PowerHeuristic(incidentPdf, incidentPdfX);
           bool penetration = glm::dot(hit.geometry_normal, incidentSample) < 0.0f;
           Medium *newMedium = penetration ? (hit.front_face ? material.medium : nullptr) : currentMedium; 
+          incidentPdf = glm::clamp(incidentPdf, pdfClamp, 1e10f);
           incident = SampleRay(hit.position + 3e-5f * incidentSample,
-                              incidentSample, x, y, sample, bounces + 1, newMedium) *
+                              incidentSample, x, y, hit.position[1] == 330.0f ? -1 : sample, bounces + 1, newMedium, incidentRatio) *
                       brdf *
                       std::fabs(glm::dot(hit.geometry_normal, incidentSample)) /
                       (actualContinueProb * incidentPdf);
@@ -270,8 +283,9 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           incident = glm::vec3{0.0f};
         // emission
         emission = material.material_type == MATERIAL_TYPE_EMISSION
-                          ? material.emission * material.emission_strength
+                          ? material.emission * material.emission_strength * currentRatio
                           : glm::vec3{0.0f};
+        // std::cerr << currentRatio << std::endl;
 
         // direct illumination
         glm::vec3 pos = hit.position + 3e-5f * incidentSample;
@@ -300,13 +314,6 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         } else {
           directPdf = 0;
         }
-        // incident illumination
-        
-        float incidentPdfX = getPdfByLight(pos, incidentSample, lightArea);
-        assert(!std::isinf(incidentPdf));
-
-        float incidentRatio = incidentPdf == 0 ? 0 : PowerHeuristic(incidentPdf, incidentPdfX);
-        incident *= incidentRatio;
       }
     }
     if (sampledType & BSDF_SPECULAR) {
@@ -315,8 +322,10 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
 
     glm::vec3 L = (emission + direct + env + incident) * volWeight;
     assert(!std::isnan(L[0]) && !std::isnan(L[1]) && !std::isnan(L[2]));
-    if (bounces == 0)
-      L = glm::clamp(L, 0.0f, 1.0f);
+    // if (bounces == 0)
+    //   L = glm::clamp(L, 0.0f, 1.0f);
+    // if(bounces == 2 && sample == -1 && material.material_type == MATERIAL_TYPE_EMISSION)
+    //   std::cerr << L[1] << std::endl;
     return L;
   }
 
