@@ -1,0 +1,1733 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+		<transform type="lookat">
+			<eye value="-6.959 0.865 6.549"/>
+			<center value="0 0.8 0"/>
+			<up value="0.04 1.0 0.04"/>
+		</transform>
+        <fov value="32"/>
+        <pitch value="-2"/>
+	</camera>
+
+	
+    <envmap type="file" value="../../textures/envmap_clouds_4k.hdr"/>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.001.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.001.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.002.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.002.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.003.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.003.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.004.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.004.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="di-zuo-.001.obj">
+		<filename value="../../meshes/background/di-zuo-.001.obj"/>
+		<material type="lambertian">
+			<albedo value="0.000000 0.000000 0.000000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="di-zuo-.obj">
+		<filename value="../../meshes/background/di-zuo-.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-.001.obj">
+		<filename value="../../meshes/background/duan-qiao-.001.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-.obj">
+		<filename value="../../meshes/background/duan-qiao-.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-_cell.003.obj">
+		<filename value="../../meshes/background/duan-qiao-_cell.003.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-_cell.006.obj">
+		<filename value="../../meshes/background/duan-qiao-_cell.006.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-_cell.007.obj">
+		<filename value="../../meshes/background/duan-qiao-_cell.007.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-_cell.009.obj">
+		<filename value="../../meshes/background/duan-qiao-_cell.009.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="duan-qiao-_cell.012.obj">
+		<filename value="../../meshes/background/duan-qiao-_cell.012.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="hai-.obj">
+		<filename value="../../meshes/background/hai-.obj"/>
+		<material type="lambertian">
+			<albedo value="0.639983 0.703917 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="hai-2.obj">
+		<filename value="../../meshes/background/hai-2.obj"/>
+		<material type="lambertian">
+			<albedo value="0.010134 0.020678 0.042351"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="hai-22.obj">
+		<filename value="../../meshes/background/hai-22.obj"/>
+		<material type="lambertian">
+			<albedo value="0.010134 0.020678 0.042351"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.001.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.001.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.002.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.002.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.003.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.003.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.004.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.004.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.005.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.005.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.006.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.006.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.007.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.007.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.008.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.008.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.009.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.009.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.010.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.010.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.011.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.011.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.012.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.012.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.013.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.013.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.014.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.014.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.015.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.015.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.016.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.016.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.017.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.017.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.018.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.018.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.019.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.019.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.020.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.020.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.021.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.021.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.022.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.022.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.023.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.023.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.024.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.024.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.025.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.025.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.026.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.026.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.027.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.027.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.028.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.028.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.029.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.029.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.030.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.030.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.031.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.031.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.032.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.032.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.033.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.033.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.034.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.034.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.035.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.035.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.036.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.036.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.037.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.037.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.038.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.038.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.039.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.039.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.040.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.040.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.041.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.041.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.042.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.042.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.043.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.043.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.044.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.044.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.045.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.045.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.046.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.046.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.047.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.047.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.048.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.048.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.049.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.049.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.050.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.050.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.051.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.051.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.052.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.052.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.053.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.053.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.054.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.054.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.055.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.055.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.056.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.056.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.057.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.057.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.058.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.058.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.059.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.059.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.060.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.060.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.061.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.061.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.062.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.062.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.063.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.063.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.064.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.064.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.065.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.065.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.066.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.066.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.067.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.067.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.068.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.068.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.069.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.069.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.070.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.070.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.071.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.071.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.072.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.072.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.073.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.073.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.074.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.074.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.075.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.075.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.076.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.076.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.077.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.077.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.078.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.078.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.079.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.079.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.080.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.080.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.081.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.081.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.082.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.082.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.083.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.083.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.084.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.084.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.085.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.085.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.086.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.086.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.087.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.087.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.088.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.088.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.089.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.089.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.090.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.090.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.091.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.091.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.092.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.092.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.093.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.093.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.094.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.094.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.095.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.095.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.096.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.096.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.097.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.097.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.098.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.098.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.099.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.099.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.100.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.100.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.101.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.101.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.102.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.102.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.103.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.103.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.104.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.104.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.105.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.105.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.106.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.106.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.107.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.107.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.108.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.108.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.109.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.109.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.110.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.110.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.111.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.111.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.112.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.112.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.113.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.113.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.114.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.114.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.115.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.115.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.116.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.116.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.117.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.117.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.118.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.118.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.119.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.119.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.120.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.120.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.121.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.121.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.122.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.122.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.123.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.123.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.124.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.124.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.125.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.125.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.126.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.126.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.127.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.127.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.128.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.128.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.129.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.129.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.130.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.130.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.131.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.131.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.132.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.132.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.133.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.133.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.134.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.134.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.135.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.135.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.136.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.136.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.137.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.137.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.138.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.138.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.139.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.139.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.140.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.140.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.141.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.141.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.142.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.142.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.143.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.143.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.144.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.144.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.145.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.145.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.146.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.146.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.147.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.147.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.148.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.148.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.149.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.149.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.150.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.150.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.151.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.151.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.152.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.152.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.153.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.153.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.154.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.154.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.155.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.155.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.156.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.156.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.157.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.157.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.158.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.158.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.159.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.159.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.160.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.160.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.161.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.161.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.162.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.162.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.163.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.163.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.164.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.164.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.165.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.165.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.166.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.166.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.167.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.167.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.168.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.168.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.169.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.169.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.170.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.170.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.171.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.171.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.172.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.172.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.173.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.173.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.174.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.174.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.001_cell.obj">
+		<filename value="../../meshes/background/li-fang-ti-.001_cell.obj"/>
+		<material type="principled">
+			<albedo value="0.251767 0.197683 0.026270"/>
+			<metallic value="1"/>
+			<roughness value="0"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.004.obj">
+		<filename value="../../meshes/background/li-fang-ti-.004.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.006.obj">
+		<filename value="../../meshes/background/li-fang-ti-.006.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.007.obj">
+		<filename value="../../meshes/background/li-fang-ti-.007.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.009.obj">
+		<filename value="../../meshes/background/li-fang-ti-.009.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.010.obj">
+		<filename value="../../meshes/background/li-fang-ti-.010.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.011.obj">
+		<filename value="../../meshes/background/li-fang-ti-.011.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.012.obj">
+		<filename value="../../meshes/background/li-fang-ti-.012.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.013.obj">
+		<filename value="../../meshes/background/li-fang-ti-.013.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.014.obj">
+		<filename value="../../meshes/background/li-fang-ti-.014.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.obj">
+		<filename value="../../meshes/background/li-fang-ti-.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="ping-mian-.obj">
+		<filename value="../../meshes/background/ping-mian-.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="yuan-shan-.obj">
+		<filename value="../../meshes/background/yuan-shan-.obj"/>
+		<material type="lambertian">
+			<albedo value="0.039046 0.039046 0.039046"/>
+		</material>
+	</model>
+
+
+</scene>
