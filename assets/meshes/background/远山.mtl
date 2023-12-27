@@ -1,0 +1,18 @@
+# Blender 4.0.2 MTL File: 'fufu -模之屋 - modified.blend'
+# www.blender.org
+
+newmtl Material_#14
+Kd 0.039046 0.039046 0.039046
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+Pr 0.552786
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Bump -bm 1.000000 C:/Users/Map #32
