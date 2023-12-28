@@ -19,6 +19,7 @@ class Scene{
   [[nodiscard]] const Texture &GetTexture(int texture_id) const;
   [[nodiscard]] int GetTextureCount() const;
   [[nodiscard]] std::vector<const char *> GetTextureNameList() const;
+  [[nodiscard]] int GetTextureId(const std::string &name) const;
 
   template <class... Args>
   int AddEntity(Args... args) {

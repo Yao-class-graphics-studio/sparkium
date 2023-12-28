@@ -67,11 +67,37 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
   child_element = material_element->FirstChildElement("normal_texture");
   if (child_element) {
     std::string path = child_element->FindAttribute("value")->Value();
-    Texture normal_texture(1, 1);
-    if (Texture::Load(path, normal_texture)) {
+    std::string filename = PathToFilename(path);
+    int tmp_id = scene->GetTextureId(filename);
+    if (tmp_id != -1)
+    {
       use_normal_texture = true;
-      normal_texture_id =
-          scene->AddTexture(normal_texture, PathToFilename(path));
+      normal_texture_id = tmp_id;
+    } else {
+      Texture normal_texture(1, 1);
+      if (Texture::Load(path, normal_texture)) {
+        use_normal_texture = true;
+        normal_texture_id =
+            scene->AddTexture(normal_texture, PathToFilename(path));
+      }
+    }
+  }
+
+  child_element = material_element->FirstChildElement("alpha_texture");
+  if (child_element) {
+    std::string path = child_element->FindAttribute("value")->Value();
+    std::string filename = PathToFilename(path);
+    int tmp_id = scene->GetTextureId(filename);
+    if (tmp_id != -1) {
+      use_alpha_texture = true;
+      alpha_texture_id = tmp_id;
+    } else {
+      Texture alpha_texture(1, 1);
+      if (Texture::Load(path, alpha_texture)) {
+        use_alpha_texture = true;
+        alpha_texture_id =
+            scene->AddTexture(alpha_texture, PathToFilename(path));
+      }
     }
   }
 
@@ -281,6 +307,12 @@ glm::vec3 Material::GetAlbedoColor(const HitRecord &hit,
   return albedo_color * glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
 }
 
+float Material::GetAlpha(const HitRecord &hit, const Scene *scene) const {
+  if (!use_alpha_texture)
+    return alpha;
+  return scene->GetTexture(alpha_texture_id).Sample(hit.tex_coord)[3];
+}
+
 HitRecord Material::GetShaderHit(const HitRecord &hit, const Scene *scene) const{
   HitRecord textureHit = hit;
   if (!textureHit.front_face) {
@@ -320,6 +352,7 @@ glm::vec3 Material::GetShaderNormal(const HitRecord &hit,
 BSDF* Material::ComputeBSDF(const HitRecord &hit,
                          const Scene* scene) const {
   glm::vec3 color = GetAlbedoColor(hit, scene);
+  float real_alpha = GetAlpha(hit, scene);
   BSDF* bsdf = new BSDF(GetShaderHit(hit,scene));
   switch (material_type) { 
     case MATERIAL_TYPE_LAMBERTIAN: {
@@ -460,12 +493,12 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
       break;
     }
   }
-  if (alpha != 1.0f) {
+  if (real_alpha != 1.0f) {
     for (auto &[bxdf, weight] : bsdf->bxdfs_) {
-      bxdf = new ScaledBxDF(bxdf, glm::vec3{alpha});
-      weight *= alpha;
+      bxdf = new ScaledBxDF(bxdf, glm::vec3{real_alpha});
+      weight *= real_alpha;
     }
-    bsdf->Add(new SpecularTransmission(glm::vec3{1.0f-alpha}, 1.0f, 1.0f), 1 - alpha);
+    bsdf->Add(new SpecularTransmission(glm::vec3{1.0f-real_alpha}, 1.0f, 1.0f), 1 - real_alpha);
   }
   return bsdf;
 }

@@ -31,6 +31,8 @@ public:
   glm::vec3 emission{0.0f};
   float emission_strength{1.0f};
   float cone{0.0f};
+  bool use_alpha_texture{false};
+  int alpha_texture_id{0};
   float alpha{1.0f};
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
   float metallic{0.0f}, eta{1.45f};
@@ -59,6 +61,7 @@ public:
   explicit Material(const glm::vec3 &albedo);
   Material(Scene *scene, const tinyxml2::XMLElement *material_element);
   glm::vec3 GetAlbedoColor(const HitRecord &hit, const Scene *scene) const;
+  float GetAlpha(const HitRecord &hit, const Scene *scene) const;
   glm::vec3 GetShaderNormal(const HitRecord &hit, const Scene *scene) const;
   HitRecord GetShaderHit(const HitRecord &hit, const Scene *scene) const;
   BSDF* ComputeBSDF(const HitRecord &hit, const Scene* scene) const;

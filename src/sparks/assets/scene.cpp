@@ -27,6 +27,13 @@ int Scene::GetTextureCount() const {
   return int(textures_.size());
 }
 
+int Scene::GetTextureId(const std::string &name) const {
+  for (int i = 0; i < texture_names_.size(); i++)
+    if (texture_names_[i] == name)
+      return i;
+  return -1;
+}
+
 void Scene::Clear() {
   textures_.clear();
   entities_.clear();
