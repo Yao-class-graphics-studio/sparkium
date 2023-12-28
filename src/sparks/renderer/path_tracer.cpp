@@ -242,11 +242,22 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     direct = directIllumination(volSample, directPdf, directDir, lightArea, -1, currentMedium); 
     float p = currentMedium->p(-direction, directDir);
     direct = glm::vec3(p) * direct * PowerHeuristic(directPdf, p) * volWeight;
+    glm::vec3 envThroughput;
+    int flag = shadowRay(volSample, direction, glm::vec3{0.0f}, envThroughput, currentMedium);
+    if (flag == 1) { 
+      env += 4 * PI * currentMedium->p(-direction, direction) * scene_->GetEnvmapMinorColor() * envThroughput; // How should I set this direction...?
+    }
+    glm::vec3 envDirection = scene_->GetEnvmapLightDirection();
+    flag = shadowRay(volSample, envDirection, glm::vec3{0.0f}, envThroughput, currentMedium);
+    if (flag == 1) {
+      env += currentMedium->p(-direction, envDirection) * scene_->GetEnvmapMajorColor() * envThroughput;
+    }
+    env *= volWeight;
     if(russianRoulette >= actualContinueProb || bounces >= render_settings_->num_bounces)
-      return direct;
+      return direct + env;
     glm::vec3 incidentSample;
     volWeight *= currentMedium->Sample_p(-direction, incidentSample, rd, uniform) / actualContinueProb;
-    return direct + volWeight * SampleRay(volSample, incidentSample, x, y, sample, bounces + 1, currentMedium) + currentMedium->getEmission();
+    return direct + env + volWeight * SampleRay(volSample, incidentSample, x, y, sample, bounces + 1, currentMedium) + currentMedium->getEmission();
   } else { // otherwise, do normal sampling
     auto FirstBounceClamp = [bounces](const glm::vec3 &L) -> glm::vec3 {
       return bounces == 0 ? glm::clamp(L, 0.0f, 3.0f) : L;
@@ -336,6 +347,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         // direct illumination (from environment map)
       
           // minor color used for diffuse reflection only
+        
         glm::vec3 envThroughput;
         int flag = shadowRay(pos, norm, glm::vec3{0.0f}, envThroughput, currentMedium);
         if (flag == 1) {
@@ -344,6 +356,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                  scene_->GetEnvmapMinorColor() * envThroughput;
           // std::cerr << envThroughput[0] << std::endl;
         }
+
         glm::vec3 envDirection = scene_->GetEnvmapLightDirection();
         flag = shadowRay(pos, envDirection, glm::vec3{0.0f}, envThroughput, currentMedium);
         if (flag == 1) {

@@ -35,14 +35,14 @@
 
 
 	<model name="small_fog">
-        <vertex position="130.0 70 -130"/>
-        <vertex position="130.0 70 130"/>
-        <vertex position="-130 70 130"/>
-        <vertex position="-130 70 -130"/>
-        <vertex position="130 -70 -130 "/>
-        <vertex position="130 -70 130"/>
-        <vertex position="-130 -70 130"/>
-        <vertex position="-130 -70 -130 "/>
+        <vertex position="3000 150 -3000"/>
+        <vertex position="3000 150 3000"/>
+        <vertex position="-3000 150 3000"/>
+        <vertex position="-3000 150 -3000"/>
+        <vertex position="3000 -150 -3000 "/>
+        <vertex position="3000 -150 3000"/>
+        <vertex position="-3000 -150 3000"/>
+        <vertex position="-3000 -150 -3000"/>
 
         <index value="0"/>
         <index value="1"/>
@@ -83,8 +83,8 @@
 
         <material type="medium">
             <albedo value="1 1 1"/>
-            <sigma_a value="0.003 0.003 0.003"/>
-            <sigma_s value="0.009 0.009 0.009"/>
+            <sigma_a value="0.0002 0.0002 0.0002"/>
+            <sigma_s value="0.0008 0.0008 0.0008"/>
             <false_surface value="TRUE"/>
             <volumetric_emission value="0 0 0"/>
             <g value="0"/>
