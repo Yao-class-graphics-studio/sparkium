@@ -1,27 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<scene>
-    <camera>
-		<transform type="lookat">
-			<eye value="-6.959 0.865 6.549"/>
-			<center value="0 0.8 0"/>
-			<up value="0.04 1.0 0.04"/>
-		</transform>
-        <fov value="32"/>
-        <pitch value="-2"/>
-	</camera>
-
-
-	<envmap type="file" value="../../textures/envmap_clouds_4k.hdr"/>
-
 	<model type="obj">
-		<filename value="../../meshes/plane.obj"/>
-
-		<material type="lambertian">
-			<albedo value="0.8 0.8 0.8"/>
-		</material>
-	</model>
-	
-			<model type="obj">
 		<filename value="../../meshes/furina/final.001.obj"/>
 		<material type="lambertian">
 			<albedo value="1.000000 1.000000 1.000000"/>
@@ -231,4 +208,3 @@
 			<albedo_texture value="../../textures/furina/spa_h.png"/>
 		</material>
 	</model>
-</scene>

@@ -412,7 +412,7 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
                    color, metallic);
       Fresnel *fresnel =
           new DisneyFresnel(Cspec0, metallic, eta);
-      bsdf->Add(new MicrofacetReflection(glm::vec3{1.0f}, distrib, fresnel),1.0f);
+      bsdf->Add(new MicrofacetReflection(color, distrib, fresnel),1.0f);
 
       // Clearcoat
       if (clearcoat > 0) {

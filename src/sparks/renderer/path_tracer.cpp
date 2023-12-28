@@ -215,7 +215,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     return direct + volWeight * SampleRay(volSample, incidentSample, x, y, sample, bounces + 1, currentMedium) + currentMedium->getEmission();
   } else { // otherwise, do normal sampling
     auto FirstBounceClamp = [bounces](const glm::vec3 &L) -> glm::vec3 {
-      return bounces == 0 ? glm::clamp(L, 0.0f, 3.0f) : L;
+      return bounces == 0 ? glm::clamp(L, 0.0f, 1.0f) : L;
     };
     if(intersection <= 0.0f)
       return FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
