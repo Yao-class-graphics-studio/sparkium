@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <memory>
+#include <stack>
 
 #include <cassert>
 
@@ -121,6 +122,36 @@ float PathTracer::getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area) {
     return 0.0f;
 }
 
+int PathTracer::shadowRay(glm::vec3 pos, glm::vec3 &dir, glm::vec3 sample, glm::vec3 &throughput, Medium *currentMedium) {
+  HitRecord tmpHit;
+  glm::vec3 currentPos = pos;
+  throughput = glm::vec3{1.0f};
+  Medium *tmpMedium = currentMedium;
+  while(true) {
+    float check = scene_->TraceRay(currentPos, dir, 1e-3f, 1e4f, &tmpHit);
+    if(check < 0) {
+      if(tmpMedium != nullptr) 
+        throughput *= tmpMedium->Tr(currentPos, dir, 1e10f, rd, uniform);
+      return 1;
+    }
+    const Material &material = scene_->GetEntity(tmpHit.hit_entity_id).GetMaterial();
+    if(tmpMedium != nullptr)
+      throughput *= tmpMedium->Tr(currentPos, dir, check, rd, uniform);
+    if(glm::length(currentPos + check * dir - sample) < 0.01f) {
+      throughput *= material.emission * material.emission_strength;
+      if(std::fabs(glm::dot(dir, tmpHit.geometry_normal)) < material.cone)
+        throughput *= 0.0f;
+      return 0;
+    } else if (!material.false_surface) 
+      return 2;
+    currentPos = tmpHit.position + 3e-5f * dir;
+    if(tmpHit.front_face)
+      tmpMedium = material.medium;
+    else
+      tmpMedium = nullptr;
+  }
+}
+
 glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &dir, float &lightArea, int except, Medium *currentMedium) {
   glm::vec3 directSample, directNorm, directDir;
   glm::vec3 res{0.0f};
@@ -128,37 +159,14 @@ glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &d
   SampleFromLight(directSample, directNorm, lightArea, except);
   if(lightArea != 0) {
     directDir = glm::normalize(directSample - pos);
-    HitRecord tmpHit;
-    glm::vec3 currentPos = pos, throughput = glm::vec3{1.0f};
-    Medium *tmpMedium = currentMedium; 
-    while(true) { // repeatly accumulate all attenuation into the throughput
-      float check = scene_->TraceRay(currentPos, directDir, 1e-3f, 1e4f, &tmpHit);
-      if(check < 0) {
-        pdf = 0.0f;
-        return glm::vec3{0.0f};
-      }
-      Material isectMaterial = scene_->GetEntity(tmpHit.hit_entity_id).GetMaterial();
-      if(tmpMedium != nullptr) {
-          throughput *= tmpMedium->Tr(currentPos, directDir, check, rd, uniform); // direct light get attenuated while passing through scattering medium
-          // if(pos[1] == 0.0f && glm::floor(pos[0]) == 200 && glm::floor(pos[2]) == 200)
-          //   std::cerr << throughput[0] << std::endl;
-      }
-      if(glm::length(currentPos + check * directDir - directSample) < 0.01f) {
-        pdf = 1 / lightArea * glm::dot(directSample - pos, directSample - pos) / std::fabs(glm::dot(directNorm, -directDir));
-        res = isectMaterial.emission * isectMaterial.emission_strength / pdf * throughput;
-        break;
-      } else if(!isectMaterial.false_surface) { 
-        // false surface denotes those boundaries of participating medium
-        // they determine region of medium, do not effect light ray directly
-        dir = directDir;
-        pdf = 0.0f;
-        return glm::vec3{0.0f};
-      }
-      currentPos = tmpHit.position + 3e-5f * directDir;
-      if(tmpHit.front_face)
-        tmpMedium = isectMaterial.medium;
-      else
-        tmpMedium = nullptr;
+    glm::vec3 throughput;
+    int flag = shadowRay(pos, directDir, directSample, throughput, currentMedium);
+    if(flag != 0) {
+      pdf = 0.0f;
+    } else {
+      float cosCone = std::fabs(glm::dot(directNorm, -directDir));
+      pdf = 1 / lightArea * glm::dot(directSample - pos, directSample - pos) / cosCone;
+      res = throughput / pdf;
     }
   } else {
     pdf = 0.0f;
@@ -166,6 +174,30 @@ glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &d
   }
   dir = directDir;
   return res;
+}
+
+Medium* PathTracer::initialMedium(glm::vec3 pos) {
+  glm::vec3 dir(0.0f, 1.0f, 0.0f);
+  glm::vec3 currentPos = pos;
+  std::stack<int> entities;
+  while(true) {
+    HitRecord hit;
+    int t = scene_->TraceRay(currentPos, dir, 1e-3f, 1e4f, &hit);
+    if(t < 0)
+      return nullptr;
+    if(hit.front_face) {
+      entities.push(hit.hit_entity_id);
+    } else {
+      if(!entities.empty() && entities.top() == hit.hit_entity_id)
+        entities.pop();
+      else {
+        const Material material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
+        if(material.medium != nullptr)
+          return material.medium;
+      }
+    }
+  }
+  return nullptr;
 }
 
 static float PowerHeuristic(float pdf1, float pdf2) {
@@ -184,6 +216,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int bounces,
                                 Medium *currentMedium, 
                                 float currentRatio) {           
+  if(bounces == 0)
+    currentMedium = initialMedium(origin);
   const float pdfClamp = 0.05f;
   glm::vec3 emission{0.0f}, direct{0.0f}, env{0.0f}, incident{0.0f};
   HitRecord hit;
@@ -302,13 +336,22 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         // direct illumination (from environment map)
       
           // minor color used for diffuse reflection only
-        env += bsdf->f(-direction, norm, BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) * scene_->GetEnvmapMinorColor();
+        glm::vec3 envThroughput;
+        int flag = shadowRay(pos, norm, glm::vec3{0.0f}, envThroughput, currentMedium);
+        if (flag == 1) {
+          env += bsdf->f(-direction, norm,
+                         BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)) *
+                 scene_->GetEnvmapMinorColor() * envThroughput;
+          // std::cerr << envThroughput[0] << std::endl;
+        }
         glm::vec3 envDirection = scene_->GetEnvmapLightDirection();
-        if (scene_->TraceRay(pos, envDirection, 1e-3f, 1e4f, nullptr) < 0.0f) {
-        env += bsdf->f(-direction, envDirection,
-                        BxDFType(BSDF_ALL)) *
-                scene_->GetEnvmapMajorColor() *
-                std::fabs(glm::dot(envDirection, norm)) * 2.0f;
+        flag = shadowRay(pos, envDirection, glm::vec3{0.0f}, envThroughput, currentMedium);
+        if (flag == 1) {
+          env += bsdf->f(-direction, envDirection,
+                          BxDFType(BSDF_ALL)) *
+                  scene_->GetEnvmapMajorColor() *
+                  std::fabs(glm::dot(envDirection, norm)) * 
+                  envThroughput;
         }
 
         // direct illumination (from emitting entities)

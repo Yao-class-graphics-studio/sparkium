@@ -88,5 +88,7 @@ class Scene{
   float camera_speed_{3.0f};
   glm::vec3 camera_pitch_yaw_roll_{0.0f, 0.0f, 0.0f};
   Camera camera_{};
+
+  
 };
 }  // namespace sparks

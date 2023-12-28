@@ -30,6 +30,7 @@ public:
   int normal_texture_id{0};
   glm::vec3 emission{0.0f};
   float emission_strength{1.0f};
+  float cone{0.0f};
   float alpha{1.0f};
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
   float metallic{0.0f}, eta{1.45f};

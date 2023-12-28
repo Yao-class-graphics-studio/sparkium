@@ -86,6 +86,11 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
         std::stof(child_element->FindAttribute("value")->Value());
   }
 
+  child_element = material_element->FirstChildElement("cone");
+  if (child_element) {
+    cone = std::stof(child_element->FindAttribute("value")->Value());
+  }
+
   child_element = material_element->FirstChildElement("alpha");
   if (child_element) {
     alpha = std::stof(child_element->FindAttribute("value")->Value());
