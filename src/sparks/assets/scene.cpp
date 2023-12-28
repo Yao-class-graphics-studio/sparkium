@@ -170,6 +170,8 @@ void Scene::UpdateEnvmapConfiguration() {
   for (auto &v : envmap_cdf_) {
     v *= inv_total_weight;
   }
+  std::cerr << envmap_minor_color_[0] << " " << envmap_minor_color_[1] << " " << envmap_minor_color_[2] << std::endl;
+  std::cerr << envmap_major_color_[0] << " " << envmap_major_color_[1] << " " << envmap_major_color_[2] << std::endl;
 }
 glm::vec3 Scene::GetEnvmapLightDirection() const {
   float sin_offset = std::sin(envmap_offset_);
