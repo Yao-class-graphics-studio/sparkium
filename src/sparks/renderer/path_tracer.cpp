@@ -97,15 +97,15 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
   }
 
   // env light
-  /*auto light_direction = scene_->GetEnvmapLightDirection();
+  auto light_direction = scene_->GetEnvmapLightDirection();
   auto t_l = scene_->TraceRay(intersection.position, light_direction, 1e-3f,
                               1e4f, nullptr);
   if (t_l < 0.0f) {
     L_dir +=
-        scene_->GetEnvmapMajorColor() *
+         2.0f * pi * scene_->GetEnvmapMajorColor() *
         std::max(glm::dot(light_direction, intersection.geometry_normal),
                  0.0f) * brdf;
-  }*/
+  }
 
   // indirect light
   float p_rr = 0.6;
@@ -136,18 +136,14 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int x,
                                 int y,
                                 int sample) const {
-  const float num_sample_per_pixel = sample;
-  glm::vec3 current_radiance(0, 0, 0);
+  glm::vec3 radiance(0, 0, 0);
   HitRecord intersection;
   auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &intersection);
   if (t > 0) {
-    for (int k = 0; k < num_sample_per_pixel; k++) {
-      glm::vec3 radiance = sparks::PathTracer::Shade(intersection, -direction, 0);
-      current_radiance += radiance / num_sample_per_pixel;
-    }
+    radiance = sparks::PathTracer::Shade(intersection, -direction, 0);
   } else {
-    current_radiance = glm::vec3{scene_->SampleEnvmap(direction)};
+    radiance = glm::vec3{scene_->SampleEnvmap(direction)};
   }
-  return current_radiance;
+  return radiance;
 }
 }  // namespace sparks
