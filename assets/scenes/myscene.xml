@@ -3,7 +3,7 @@
     <camera>
 		<transform type="lookat">
 			<eye value="-6.959 0.865 6.549"/>
-			<center value="0 0.8 0"/>
+			<center value="-0.4 0.9 -0.4"/>
 			<up value="0.04 1.0 0.04"/>
 		</transform>
         <fov value="32"/>
@@ -11,7 +11,145 @@
 	</camera>
 
 	
-    <envmap type="file" value="../../textures/envmap_clouds_4k.hdr"/>
+	<envmap type="file" value="../../textures/kloppenheim_07_puresky_2k.hdr"/>
+
+
+	<model type="obj" name="light">
+		<filename value="../../meshes/background/light.obj"/>
+
+		<material type="emission">
+            <emission value="1.0 1.0 0.7"/>
+            <emission_strength value="8000.0"/>
+			<cone value="0.985"/>
+        </material>
+	</model>
+
+	<!-- <model type="obj" name="sun">
+		<filename value="../../meshes/background/sun.obj"/>
+
+		<material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="130000.0"/>
+        </material>
+	</model> -->
+
+
+	<model name="small_fog">
+        <vertex position="130.0 70 -130"/>
+        <vertex position="130.0 70 130"/>
+        <vertex position="-130 70 130"/>
+        <vertex position="-130 70 -130"/>
+        <vertex position="130 -70 -130 "/>
+        <vertex position="130 -70 130"/>
+        <vertex position="-130 -70 130"/>
+        <vertex position="-130 -70 -130 "/>
+
+        <index value="0"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="2"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="6"/>
+        <index value="6"/>
+        <index value="3"/>
+        <index value="2"/>
+        <index value="3"/>
+        <index value="6"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="7"/>
+        <index value="5"/>
+        <index value="7"/>
+        <index value="6"/>
+        <index value="5"/>
+        <index value="4"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="4"/>
+        <index value="1"/>
+        <index value="0"/>
+        <index value="1"/>
+        <index value="4"/>
+        <index value="5"/>
+
+        <material type="medium">
+            <albedo value="1 1 1"/>
+            <sigma_a value="0.003 0.003 0.003"/>
+            <sigma_s value="0.009 0.009 0.009"/>
+            <false_surface value="TRUE"/>
+            <volumetric_emission value="0 0 0"/>
+            <g value="0"/>
+            <eta value="1"/>
+        </material>
+    </model> 
+
+
+	<!-- <model name="big_fog">
+        <vertex position="200.0 20 -200"/>
+        <vertex position="200.0 20 200"/>
+        <vertex position="-200 20 200"/>
+        <vertex position="-200 20 -200"/>
+        <vertex position="200 -20 -200 "/>
+        <vertex position="200 -20 200"/>
+        <vertex position="-200 -20 200"/>
+        <vertex position="-200 -20 -200 "/>
+
+        <index value="0"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="2"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="6"/>
+        <index value="6"/>
+        <index value="3"/>
+        <index value="2"/>
+        <index value="3"/>
+        <index value="6"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="7"/>
+        <index value="5"/>
+        <index value="7"/>
+        <index value="6"/>
+        <index value="5"/>
+        <index value="4"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="4"/>
+        <index value="1"/>
+        <index value="0"/>
+        <index value="1"/>
+        <index value="4"/>
+        <index value="5"/>
+
+        <material type="medium">
+            <albedo value="1 1 1"/>
+            <sigma_a value="0.0005 0.0003 0.0002"/>
+            <sigma_s value="0.0005 0.0007 0.0008"/>
+            <false_surface value="TRUE"/>
+            <volumetric_emission value="0 0 0"/>
+            <g value="0"/>
+            <eta value="1"/>
+        </material>
+    </model>  -->
 
 
 	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.001.obj">
@@ -66,7 +204,7 @@
 		<filename value="../../meshes/background/di-zuo-.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -132,6 +270,7 @@
 		<filename value="../../meshes/background/hai-.obj"/>
 		<material type="lambertian">
 			<albedo value="0.639983 0.703917 0.800000"/>
+			<normal_texture value="../../textures/normal_noise_256.jpg"/>
 		</material>
 	</model>
 
@@ -220,7 +359,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.009.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -238,7 +377,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.011.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -264,7 +403,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.014.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -274,7 +413,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.015.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -300,7 +439,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.018.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -358,7 +497,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.025.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -368,7 +507,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.026.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -394,7 +533,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.029.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -516,7 +655,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.044.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -550,7 +689,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.048.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -592,7 +731,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.053.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -610,7 +749,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.055.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -668,7 +807,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.062.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -678,7 +817,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.063.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -704,7 +843,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.066.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -722,7 +861,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.068.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -740,7 +879,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.070.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -766,7 +905,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.073.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -848,7 +987,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.083.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -866,7 +1005,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.085.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -908,7 +1047,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.090.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -934,7 +1073,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.093.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -968,7 +1107,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.097.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -986,7 +1125,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.099.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -996,7 +1135,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.100.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1022,7 +1161,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.103.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1056,7 +1195,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.107.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1074,7 +1213,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.109.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1100,7 +1239,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.112.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1118,7 +1257,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.114.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1136,7 +1275,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.116.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1170,7 +1309,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.120.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1180,7 +1319,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.121.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1310,7 +1449,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.137.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1328,7 +1467,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.139.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1498,7 +1637,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.160.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1508,7 +1647,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.161.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1550,7 +1689,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.166.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1592,7 +1731,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.171.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1618,7 +1757,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.174.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
@@ -1628,7 +1767,7 @@
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.obj"/>
 		<material type="principled">
 			<albedo value="0.251767 0.197683 0.026270"/>
-			<metallic value="1"/>
+			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
 	</model>
