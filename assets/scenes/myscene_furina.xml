@@ -3,7 +3,7 @@
     <camera>
 		<transform type="lookat">
 			<eye value="-6.959 0.865 6.549"/>
-			<center value="-0.4 0.9 -0.4"/>
+			<center value="-0.35 0.9 -0.35"/>
 			<up value="0.04 1.0 0.04"/>
 		</transform>
         <fov value="32"/>
@@ -35,14 +35,14 @@
 
 
 	<model name="small_fog">
-        <vertex position="130.0 70 -130"/>
-        <vertex position="130.0 70 130"/>
-        <vertex position="-130 70 130"/>
-        <vertex position="-130 70 -130"/>
-        <vertex position="130 -70 -130 "/>
-        <vertex position="130 -70 130"/>
-        <vertex position="-130 -70 130"/>
-        <vertex position="-130 -70 -130 "/>
+        <vertex position="3000 150 -3000"/>
+        <vertex position="3000 150 3000"/>
+        <vertex position="-3000 150 3000"/>
+        <vertex position="-3000 150 -3000"/>
+        <vertex position="3000 -150 -3000 "/>
+        <vertex position="3000 -150 3000"/>
+        <vertex position="-3000 -150 3000"/>
+        <vertex position="-3000 -150 -3000"/>
 
         <index value="0"/>
         <index value="1"/>
@@ -83,8 +83,8 @@
 
         <material type="medium">
             <albedo value="1 1 1"/>
-            <sigma_a value="0.003 0.003 0.003"/>
-            <sigma_s value="0.009 0.009 0.009"/>
+            <sigma_a value="0.0002 0.0002 0.0002"/>
+            <sigma_s value="0.0009 0.0009 0.0009"/>
             <false_surface value="TRUE"/>
             <volumetric_emission value="0 0 0"/>
             <g value="0"/>
@@ -195,7 +195,8 @@
 	<model type="obj" name="di-zuo-.001.obj">
 		<filename value="../../meshes/background/di-zuo-.001.obj"/>
 		<material type="lambertian">
-			<albedo value="0.000000 0.000000 0.000000"/>
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<albedo value="0.251767 0.197683 0.026270"/>
 		</material>
 	</model>
 
@@ -267,15 +268,18 @@
 
 
 	<model type="obj" name="hai-.obj">
-		<filename value="../../meshes/background/hai-.obj"/>
+		<filename value="../../meshes/background/hai-volume-.obj"/>
 		<material type="principled">
-			<albedo value="0.024 0.005 0.036"/>
+			<albedo value="0.064 0.130 0.292"/>
 			<normal_texture value="../../textures/normal_noise_256.jpg"/>
 			<eta value="1.33"/>
 			<metallic value="0.8"/>
 			<roughness value="0.1"/>
-			<specTrans value="0.5"/>
+			<specTrans value="1"/>
+			<alpha value="0.925"/>
 		</material>
+		
+
 	</model>
 
 
