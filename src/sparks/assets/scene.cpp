@@ -323,7 +323,22 @@ Scene::Scene(const std::string &filename) : Scene() {
   for (tinyxml2::XMLElement *child_element = rootElement->FirstChildElement();
        child_element; child_element = child_element->NextSiblingElement()) {
     std::string element_type{child_element->Value()};
-    if (element_type == "envmap") {
+    if (element_type == "light") {
+      use_scene_light = true;
+      auto grandchild_element = child_element->FirstChildElement("color");
+      if (grandchild_element) {
+        light = StringToVec3(grandchild_element->FindAttribute("value")->Value());
+      }
+      grandchild_element = child_element->FirstChildElement("strength");
+      if (grandchild_element) {
+        light_strength = std::stof(grandchild_element->FindAttribute("value")->Value());
+      }
+      grandchild_element = child_element->FirstChildElement("direction");
+      if (grandchild_element) {
+        light_direction = StringToVec3(grandchild_element->FindAttribute("value")->Value());
+        light_direction = glm::normalize(light_direction);
+      }
+    } else if (element_type == "envmap") {
       std::string envmap_type = child_element->FindAttribute("type")->Value();
       if (envmap_type == "file") {
         std::string envmap_filename =
@@ -388,6 +403,14 @@ Scene::Scene(const std::string &filename) : Scene() {
 
   SetCameraToWorld(camera_to_world);
   UpdateEnvmapConfiguration();
+}
+
+glm::vec3 Scene::GetSceneLight() const {
+  return light * light_strength;
+}
+
+glm::vec3 Scene::GetSceneLightDirection() const {
+  return light_direction;
 }
 
 }  // namespace sparks

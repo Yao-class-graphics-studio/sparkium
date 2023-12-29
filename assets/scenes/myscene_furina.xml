@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <scene>
+	<light>
+		<color value="1 1 1"/>
+		<strength value="3"/>
+		<direction value="-0.3 1.0 0.3"/>
+	</light>
+
     <camera>
 		<transform type="lookat">
 			<eye value="-6.959 0.865 6.549"/>
@@ -18,7 +24,7 @@
 		<filename value="../../meshes/background/light.obj"/>
 
 		<material type="emission">
-            <emission value="1.0 1.0 0.7"/>
+            <emission value="1.0 1.0 0.8"/>
             <emission_strength value="8000.0"/>
 			<cone value="0.985"/>
         </material>
@@ -35,14 +41,14 @@
 
 
 	<model name="small_fog">
-        <vertex position="3000 150 -3000"/>
-        <vertex position="3000 150 3000"/>
-        <vertex position="-3000 150 3000"/>
-        <vertex position="-3000 150 -3000"/>
-        <vertex position="3000 -150 -3000 "/>
-        <vertex position="3000 -150 3000"/>
-        <vertex position="-3000 -150 3000"/>
-        <vertex position="-3000 -150 -3000"/>
+        <vertex position="100 150 -100"/>
+        <vertex position="100 150 100"/>
+        <vertex position="-100 150 100"/>
+        <vertex position="-100 150 -100"/>
+        <vertex position="100 -150 -100 "/>
+        <vertex position="100 -150 100"/>
+        <vertex position="-100 -150 100"/>
+        <vertex position="-100 -150 -100"/>
 
         <index value="0"/>
         <index value="1"/>
@@ -83,8 +89,8 @@
 
         <material type="medium">
             <albedo value="1 1 1"/>
-            <sigma_a value="0.0002 0.0002 0.0002"/>
-            <sigma_s value="0.0009 0.0009 0.0009"/>
+            <sigma_a value="0.0005 0.0005 0.0005"/>
+            <sigma_s value="0.0040 0.0040 0.0040"/>
             <false_surface value="TRUE"/>
             <volumetric_emission value="0 0 0"/>
             <g value="0"/>
