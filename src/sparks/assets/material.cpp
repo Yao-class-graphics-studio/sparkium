@@ -353,6 +353,7 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
                          const Scene* scene) const {
   glm::vec3 color = GetAlbedoColor(hit, scene);
   float real_alpha = GetAlpha(hit, scene);
+  //float real_alpha = alpha; // It seems that there are still some bugs on alpha channel, so do not use it
   BSDF* bsdf = new BSDF(GetShaderHit(hit,scene));
   switch (material_type) { 
     case MATERIAL_TYPE_LAMBERTIAN: {
