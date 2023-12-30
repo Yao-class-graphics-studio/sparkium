@@ -305,7 +305,7 @@
 	</model>
 
 
-	<model type="obj" name="li-fang-ti-.001_cell.001.obj">
+	<!-- <model type="obj" name="li-fang-ti-.001_cell.001.obj">
 		<filename value="../../meshes/background/li-fang-ti-.001_cell.001.obj"/>
 		<material type="lambertian">
 			<albedo value="0.800000 0.800000 0.800000"/>
@@ -1774,7 +1774,7 @@
 			<metallic value="0.9"/>
 			<roughness value="0"/>
 		</material>
-	</model>
+	</model> -->
 
 
 	<model type="obj" name="li-fang-ti-.001_cell.obj">
@@ -1859,12 +1859,12 @@
 	</model>
 
 
-	<model type="obj" name="li-fang-ti-.obj">
+	<!-- <model type="obj" name="li-fang-ti-.obj">
 		<filename value="../../meshes/background/li-fang-ti-.obj"/>
 		<material type="lambertian">
 			<albedo value="0.800000 0.800000 0.800000"/>
 		</material>
-	</model>
+	</model> -->
 
 
 	<model type="obj" name="ping-mian-.obj">
@@ -1882,10 +1882,12 @@
 		</material>
 	</model>
 
-	<model type="obj" name="furina.001">
+		<model type="obj" name="furina.001">
 		<filename value="../../meshes/furina/furina.001.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1894,6 +1896,8 @@
 		<filename value="../../meshes/furina/furina.002.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1902,6 +1906,8 @@
 		<filename value="../../meshes/furina/furina.003.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1910,6 +1916,8 @@
 		<filename value="../../meshes/furina/furina.004.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1918,6 +1926,8 @@
 		<filename value="../../meshes/furina/furina.005.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1926,6 +1936,8 @@
 		<filename value="../../meshes/furina/furina.006.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1934,6 +1946,8 @@
 		<filename value="../../meshes/furina/furina.007.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1942,6 +1956,8 @@
 		<filename value="../../meshes/furina/furina.008.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1950,6 +1966,8 @@
 		<filename value="../../meshes/furina/furina.009.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair.png"/>
 			<alpha_texture value="../../textures/furina/hair.png"/>
 		</material>
@@ -1958,6 +1976,8 @@
 		<filename value="../../meshes/furina/furina.010.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/face.png"/>
 			<alpha_texture value="../../textures/furina/face.png"/>
 		</material>
@@ -1966,6 +1986,8 @@
 		<filename value="../../meshes/furina/furina.011.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -1974,6 +1996,8 @@
 		<filename value="../../meshes/furina/furina.012.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -1982,6 +2006,8 @@
 		<filename value="../../meshes/furina/furina.013.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -1990,6 +2016,8 @@
 		<filename value="../../meshes/furina/furina.014.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -1998,6 +2026,8 @@
 		<filename value="../../meshes/furina/furina.015.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -2006,6 +2036,8 @@
 		<filename value="../../meshes/furina/furina.016.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -2014,6 +2046,8 @@
 		<filename value="../../meshes/furina/furina.017.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -2022,6 +2056,8 @@
 		<filename value="../../meshes/furina/furina.018.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -2030,6 +2066,8 @@
 		<filename value="../../meshes/furina/furina.019.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/hair_1.png"/>
 			<alpha_texture value="../../textures/furina/hair_1.png"/>
 		</material>
@@ -2038,6 +2076,8 @@
 		<filename value="../../meshes/furina/furina.020.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2046,6 +2086,8 @@
 		<filename value="../../meshes/furina/furina.021.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2054,6 +2096,8 @@
 		<filename value="../../meshes/furina/furina.022.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2062,6 +2106,8 @@
 		<filename value="../../meshes/furina/furina.023.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2070,6 +2116,8 @@
 		<filename value="../../meshes/furina/furina.024.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2078,6 +2126,8 @@
 		<filename value="../../meshes/furina/furina.025.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2086,6 +2136,8 @@
 		<filename value="../../meshes/furina/furina.026.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2094,6 +2146,8 @@
 		<filename value="../../meshes/furina/furina.027.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2102,6 +2156,8 @@
 		<filename value="../../meshes/furina/furina.028.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2110,6 +2166,8 @@
 		<filename value="../../meshes/furina/furina.029.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/body_1.png"/>
 			<alpha_texture value="../../textures/furina/body_1.png"/>
 		</material>
@@ -2118,11 +2176,21 @@
 		<filename value="../../meshes/furina/furina.obj"/>
 		<material type="principled">
 			<eta value="1.000000"/>
+			<roughness value="0.500000"/>
+			<metallic value="0.000000"/>
 			<albedo_texture value="../../textures/furina/spa_h.png"/>
 			<alpha_texture value="../../textures/furina/spa_h.png"/>
 		</material>
 	</model>
-
-
+	<model type="obj" name="Indoor_Fd_Prop_Gjy_Chair_A_02_Vo">
+		<filename value="../../meshes/furina/Indoor_Fd_Prop_Gjy_Chair_A_02_Vo.obj"/>
+		<material type="principled">
+			<eta value="1.450000"/>
+			<roughness value="0.552786"/>
+			<metallic value="1.000000"/>
+			<albedo_texture value="../../textures/furina/Indoor_Fd_Build_Gjy_Zujian_B_02_Diffuse.png"/>
+			<normal_texture value="../../textures/furina/Indoor_Fd_Build_Gjy_Zujian_B_02_Normal.png"/>
+		</material>
+	</model>
 
 </scene>

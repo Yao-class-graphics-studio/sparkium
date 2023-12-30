@@ -293,6 +293,12 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     volWeight *= currentMedium->Sample_p(-direction, incidentSample, rd, uniform) / actualContinueProb;
     return direct + env + SampleRay(volSample, incidentSample, x, y, sample, bounces + 1, true) + currentMedium->getEmission() * volWeight;
   } else { // otherwise, do normal sampling
+<<<<<<< HEAD
+=======
+    auto FirstBounceClamp = [bounces](const glm::vec3 &L) -> glm::vec3 {
+      return bounces == 0 ? glm::clamp(L, 0.0f, 3.0f) : L;
+    };
+>>>>>>> 3e35046a8d6231d92c9446bc813cb6db469d69d6
     if(intersection <= 0.0f)
       return bounces == 0 ? scene_->SampleEnvmap(direction) : glm::vec3{0.0f}; //FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
     Material material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();

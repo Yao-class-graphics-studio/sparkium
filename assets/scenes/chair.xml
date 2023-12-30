@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+		<transform type="lookat">
+			<eye value="-6.959 3.865 6.549"/>
+			<center value="-0.35 3.9 -0.35"/>
+			<up value="0.04 1.0 0.04"/>
+		</transform>
+        <fov value="16"/>
+        <pitch value="10"/>
+	</camera>
+
+	
+	<envmap type="file" value="../../textures/kloppenheim_07_puresky_2k.hdr"/>
+
+
+	<model type="obj" name="light">
+		<filename value="../../meshes/background/light.obj"/>
+
+		<material type="emission">
+            <emission value="1.0 1.0 0.7"/>
+            <emission_strength value="8000.0"/>
+			<cone value="0.985"/>
+        </material>
+	</model>
+
+	<!-- <model type="obj" name="sun">
+		<filename value="../../meshes/background/sun.obj"/>
+
+		<material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="130000.0"/>
+        </material>
+	</model> -->
+
+	<model type="obj" name="Indoor_Fd_Prop_Gjy_Chair_A_02_Vo">
+		<filename value="../../meshes/furina/Indoor_Fd_Prop_Gjy_Chair_A_02_Vo.obj"/>
+		<material type="principled">
+			<eta value="1.450000"/>
+			<roughness value="0.552786"/>
+			<metallic value="1.000000"/>
+			<albedo_texture value="../../textures/furina/Indoor_Fd_Build_Gjy_Zujian_B_02_Diffuse.png"/>
+			<normal_texture value="../../textures/furina/Indoor_Fd_Build_Gjy_Zujian_B_02_Normal.png"/>
+		</material>
+	</model>
+
+</scene>

@@ -379,7 +379,7 @@ class FresnelDielectric : public Fresnel {
   float etaI_, etaT_;
 };
 
-class MicrofacetReflection : public BxDF {
+class MicrofacetReflection final : public BxDF {
  public:
   MicrofacetReflection(const glm::vec3 &R,
                        MicrofacetDistribution *distribution,
@@ -388,6 +388,10 @@ class MicrofacetReflection : public BxDF {
         R_(R),
         distribution_(distribution),
         fresnel_(fresnel) {
+  }
+  ~MicrofacetReflection() {
+    delete distribution_;
+    delete fresnel_;
   }
   glm::vec3 f(const glm::vec3 &wo, const glm::vec3 &wi) const override;
   glm::vec3 Sample_f(const glm::vec3 &wo,
@@ -402,7 +406,7 @@ class MicrofacetReflection : public BxDF {
   const Fresnel *fresnel_;
 };
 
-class MicrofacetTransmission : public BxDF {
+class MicrofacetTransmission final : public BxDF {
  public:
   MicrofacetTransmission(const glm::vec3 &T,
                          MicrofacetDistribution *distribution,

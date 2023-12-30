@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+		<transform type="lookat">
+			<eye value="-6.959 0.865 6.549"/>
+			<center value="-0.35 0.9 -0.35"/>
+			<up value="0.04 1.0 0.04"/>
+		</transform>
+        <fov value="32"/>
+        <pitch value="-2"/>
+	</camera>
+
+	
+	<envmap type="file" value="../../textures/kloppenheim_07_puresky_2k.hdr"/>
+
+
+	<model type="obj" name="light">
+		<filename value="../../meshes/background/light.obj"/>
+
+		<material type="emission">
+            <emission value="1.0 1.0 0.7"/>
+            <emission_strength value="8000.0"/>
+			<cone value="0.985"/>
+        </material>
+	</model>
+
+	<!-- <model type="obj" name="sun">
+		<filename value="../../meshes/background/sun.obj"/>
+
+		<material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="130000.0"/>
+        </material>
+	</model> -->
+
+
+	<!-- <model name="big_fog">
+        <vertex position="200.0 20 -200"/>
+        <vertex position="200.0 20 200"/>
+        <vertex position="-200 20 200"/>
+        <vertex position="-200 20 -200"/>
+        <vertex position="200 -20 -200 "/>
+        <vertex position="200 -20 200"/>
+        <vertex position="-200 -20 200"/>
+        <vertex position="-200 -20 -200 "/>
+
+        <index value="0"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="2"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="6"/>
+        <index value="6"/>
+        <index value="3"/>
+        <index value="2"/>
+        <index value="3"/>
+        <index value="6"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="7"/>
+        <index value="5"/>
+        <index value="7"/>
+        <index value="6"/>
+        <index value="5"/>
+        <index value="4"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="4"/>
+        <index value="1"/>
+        <index value="0"/>
+        <index value="1"/>
+        <index value="4"/>
+        <index value="5"/>
+
+        <material type="medium">
+            <albedo value="1 1 1"/>
+            <sigma_a value="0.0005 0.0003 0.0002"/>
+            <sigma_s value="0.0005 0.0007 0.0008"/>
+            <false_surface value="TRUE"/>
+            <volumetric_emission value="0 0 0"/>
+            <g value="0"/>
+            <eta value="1"/>
+        </material>
+    </model>  -->
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.001.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.001.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.002.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.002.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.003.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.003.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.004.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.004.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.obj">
+		<filename value="../../meshes/background/Aset_nature_rock_M_wdbncbl_00_LOD0.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="hai-.obj">
+		<filename value="../../meshes/background/hai-volume-.obj"/>
+		<material type="principled">
+			<albedo value="0.064 0.130 0.292"/>
+			<normal_texture value="../../textures/normal_noise_256.jpg"/>
+			<eta value="1.33"/>
+			<metallic value="0.8"/>
+			<roughness value="0.1"/>
+			<specTrans value="1"/>
+			<alpha value="0.925"/>
+		</material>
+		
+
+	</model>
+
+
+	<model type="obj" name="hai-2.obj">
+		<filename value="../../meshes/background/hai-2.obj"/>
+		<material type="lambertian">
+			<albedo value="0.010134 0.020678 0.042351"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="hai-22.obj">
+		<filename value="../../meshes/background/hai-22.obj"/>
+		<material type="lambertian">
+			<albedo value="0.010134 0.020678 0.042351"/>
+		</material>
+	</model>
+
+	<model type="obj" name="li-fang-ti-.004.obj">
+		<filename value="../../meshes/background/li-fang-ti-.004.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.006.obj">
+		<filename value="../../meshes/background/li-fang-ti-.006.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.007.obj">
+		<filename value="../../meshes/background/li-fang-ti-.007.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.009.obj">
+		<filename value="../../meshes/background/li-fang-ti-.009.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.010.obj">
+		<filename value="../../meshes/background/li-fang-ti-.010.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.011.obj">
+		<filename value="../../meshes/background/li-fang-ti-.011.obj"/>
+		<material type="lambertian">
+			<albedo value="0.800000 0.800000 0.800000"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.012.obj">
+		<filename value="../../meshes/background/li-fang-ti-.012.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.013.obj">
+		<filename value="../../meshes/background/li-fang-ti-.013.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+
+
+	<model type="obj" name="li-fang-ti-.014.obj">
+		<filename value="../../meshes/background/li-fang-ti-.014.obj"/>
+		<material type="lambertian">
+			<albedo value="0.086574 0.086574 0.086574"/>
+		</material>
+	</model>
+	
+
+
+</scene>
