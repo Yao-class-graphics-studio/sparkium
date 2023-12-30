@@ -25,7 +25,7 @@ struct Material {
   glm::vec3 transmittance{1.0f};
   float alpha{1.0f};
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
-  float reserve[2]{};
+  float reserve[3]{0.0f};
   Material() = default;
   explicit Material(const glm::vec3 &albedo);
   Material(Scene *scene, const tinyxml2::XMLElement *material_element);

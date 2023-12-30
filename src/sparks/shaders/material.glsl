@@ -4,6 +4,9 @@ struct Material {
   int albedo_texture_id;
   vec3 emission;
   float emission_strength;
+  vec3 specular_color;
+  float specular_exponent;
+  vec3 transmittance;
   float alpha;
   uint material_type;
 };
