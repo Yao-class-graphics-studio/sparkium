@@ -411,6 +411,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     assert(!std::isnan(L[0]) && !std::isnan(L[1]) && !std::isnan(L[2]));
     //if (bounces == 0)
     //  L = glm::clamp(L, 0.0f, 1.0f);
+    if(material.material_type == MATERIAL_TYPE_PRINCIPLED)
+      L = clamp(L, 0.0f, 1.5f);
     return L;
   }
 
