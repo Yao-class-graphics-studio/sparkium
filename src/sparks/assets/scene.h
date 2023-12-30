@@ -17,6 +17,7 @@ class Scene {
                  const std::string &name = "Unnamed Texture");
   [[nodiscard]] const std::vector<Texture> &GetTextures() const;
   [[nodiscard]] const Texture &GetTexture(int texture_id) const;
+  [[nodiscard]] int GetTextureIDByName(const std::string &name);
   [[nodiscard]] int GetTextureCount() const;
   [[nodiscard]] std::vector<const char *> GetTextureNameList() const;
 
@@ -75,6 +76,7 @@ class Scene {
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
+  int LoadObjs(const std::string &file_path, glm::mat4 transformation);
 
  private:
   std::vector<Texture> textures_;

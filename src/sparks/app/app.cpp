@@ -367,6 +367,7 @@ void App::UpdateImGui() {
     if (ImGui::BeginMenuBar()) {
       if (ImGui::BeginMenu("File")) {
         char *result{nullptr};
+        char *objs_result{nullptr};
         if (ImGui::MenuItem("Open Scene")) {
           std::vector<const char *> file_types = {"*.xml"};
           result = tinyfd_openFileDialog("Open Scene", "", file_types.size(),
@@ -386,11 +387,20 @@ void App::UpdateImGui() {
               tinyfd_openFileDialog("Import Mesh", "", file_types.size(),
                                     file_types.data(), "Mesh Files (*.obj)", 1);
         }
+        if (ImGui::MenuItem("Import Objs..")) {
+          std::vector<const char *> file_types = {"*.obj"};
+          objs_result =
+              tinyfd_openFileDialog("Import Objs", "", file_types.size(),
+                                    file_types.data(), "Mesh Files (*.obj)", 0);
+        }
         if (result) {
           std::vector<std::string> file_paths = absl::StrSplit(result, "|");
           for (auto &file_path : file_paths) {
             OpenFile(file_path);
           }
+        }
+        if (objs_result) {
+          OpenObjs(objs_result);
         }
 
         ImGui::Separator();
@@ -1218,6 +1228,10 @@ void App::OpenFile(const std::string &path) {
       ray_tracing_index_data_.clear();
     }
   }
+}
+
+void App::OpenObjs(const std::string &path) {
+  renderer_->LoadObjs(path, glm::mat4{1.0f});
 }
 
 void App::DeleteEntity(int entity_id) {
