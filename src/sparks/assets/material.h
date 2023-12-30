@@ -20,6 +20,9 @@ struct Material {
   int albedo_texture_id{0};
   glm::vec3 emission{0.0f};
   float emission_strength{1.0f};
+  glm::vec3 specular_color{1.0f};
+  float specular_exponent{1.0f};
+  glm::vec3 transmittance{1.0f};
   float alpha{1.0f};
   MaterialType material_type{MATERIAL_TYPE_LAMBERTIAN};
   float reserve[2]{};
