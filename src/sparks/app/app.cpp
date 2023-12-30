@@ -462,7 +462,7 @@ void App::UpdateImGui() {
           "Samples", &renderer_->GetRendererSettings().num_samples, 1, 128);
     } else {
       reset_accumulation_ |= ImGui::SliderInt(
-          "Samples", &renderer_->GetRendererSettings().num_samples, 1, 16);
+          "Samples", &renderer_->GetRendererSettings().num_samples, 1, 64);
     }
     reset_accumulation_ |= ImGui::SliderInt(
         "Bounces", &renderer_->GetRendererSettings().num_bounces, 1, 128);
@@ -518,6 +518,9 @@ void App::UpdateImGui() {
                              0.0f, 1e5f, "%.3f", ImGuiSliderFlags_Logarithmic);
       reset_accumulation_ |=
           ImGui::SliderFloat("Alpha", &material.alpha, 0.0f, 1.0f, "%.3f");
+      if (ImGui::Button("Delete")) {
+        DeleteEntity(selected_entity_id_);
+      }
     }
 
 #if !defined(NDEBUG)
@@ -1214,6 +1217,24 @@ void App::OpenFile(const std::string &path) {
       ray_tracing_vertex_data_.clear();
       ray_tracing_index_data_.clear();
     }
+  }
+}
+
+void App::DeleteEntity(int entity_id) {
+  renderer_->DeleteEntity(entity_id);
+  renderer_->ResetAccumulation();
+  num_loaded_device_textures_ = 0;
+  num_loaded_device_assets_ = 0;
+  device_texture_samplers_.clear();
+  entity_device_assets_.clear();
+  selected_entity_id_ = -1;
+  if (app_settings_.hardware_renderer) {
+    reset_accumulation_ = true;
+    top_level_acceleration_structure_.reset();
+    bottom_level_acceleration_structures_.clear();
+    object_info_data_.clear();
+    ray_tracing_vertex_data_.clear();
+    ray_tracing_index_data_.clear();
   }
 }
 

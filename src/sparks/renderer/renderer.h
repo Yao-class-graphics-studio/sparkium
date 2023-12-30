@@ -39,6 +39,7 @@ class Renderer {
   [[nodiscard]] bool IsPaused() const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
+  int DeleteEntity(int entity_id);
   void LoadScene(const std::string &file_path);
 
   template <class ReturnType>

@@ -22,6 +22,7 @@ class App {
   void OnClose();
 
   void OpenFile(const std::string &file_path);
+  void DeleteEntity(int entity_id);
   void Capture(const std::string &file_path);
   void UpdateImGui();
   void UpdateDynamicBuffer();

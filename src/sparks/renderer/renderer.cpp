@@ -241,6 +241,10 @@ int Renderer::LoadObjMesh(const std::string &file_path) {
   return SafeOperation<int>([&]() { return scene_.LoadObjMesh(file_path); });
 }
 
+int Renderer::DeleteEntity(int entity_id) {
+	return SafeOperation<int>([&]() { return scene_.DeleteEntity(entity_id); });
+}
+
 int Renderer::GetAccumulatedSamples() {
   std::unique_lock<std::mutex> lock(task_queue_mutex_);
   return task_queue_.front().sample;

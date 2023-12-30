@@ -26,6 +26,11 @@ class Scene {
     return int(entities_.size() - 1);
   }
 
+  int DeleteEntity(int entity_index) {
+    entities_.erase(entities_.begin() + entity_index);
+		return 1;
+  }
+
   [[nodiscard]] Entity &GetEntity(int entity_index);
   [[nodiscard]] const Entity &GetEntity(int entity_index) const;
   [[nodiscard]] std::vector<Entity> &GetEntities();
