@@ -72,6 +72,10 @@ class Scene{
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
 
+  glm::vec3 GetSceneLight() const;
+  glm::vec3 GetSceneLightDirection() const;
+  bool use_scene_light{false};
+
  private:
   std::vector<Texture> textures_;
   std::vector<std::string> texture_names_;
@@ -81,6 +85,9 @@ class Scene{
   int envmap_id_{1};
   float envmap_offset_{0.0f};
   std::vector<float> envmap_cdf_;
+  glm::vec3 light{0.0f};
+  glm::vec3 light_direction{0.0f, 1.0f, 0.0f};
+  float light_strength{1.0f};
   glm::vec3 envmap_light_direction_{0.0f, 1.0f, 0.0f};
   glm::vec3 envmap_major_color_{0.5f};
   glm::vec3 envmap_minor_color_{0.3f};
