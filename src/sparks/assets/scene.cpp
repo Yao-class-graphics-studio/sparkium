@@ -432,12 +432,19 @@ int Scene::LoadObjs(const std::string &file_path, glm::mat4 transformation) {
 		}
     else material.albedo_texture_id = 0;
     material.emission = TinyobjVecToGlmVec(materials[material_index].emission);
-    material.emission_strength = 1.0f; // need be set in gui
+    material.emission_strength = 10.0f; // need be set in gui
     material.specular_color = TinyobjVecToGlmVec(materials[material_index].specular);
     material.specular_exponent = materials[material_index].shininess;
     material.transmittance = TinyobjVecToGlmVec(materials[material_index].transmittance);
     material.alpha = materials[material_index].dissolve;
-    material.material_type = MATERIAL_TYPE_LAMBERTIAN; // To be changed
+    // material.material_type = MATERIAL_TYPE_LAMBERTIAN; // To be changed
+    if (material.alpha < 0.99f) {
+      material.material_type = MATERIAL_TYPE_TRANSMISSIVE;
+    } else if (glm::length(material.emission) > 0.1f) {
+      material.material_type = MATERIAL_TYPE_EMISSION;
+    } else {
+      material.material_type = MATERIAL_TYPE_GLOSSY;
+    }
 
     // add entity
     AddEntity(mesh, material, transformation, shapes[s].name.c_str());

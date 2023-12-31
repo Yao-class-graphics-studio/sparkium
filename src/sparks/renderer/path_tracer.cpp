@@ -48,7 +48,10 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
 
   // light source
   if (material.material_type == MATERIAL_TYPE_EMISSION) {
-    return material.emission * material.emission_strength;
+    return material.emission * material.emission_strength * glm::vec3 {
+      scene_->GetTextures()[material.albedo_texture_id].Sample(
+          intersection.tex_coord)
+    };
   }
 
   // direct light
@@ -104,7 +107,8 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
       float cos_theta_hat = abs(glm::dot(wi, intersection.normal));
       float dist = glm::distance(xl, intersection.position);
       float dist2 = dist * dist;
-      glm::vec3 intensity = material_i.emission * material_i.emission_strength;
+      glm::vec3 intensity =
+          material_i.emission * material_i.emission_strength * glm::vec3{scene_->GetTextures()[material_i.albedo_texture_id].Sample(hit_light.tex_coord)};
       if (dots > 0 && (material.material_type == MATERIAL_TYPE_GLOSSY || material.material_type == MATERIAL_TYPE_LAMBERTIAN)) {
         float phong_spe = Phong_spec(wi,wo,intersection.geometry_normal, material.specular_exponent);
         if (material.material_type != MATERIAL_TYPE_SPECULAR)

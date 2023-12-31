@@ -29,8 +29,8 @@ class Mesh : public Model {
   void WriteObjFile(const std::string &file_path) const;
   void MergeVertices();
   double area(int idx) const{
-    Vertex a = vertices_[indices_[3 * idx]], b = vertices_[3 * idx + 1],
-           c = vertices_[3 * idx + 2];
+    Vertex a = vertices_[indices_[3 * idx]], b = vertices_[indices_[3 * idx + 1]],
+           c = vertices_[indices_[3 * idx + 2]];
     auto pa = a.position, pb = b.position, pc = c.position;
     auto v_ab = pb - pa;
     auto v_ac = pc - pa;
