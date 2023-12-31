@@ -55,6 +55,20 @@ bool Texture::Load(const std::string &file_path, Texture &texture) {
   } else {
     auto result = stbi_load(file_path.c_str(), &x, &y, &c, 4);
     if (result) {
+      // flip result vertically
+      for (int i = 0; i < y / 2; i++) {
+        for (int j = 0; j < x; j++) {
+          std::swap(result[i * x * 4 + j * 4],
+                    result[(y - i - 1) * x * 4 + j * 4]);
+          std::swap(result[i * x * 4 + j * 4 + 1],
+                    result[(y - i - 1) * x * 4 + j * 4 + 1]);
+          std::swap(result[i * x * 4 + j * 4 + 2],
+                    result[(y - i - 1) * x * 4 + j * 4 + 2]);
+          std::swap(result[i * x * 4 + j * 4 + 3],
+                    result[(y - i - 1) * x * 4 + j * 4 + 3]);
+        }
+      }
+
       std::vector<glm::vec4> convert_buffer(x * y);
       const float inv_255 = 1.0f / 255.0f;
       for (int i = 0; i < x * y; i++) {
