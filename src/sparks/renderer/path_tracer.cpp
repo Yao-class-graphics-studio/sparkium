@@ -56,7 +56,7 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
 
   // direct light
   // emission light
-  static std::default_random_engine e(time(NULL));
+  static std::default_random_engine e(std::random_device{}());
   int num_ob = scene_->GetEntityCount();
   for (int i = 0; i < num_ob; i++) {
     auto &object = scene_->GetEntity(i);
@@ -74,7 +74,7 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
             reinterpret_cast<const Mesh *>(object.GetModel())->area(j);
         triangle_area[j] = total_area;
       }
-      static std::uniform_real_distribution<double> u1(0, total_area);
+      std::uniform_real_distribution<double> u1(0, total_area);
       double rnd = u1(e);
       for (int j = 0; j < n_triangle_face; j++) {
         if (rnd < triangle_area[j] && (j == 0 || rnd >= triangle_area[j - 1])) {
