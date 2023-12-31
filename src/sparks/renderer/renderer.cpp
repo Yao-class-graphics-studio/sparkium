@@ -241,6 +241,13 @@ int Renderer::LoadObjMesh(const std::string &file_path) {
   return SafeOperation<int>([&]() { return scene_.LoadObjMesh(file_path); });
 }
 
+int Renderer::LoadObjs(const std::string& file_path,
+  glm::mat4 transformation) {
+  return SafeOperation<int>([&]() {
+		return scene_.LoadObjs(file_path, transformation);
+	});
+}
+
 int Renderer::DeleteEntity(int entity_id) {
 	return SafeOperation<int>([&]() { return scene_.DeleteEntity(entity_id); });
 }
