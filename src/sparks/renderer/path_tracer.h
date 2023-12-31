@@ -14,6 +14,10 @@ class PathTracer {
                                     int sample) const;
   glm::vec3 Shade(HitRecord interseciton, glm::vec3 wo, int depth) const;
   bool RR(double p) const;
+  float PathTracer::Phong_spec(glm::vec3 v1,
+                               glm::vec3 v2,
+                               glm::vec3 normal,
+                               float exp) const;
 
  private:
   const RendererSettings *render_settings_{};

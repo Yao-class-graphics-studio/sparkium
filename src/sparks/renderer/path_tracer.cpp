@@ -3,6 +3,8 @@
 #include "sparks/util/util.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
+#include <cmath>
+#include <algorithm>
 
 namespace sparks {
 
@@ -22,11 +24,24 @@ bool PathTracer::RR(double p) const{
     return false;
 }
 
+float PathTracer::Phong_spec(glm::vec3 v1, glm::vec3 v2, glm::vec3 normal, float exp) const{
+  glm::vec3 bivec = glm::normalize(v1 + v2);
+  float cos_bn = glm::dot(bivec, normal);
+  if (cos_bn > 0)
+    return pow(cos_bn, exp);
+  return 0.0;
+}
+
 glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) const {
   const float pi = 3.1415926;
   auto &material = scene_->GetEntity(intersection.hit_entity_id).GetMaterial();
-  auto brdf =
+  float alpha = material.alpha;
+  auto brdf_d =
       material.albedo_color *
+      glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(
+          intersection.tex_coord)} / pi;
+  auto brdf_s = 
+      material.specular_color *
       glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(
           intersection.tex_coord)} / pi;
   glm::vec3 L_dir(0, 0, 0), L_ind(0, 0, 0);
@@ -79,19 +94,29 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
       HitRecord hit_light;
       auto vt =
           scene_->TraceRay(intersection.position, wi, 1e-3f, 1e4f, &hit_light);
-      if (hit_light.hit_entity_id != i)
+      auto va = glm::length(xl - intersection.position);
+      if (hit_light.hit_entity_id != i && abs(va - vt) > 1e-3f)
         visible = 0;
       intersection.geometry_normal = glm::normalize(intersection.geometry_normal);
       auto dots = glm::dot(intersection.geometry_normal, wi);
-      if (dots > 0) {
-        float pdf_light = float(1) / total_area;
-        float cos_theta = abs(glm::dot(wi, glm::normalize(vn)));
-        float cos_theta_hat = abs(glm::dot(wi, intersection.normal));
-        float dist = glm::distance(xl, intersection.position);
-        float dist2 = dist * dist;
-        glm::vec3 intensity = material_i.emission * material_i.emission_strength;
-        L_dir += intensity * brdf * cos_theta *
-                 cos_theta_hat / dist2 / pdf_light * visible;
+      float pdf_light = float(1) / total_area;
+      float cos_theta = abs(glm::dot(wi, glm::normalize(vn)));
+      float cos_theta_hat = abs(glm::dot(wi, intersection.normal));
+      float dist = glm::distance(xl, intersection.position);
+      float dist2 = dist * dist;
+      glm::vec3 intensity = material_i.emission * material_i.emission_strength;
+      if (dots > 0 && (material.material_type == MATERIAL_TYPE_GLOSSY || material.material_type == MATERIAL_TYPE_LAMBERTIAN)) {
+        float phong_spe = Phong_spec(wi,wo,intersection.geometry_normal, material.specular_exponent);
+        if (material.material_type != MATERIAL_TYPE_SPECULAR)
+          L_dir += alpha * intensity * brdf_d * cos_theta * cos_theta_hat / dist2 / pdf_light * visible;
+        if (material.material_type == MATERIAL_TYPE_GLOSSY ||
+            material.material_type == MATERIAL_TYPE_SPECULAR)
+          L_dir += alpha * intensity * brdf_s * phong_spe  * cos_theta_hat / dist2 /
+                   pdf_light * visible;
+      }
+      if (dots < 0 && material.material_type == MATERIAL_TYPE_TRANSMISSIVE) {
+        L_dir += (1 - alpha) * intensity * brdf_d * cos_theta * cos_theta_hat /
+                 dist2 / pdf_light * visible;
       }
     }
   }
@@ -101,10 +126,19 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
   auto t_l = scene_->TraceRay(intersection.position, light_direction, 1e-3f,
                               1e4f, nullptr);
   if (t_l < 0.0f) {
-    L_dir +=
+    if (material.material_type == MATERIAL_TYPE_GLOSSY || material.material_type == MATERIAL_TYPE_LAMBERTIAN)
+      L_dir +=
          2.0f * pi * scene_->GetEnvmapMajorColor() *
         std::max(glm::dot(light_direction, intersection.geometry_normal),
-                 0.0f) * brdf;
+                 0.0f) * brdf_d;
+    if (material.material_type == MATERIAL_TYPE_GLOSSY ||
+        material.material_type == MATERIAL_TYPE_SPECULAR) {
+      
+      L_dir += 2.0f * pi * scene_->GetEnvmapMajorColor() *
+               brdf_s *
+               Phong_spec(light_direction, wo, intersection.geometry_normal,
+                          material.specular_exponent);
+    }
   }
 
   // indirect light
@@ -120,12 +154,50 @@ glm::vec3 PathTracer::Shade(HitRecord intersection, glm::vec3 wo, int depth) con
                            .GetMaterial()
                            .material_type != MATERIAL_TYPE_EMISSION) {
       glm::vec3 intensity = Shade(next_intersection, -next_ray, depth+1) / p_rr;
-      L_ind += 2.0f * pi * brdf * intensity *
+      if (material.material_type != MATERIAL_TYPE_SPECULAR)
+        L_ind += alpha * 2.0f * pi * brdf_d * intensity *
                abs(glm::dot(intersection.normal, next_ray));
+      if (material.material_type == MATERIAL_TYPE_GLOSSY ||
+          material.material_type == MATERIAL_TYPE_SPECULAR) {
+        L_ind +=
+            alpha * 2.0f * pi * intensity * brdf_s *
+            Phong_spec(next_ray, wo, intersection.geometry_normal,
+                       material.specular_exponent);
+      }
+
     } else if (t_n < 0) {
-      L_ind += 2.0f * pi * brdf * glm::vec3{scene_->SampleEnvmap(next_ray)} *
+      if (material.material_type != MATERIAL_TYPE_SPECULAR)
+        L_ind += alpha * 2.0f * pi * brdf_d * glm::vec3{scene_->SampleEnvmap(next_ray)} *
                abs(glm::dot(intersection.normal, next_ray));
+      if (material.material_type == MATERIAL_TYPE_GLOSSY ||
+          material.material_type == MATERIAL_TYPE_SPECULAR) {
+        L_ind += alpha * 2.0f * pi * brdf_s *
+                 glm::vec3{scene_->SampleEnvmap(next_ray)} *
+                 Phong_spec(next_ray, wo, intersection.geometry_normal,
+                            material.specular_exponent);
+      }
     }
+    if (material.material_type == MATERIAL_TYPE_TRANSMISSIVE) {
+      next_ray = -next_ray;
+      HitRecord next_intersection;
+      auto t_n = scene_->TraceRay(intersection.position, next_ray, 1e-3f, 1e4f,
+                                  &next_intersection);
+      if (t_n > 0 && scene_->GetEntity(next_intersection.hit_entity_id)
+                             .GetMaterial()
+                             .material_type != MATERIAL_TYPE_EMISSION) {
+        glm::vec3 intensity =
+            Shade(next_intersection, -next_ray, depth + 1) / p_rr;
+        L_ind += (1 - alpha) * 2.0f * pi * brdf_d * intensity *
+                   abs(glm::dot(intersection.normal, next_ray));
+
+      } else if (t_n < 0) {
+        L_ind += (1 - alpha) * 2.0f * pi * brdf_d *
+                   glm::vec3{scene_->SampleEnvmap(next_ray)} *
+                   abs(glm::dot(intersection.normal, next_ray));
+      }
+
+    }
+        
   }
 
   return L_dir + L_ind;
