@@ -500,7 +500,7 @@ void App::UpdateImGui() {
       ImGui::Separator();
       static int current_item = 0;
       std::vector<const char *> material_types = {
-          "Lambertian", "Specular", "Transmissive", "Principled", "Emission"};
+          "Lambertian", "Specular", "Transmissive", "Principled", "Emission", "Subsurface", "KdSubsureface", "Medium", "Grid Medium"};
       Material &material = scene.GetEntity(selected_entity_id_).GetMaterial();
       reset_accumulation_ |=
           ImGui::Combo("Type", reinterpret_cast<int *>(&material.material_type),
@@ -552,6 +552,67 @@ void App::UpdateImGui() {
           reset_accumulation_ |= ImGui::SliderFloat(
               "DiffuseTrans", &material.diffTrans, 0.0f, 1.0f, "%.3f");
         }
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_MEDIUM) || material.material_type == MaterialType(MATERIAL_TYPE_GRID_MEDIUM)) {
+        bool tmpFlag = false;
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_a", reinterpret_cast<float *>(&material.sigma_a));
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_s", reinterpret_cast<float *>(&material.sigma_s));
+        tmpFlag |= ImGui::Checkbox(
+            "False Surface", &material.false_surface);
+        tmpFlag |= ImGui::ColorEdit3(
+            "Volumetric Emission", &material.volumetric_emission[0],
+            ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
+        tmpFlag |= ImGui::SliderFloat(
+            "g", &material.g, -1.0f, 1.0f, "%.3f");
+        if(tmpFlag) {
+          material.medium->Update(material.sigma_a, material.sigma_s, material.volumetric_emission, material.g);
+        }
+        reset_accumulation_ |= tmpFlag;
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_KDSUBSURFACE)) {
+        bool tmpFlag = false;
+        tmpFlag |= ImGui::SliderFloat(
+            "g", &material.g, -1.0f, 1.0f, "%.3f");
+        tmpFlag |= ImGui::SliderFloat(
+            "eta", &material.eta, 1.0f, 2.0f, "%.3f");
+        tmpFlag |= ImGui::InputFloat3(
+            "mfp", reinterpret_cast<float *>(&material.mfp));
+        if(tmpFlag) {
+          ComputeBeamDiffusionBSSRDF(material.g, material.eta, *material.table);
+        }
+        reset_accumulation_ |= tmpFlag;
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_SUBSURFACE)) {
+        std::vector<const char*> ss_keys{
+            "apple", "chicken_1", "chicken_2",
+            "cream", "ketchup", "marble", "potato", "skimmilk",
+            "skin_1", "skin_2", "spectralon", "wholemilk", "lowfat_milk", "reduced_milk",
+            "regular_milk", "espresso", "mint_mocha_coffee", "lowfat_soy_milk", "regular_soy_milk",
+            "lowfat_chocolate_milk", "regular_chocolate_milk", "coke", "pepsi", "sprite",
+            "gatorade", "chardonnay", "white_zinfandel", "merlot", "budweiser_beer", "coors_light_beer",
+            "clorox", "apple_juice", "cranberry_juice", "grape_juice", "ruby_grape_juice", "white_grapefuite_juice",
+            "shampoo", "strawberry_shampoo", "head_and_shoulders_shampoo", "lemon_tee_powder", "orange_powder", "pink_lemonade_powder",
+            "cappuccino_powder", "salt_powder", "sugar_powder", "suisse_mocha_powder", "pacific_ocean_surface_water", "none"
+        };
+        bool tmpFlag = false;
+        tmpFlag |=
+          ImGui::Combo("Subsurface Preset", reinterpret_cast<int *>(&material.ss_type),
+                       ss_keys.data(), ss_keys.size());
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_a", reinterpret_cast<float *>(&material.sigma_a));
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_s", reinterpret_cast<float *>(&material.sigma_s));
+        tmpFlag |= ImGui::SliderFloat(
+            "g", &material.g, -1.0f, 1.0f, "%.3f");
+        tmpFlag |= ImGui::SliderFloat(
+            "eta", &material.eta, 1.0f, 2.0f, "%.3f");
+        if(tmpFlag) {
+          ComputeBeamDiffusionBSSRDF(material.g, material.eta, *material.table);
+          GetPresetSS(material.ss_type, material.sigma_a, material.sigma_s);
+        }
+        reset_accumulation_ |= tmpFlag;
       }
     }
 

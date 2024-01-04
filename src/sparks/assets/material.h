@@ -5,6 +5,8 @@
 #include "sparks/assets/hit_record.h"
 #include "sparks/assets/bxdf.h"
 #include "sparks/assets/bssrdf.h"
+#include "sparks/assets/medium.h"
+#include "sparks/assets/subsurface_lib.h"
 
 namespace sparks {
 
@@ -48,10 +50,12 @@ public:
   bool use_ss_texture{false};
   int sigma_a_texture_id{0};
   int sigma_s_texture_id{0};
+  PresetSSType ss_type{SS_NONE};
   glm::vec3 volumetric_emission{0.0f};
   Medium *medium{nullptr};
   bool false_surface{false};
   glm::vec3 sigma_a{0.0f}, sigma_s{0.0f};
+  float g{0.0f};
   glm::vec3 mfp{0.0f};
   BSSRDFTable *table{nullptr};
   float reserve[2]{};
