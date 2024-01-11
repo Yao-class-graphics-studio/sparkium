@@ -68,15 +68,16 @@ class PathTracer {
                                     glm::vec3 direction,
                                     int x,
                                     int y,
+                                    float sampleTime,
                                     int sample,
                                     int bounces = 0,
                                     bool initialized = false,
                                     float currentRatio = 1.0f);
   void SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, int except);
-  float getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area);
-  int shadowRay(glm::vec3 pos, glm::vec3 &dir, glm::vec3 sample, glm::vec3 &throughput);
-  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, float &lightArea, int except);
-  void initialMedium(glm::vec3 pos);
+  float getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area, float sampleTime);
+  int shadowRay(glm::vec3 pos, glm::vec3 &dir, glm::vec3 sample, glm::vec3 &throughput, float sampleTime);
+  glm::vec3 directIllumination(glm::vec3 pos, float &lightPdf, glm::vec3 &dir, float &lightArea, int except, float sampleTime);
+  void initialMedium(glm::vec3 pos, float sampleTime);
   void updateStack(MyStack &st, HitRecord hit, bool penetrate);
  private:
   const RendererSettings *render_settings_{};

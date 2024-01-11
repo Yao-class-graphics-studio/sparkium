@@ -2,6 +2,9 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/matrix_decompose.hpp"
+#include "glm/gtx/matrix_interpolation.hpp"
 #include "imgui.h"
 #include "sparks/assets/accelerated_mesh.h"
 #include "sparks/util/util.h"
@@ -199,17 +202,34 @@ const std::vector<float> &Scene::GetEnvmapCdf() const {
   return envmap_cdf_;
 }
 
+glm::mat4 InterpolateTransformation(const glm::mat4 &start,
+                                    const glm::mat4 &end,
+                                    float t) {
+    // M = TRS
+  glm::vec3 T[2];
+  glm::quat R[2];
+  glm::vec3 S[2];
+  glm::vec3 skew[2];
+  glm::vec4 perspective[2];
+  glm::decompose(start, S[0], R[0], T[0], skew[0], perspective[0]);
+  glm::decompose(end, S[1], R[1], T[1], skew[1], perspective[1]);
+  glm::mat4 ans(1.0f);
+  return glm::translate(glm::mat4(1.0f), glm::mix(T[0], T[1], t)) * glm::mat4_cast(glm::slerp(R[0], R[1], t)) * glm::scale(glm::mat4(1.0f), glm::mix(S[0], S[1], t));
+}
+
 float Scene::TraceRay(const glm::vec3 &origin,
                       const glm::vec3 &direction,
                       float t_min,
                       float t_max,
-                      HitRecord *hit_record) const {
+                      HitRecord *hit_record,
+                      float sampleTime) const {
   float result = -1.0f;
   HitRecord local_hit_record;
   float local_result;
   for (int entity_id = 0; entity_id < entities_.size(); entity_id++) {
     auto &entity = entities_[entity_id];
-    auto &transform = entity.GetTransformMatrix();
+    auto &transform = InterpolateTransformation(glm::mat4(1.0f), entity.GetTransformMatrix(), sampleTime);
+
     auto inv_transform = glm::inverse(transform);
     auto transformed_direction =
         glm::vec3{inv_transform * glm::vec4{direction, 0.0f}};
@@ -240,6 +260,33 @@ float Scene::TraceRay(const glm::vec3 &origin,
       }
     }
   }
+  //for (int entity_id = 0; entity_id < entities_.size(); entity_id++) {
+  //  auto &entity = entities_[entity_id];
+  //  auto transformed_direction = direction;
+  //  auto transformed_direction_length = glm::length(transformed_direction);
+  //  if (transformed_direction_length < 1e-6) {
+  //    continue;
+  //  }
+  //  local_result = entity.GetModel()->TraceRay(
+  //      origin,
+  //      transformed_direction / transformed_direction_length, t_min,
+  //      hit_record ? &local_hit_record : nullptr);
+  //  local_result /= transformed_direction_length;
+  //  if (local_result > t_min && local_result < t_max &&
+  //      (result < 0.0f || local_result < result)) {
+  //    result = local_result;
+  //    if (hit_record) {
+  //      local_hit_record.position =
+  //          local_hit_record.position;
+  //      local_hit_record.normal = local_hit_record.normal;
+  //      local_hit_record.tangent = local_hit_record.tangent;
+  //      local_hit_record.geometry_normal =
+  //          local_hit_record.geometry_normal;
+  //      *hit_record = local_hit_record;
+  //      hit_record->hit_entity_id = entity_id;
+  //    }
+  //  }
+  //}
   if (hit_record) {
     hit_record->geometry_normal = glm::normalize(hit_record->geometry_normal);
     hit_record->normal = glm::normalize(hit_record->normal);

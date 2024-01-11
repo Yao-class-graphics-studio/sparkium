@@ -356,12 +356,16 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
   //float real_alpha = alpha; // It seems that there are still some bugs on alpha channel, so do not use it
   BSDF* bsdf = new BSDF(GetShaderHit(hit,scene));
   switch (material_type) { 
+      case MATERIAL_TYPE_SUBSURFACE: {
+          bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, 1.0f), 1.0f);
+          break;
+      }
+      case MATERIAL_TYPE_KDSUBSURFACE: {
+          bsdf->Add(new SpecularTransmission(glm::vec3{1.0f}, 1.0f, 1.0f), 1.0f);
+          break;
+      }
     case MATERIAL_TYPE_LAMBERTIAN: {
       bsdf->Add(new LambertianReflection(color), 1);
-      break;
-    }
-    case MATERIAL_TYPE_KDSUBSURFACE: {
-      bsdf->Add(new LambertianReflection(glm::vec3{0.0f}), 0);
       break;
     }
     case MATERIAL_TYPE_EMISSION:{

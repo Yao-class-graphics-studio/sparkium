@@ -1,7 +1,7 @@
 # Blender 3.6.5 MTL File: 'None'
 # www.blender.org
 
-newmtl 颜.001
+newmtl Mat_Face.001
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
@@ -13,5 +13,5 @@ Pc 0.000000
 Pcr 0.030000
 aniso 0.000000
 anisor 0.000000
-map_Kd D:/myprogram/mycpp/ACG/project/tex/颜.png
-map_d D:/myprogram/mycpp/ACG/project/tex/颜.png
+map_Kd D:/myprogram/mycpp/ACG/project/【芙宁娜】_by_原神_dd7a8a03e7a7dfa6593053d639fa3025/tex/颜.png
+map_d D:/myprogram/mycpp/ACG/project/【芙宁娜】_by_原神_dd7a8a03e7a7dfa6593053d639fa3025/tex/颜.png

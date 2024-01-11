@@ -274,7 +274,7 @@
 
 
 	<model type="obj" name="hai-.obj">
-		<filename value="../../meshes/background/hai-volume-.obj"/>
+		<filename value="../../meshes/background/hai-.obj"/>
 		<material type="principled">
 			<albedo value="0.064 0.130 0.292"/>
 			<normal_texture value="../../textures/normal_noise_256.jpg"/>
@@ -1867,12 +1867,12 @@
 	</model> -->
 
 
-	<model type="obj" name="ping-mian-.obj">
+	<!-- <model type="obj" name="ping-mian-.obj">
 		<filename value="../../meshes/background/ping-mian-.obj"/>
 		<material type="lambertian">
 			<albedo value="0.800000 0.800000 0.800000"/>
 		</material>
-	</model>
+	</model> -->
 
 
 	<model type="obj" name="yuan-shan-.obj">
