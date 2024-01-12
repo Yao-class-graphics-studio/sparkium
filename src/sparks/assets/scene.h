@@ -65,7 +65,8 @@ class Scene{
                  const glm::vec3 &direction,
                  float t_min,
                  float t_max,
-                 HitRecord *hit_record) const;
+                 HitRecord *hit_record,
+                 float sampleTime) const;
 
   bool TextureCombo(const char *label, int *current_item) const;
   bool EntityCombo(const char *label, int *current_item) const;

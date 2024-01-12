@@ -1,5 +1,6 @@
 #include "sparks/assets/bssrdf.h"
 #include <vector>
+#include "glm/gtc/type_ptr.hpp"
 
 namespace sparks {
 // BSSRDF Utility
@@ -276,16 +277,19 @@ glm::vec3 SeparableBSSRDF::Sample_S(const TraceMethod &trace, glm::vec3 &pi, glm
     glm::vec3 sp = Sample_Sp(trace, pi, wiNormal, rawPdf, entity, rd, uniform);
     if(sp != glm::vec3{0.0f}) {
         glm::vec2 args(uniform(rd), uniform(rd));
-        glm::vec3 wi = SampleFromCosine(args);
+        wi = SampleFromCosine(args);
         fullPdf = rawPdf * SinTheta(wi) * AbsCosTheta(wi) * INV_PI;
         // std::cerr << rawPdf << " " << fullPdf << std::endl;
         glm::vec3 sx = wiNormal == glm::vec3(0.0f, 0.0f, 1.0f) ? 
                        glm::normalize(glm::cross(wiNormal, glm::vec3(0.0f, 1.0f, 0.0f))) :
                        glm::normalize(glm::cross(wiNormal, glm::vec3(0.0f, 0.0f, 1.0f)));
-        glm::vec3 sy = glm::normalize(glm::cross(wiNormal, tx));
+        glm::vec3 sy = glm::normalize(glm::cross(wiNormal, sx));
         glm::mat3 wiLocal2World = glm::mat3{sx, sy, wiNormal};
+        //printf("dir before transform: %f %f %f\n", wi[0], wi[1], wi[2]);
+        //printf("normal: %f %f %f\n", wiNormal[0], wiNormal[1], wiNormal[2]);
         wi = glm::normalize(wiLocal2World * wi);
-    }
+        //printf("addr; dir after transform: %p %f %f %f\n", glm::value_ptr(wi), wi[0], wi[1], wi[2]);
+    } 
     return sp;
 }
 
@@ -417,10 +421,13 @@ float TabulatedBSSRDF::Pdf_Sr(int ch, float r) const {
 glm::vec3 DisneyBSSRDF::Sr(float r) const {
     if (r < 1e-6f)
         r = 1e-6f;
+    auto f = [r](float d) {
+      if (d == 0.0f)
+        return 0.0f;
+      return (std::exp(-r / d) + std::exp(-r / (3 * d))) / (8 * PI * d * r);
+    };
     return R_ *
-           (glm::exp(-glm::vec3{r} / d_) +
-            glm::exp(-glm::vec3{r} / (glm::vec3{3.0f} * d_))) /
-           (8 * PI * d_ * r);
+        glm::vec3(f(d_[0]), f(d_[1]), f(d_[2]));
 }
 
 float DisneyBSSRDF::Sample_Sr(int ch, float u) const {
@@ -436,6 +443,8 @@ float DisneyBSSRDF::Sample_Sr(int ch, float u) const {
 float DisneyBSSRDF::Pdf_Sr(int ch, float r) const {
     if (r < 1e-6f)
         r = 1e-6f;
+    if (d_[ch] == 0.0f)
+        return 0.0f;
     return (0.25f * std::exp(-r / d_[ch]) / (2 * PI * d_[ch] * r) +
             0.75 * std::exp(-r / (3 * d_[ch])) / (6 * PI * d_[ch] * r));
 }

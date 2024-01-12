@@ -5,6 +5,7 @@
 #include "absl/strings/str_split.h"
 #include "cmath"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "iostream"
 #include "sparks/util/util.h"
 #include "stb_image_write.h"
@@ -551,6 +552,10 @@ void App::UpdateImGui() {
               "Flatness", &material.flatness, 0.0f, 1.0f, "%.3f");
           reset_accumulation_ |= ImGui::SliderFloat(
               "DiffuseTrans", &material.diffTrans, 0.0f, 1.0f, "%.3f");
+        } else {
+          reset_accumulation_ |= ImGui::SliderFloat3(
+              "ScatterDistance", glm::value_ptr(material.scatterDistance), 0.0f,
+              1.0f, "%.3f");
         }
       }
       if (material.material_type == MaterialType(MATERIAL_TYPE_MEDIUM) || material.material_type == MaterialType(MATERIAL_TYPE_GRID_MEDIUM)) {

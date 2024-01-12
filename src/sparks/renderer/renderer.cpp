@@ -199,6 +199,7 @@ void Renderer::RayGeneration(int x,
   std::mt19937 xrd(x);
   std::mt19937 yrd(y + std::uniform_int_distribution<int>()(xrd));
   std::mt19937 rd(sample + std::uniform_int_distribution<int>()(yrd));
+  float sampleTime = std::uniform_real_distribution<double>(0, 1)(rd);
   //anti-aliasing: add random number in [-0.5,0.5] to x and y
   //glm::vec2 pos{(float(x) + 0.5f +std::uniform_real_distribution<float>(-0.5f,0.5f)(rd) ) / float(width_),
   //              (float(y) + 0.5f +std::uniform_real_distribution<float>(-0.5f,0.5f)(rd)) / float(height_)};
@@ -218,7 +219,7 @@ void Renderer::RayGeneration(int x,
   auto camera_to_world = scene_.GetCameraToWorld();
   origin = camera_to_world * glm::vec4(origin, 1.0f);
   direction = camera_to_world * glm::vec4(direction, 0.0f);
-  color_result = path_tracer.SampleRay(origin, direction, x, y, sample);
+  color_result = path_tracer.SampleRay(origin, direction, x, y, sampleTime, sample, 0, false, 1.0f);
 }
 
 void Renderer::RetrieveAccumulationResult(

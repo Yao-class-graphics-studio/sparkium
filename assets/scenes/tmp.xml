@@ -40,122 +40,6 @@
 	</model> -->
 
 
-	<model name="big_fog">
-        <vertex position="400 200 -400"/>
-        <vertex position="400 200 400"/>
-        <vertex position="-400 200 400"/>
-        <vertex position="-400 200 -400"/>
-        <vertex position="400 -200 -400 "/>
-        <vertex position="400 -200 400"/>
-        <vertex position="-400 -200 400"/>
-        <vertex position="-400 -200 -400"/>
-
-        <index value="0"/>
-        <index value="1"/>
-        <index value="3"/>
-        <index value="3"/>
-        <index value="1"/>
-        <index value="2"/>
-        <index value="5"/>
-        <index value="2"/>
-        <index value="1"/>
-        <index value="2"/>
-        <index value="5"/>
-        <index value="6"/>
-        <index value="6"/>
-        <index value="3"/>
-        <index value="2"/>
-        <index value="3"/>
-        <index value="6"/>
-        <index value="7"/>
-        <index value="4"/>
-        <index value="7"/>
-        <index value="5"/>
-        <index value="7"/>
-        <index value="6"/>
-        <index value="5"/>
-        <index value="4"/>
-        <index value="0"/>
-        <index value="3"/>
-        <index value="3"/>
-        <index value="7"/>
-        <index value="4"/>
-        <index value="4"/>
-        <index value="1"/>
-        <index value="0"/>
-        <index value="1"/>
-        <index value="4"/>
-        <index value="5"/>
-
-        <material type="medium">
-            <albedo value="1 1 1"/>
-            <sigma_a value="0.0007 0.0007 0.0007"/>
-            <sigma_s value="0.0010 0.0010 0.0010"/>
-            <false_surface value="TRUE"/>
-            <volumetric_emission value="0 0 0"/>
-            <g value="0"/>
-            <eta value="1"/>
-        </material>
-    </model> 
-
-
-	<model name="small_fog">
-        <vertex position="18.0 15 -18"/>
-        <vertex position="18.0 15 -13"/>
-        <vertex position="13 15 -13"/>
-        <vertex position="13 15 -18"/>
-        <vertex position="18 1 -18"/>
-        <vertex position="18 1 -13"/>
-        <vertex position="13 1 -13"/>
-        <vertex position="13 1 -18"/>
-
-        <index value="0"/>
-        <index value="1"/>
-        <index value="3"/>
-        <index value="3"/>
-        <index value="1"/>
-        <index value="2"/>
-        <index value="5"/>
-        <index value="2"/>
-        <index value="1"/>
-        <index value="2"/>
-        <index value="5"/>
-        <index value="6"/>
-        <index value="6"/>
-        <index value="3"/>
-        <index value="2"/>
-        <index value="3"/>
-        <index value="6"/>
-        <index value="7"/>
-        <index value="4"/>
-        <index value="7"/>
-        <index value="5"/>
-        <index value="7"/>
-        <index value="6"/>
-        <index value="5"/>
-        <index value="4"/>
-        <index value="0"/>
-        <index value="3"/>
-        <index value="3"/>
-        <index value="7"/>
-        <index value="4"/>
-        <index value="4"/>
-        <index value="1"/>
-        <index value="0"/>
-        <index value="1"/>
-        <index value="4"/>
-        <index value="5"/>
-
-        <material type="medium">
-            <albedo value="1 1 1"/>
-            <sigma_a value="0.008 0.008 0.008"/>
-            <sigma_s value="0.024 0.024 0.024"/>
-            <false_surface value="TRUE"/>
-            <volumetric_emission value="0 0 0"/>
-            <g value="0"/>
-            <eta value="1"/>
-        </material>
-    </model> 
 
 
 	<model type="obj" name="Aset_nature_rock_M_wdbncbl_00_LOD0.001.obj">
@@ -274,7 +158,7 @@
 
 
 	<model type="obj" name="hai-.obj">
-		<filename value="../../meshes/background/hai-.obj"/>
+		<filename value="../../meshes/background/hai-volume-.obj"/>
 		<material type="principled">
 			<albedo value="0.064 0.130 0.292"/>
 			<normal_texture value="../../textures/normal_noise_256.jpg"/>
@@ -1867,12 +1751,12 @@
 	</model> -->
 
 
-	<!-- <model type="obj" name="ping-mian-.obj">
+	<model type="obj" name="ping-mian-.obj">
 		<filename value="../../meshes/background/ping-mian-.obj"/>
 		<material type="lambertian">
 			<albedo value="0.800000 0.800000 0.800000"/>
 		</material>
-	</model> -->
+	</model>
 
 
 	<model type="obj" name="yuan-shan-.obj">
