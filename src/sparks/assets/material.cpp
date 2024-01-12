@@ -38,8 +38,62 @@ std::unordered_map<std::string, MaterialType> material_name_map{
     {"subsurface", MATERIAL_TYPE_SUBSURFACE},
     {"kdsubsurface", MATERIAL_TYPE_KDSUBSURFACE},
     {"medium", MATERIAL_TYPE_MEDIUM},
-    {"grid_medium", MATERIAL_TYPE_GRID_MEDIUM}};
+    {"grid_medium", MATERIAL_TYPE_GRID_MEDIUM}
+};
+
+std::unordered_map<std::string, PresetSSType> ss_type_name_map{
+    {"apple", SS_APPLE},
+    {"chicken_1", SS_CHICKEN_1},
+    {"chicken_2", SS_CHICKEN_2},
+    {"cream", SS_CREAM},
+    {"ketchup", SS_KETCHUP},
+    {"marble", SS_MARBLE},
+    {"potato", SS_POTATO},
+    {"skimmilk", SS_SKIMMILK},
+    {"skin_1", SS_SKIN_1},
+    {"skin_2", SS_SKIN_2},
+    {"spectralon", SS_SPECTRALON},
+    {"wholemilk", SS_WHOLEMILK},
+    {"lowfat_milk", SS_LOWFAT_MILK},
+    {"reduced_milk", SS_REDUCED_MILK},
+    {"regular_milk", SS_REGULAR_MILK},
+    {"espresso", SS_ESPRESSO},
+    {"mint_mocha_coffee", SS_MINT_MOCHA_COFFEE},
+    {"lowfat_soy_milk", SS_LOWFAT_SOY_MILK},
+    {"regular_soy_milk", SS_REGULAR_SOY_MILK},
+    {"lowfat_chocolate_milk", SS_LOWFAT_CHOCOLATE_MILK},
+    {"regular_chocolate_milk", SS_REGULAR_CHOCOLATE_MILK},
+    {"coke", SS_COKE},
+    {"pepsi", SS_PEPSI},
+    {"sprite", SS_SPRITE},
+    {"gatorade", SS_GATORADE},
+    {"chardonnay", SS_CHARDONNAY},
+    {"white_zinfandel", SS_WHITE_ZINFANDEL},
+    {"merlot", SS_MERLOT},
+    {"budweiser_beer", SS_BUDWEISER_BEER},
+    {"coors_light_beer", SS_COORS_LIGHT_BEER},
+    {"clorox", SS_CLOROX},
+    {"apple_juice", SS_APPLE_JUICE},
+    {"cranberry_juice", SS_CRANBERRY_JUICE},
+    {"grape_juice", SS_GRAPE_JUICE},
+    {"ruby_grape_juice", SS_RUBY_GRAPE_JUICE},
+    {"white_grapefuite_juice", SS_WHITE_GRAPEfRUITE_JUICE},
+    {"shampoo", SS_SHAMPOO},
+    {"strawberry_shampoo", SS_STRAWBERRY_SHAMPOO},
+    {"head_and_shoulders_shampoo", SS_HEAD_AND_SHOULDERS_SHAMPOO},
+    {"lemon_tee_powder", SS_LEMON_TEE_POWDER},
+    {"orange_powder", SS_ORANGE_POWDER},
+    {"pink_lemonade_powder", SS_PINK_LEMONADE_POWDER},
+    {"cappuccino_powder", SS_CAPPUCCINO_POWDER},
+    {"salt_powder", SS_SALT_POWDER},
+    {"sugar_powder", SS_SUGAR_POWDER},
+    {"suisse_mocha_powder", SS_SUISSE_MOCHA_POWDER},
+    {"pacific_ocean_surface_water", SS_PACIFIC_OCEAN_SURFACE_WATER},
+    {"none", SS_NONE}
+};
+
 }
+
 
 Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     : table(new BSSRDFTable(100, 64))  {
@@ -193,8 +247,6 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     thin = StringToBool(child_element->FindAttribute("value")->Value());
   }
 
-  float g = 0.0f;
-
   child_element = material_element->FirstChildElement("sigma_a");
   if (child_element) {
     sigma_a = StringToVec3(child_element->FindAttribute("value")->Value());
@@ -203,6 +255,13 @@ Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
   child_element = material_element->FirstChildElement("sigma_s");
   if (child_element) {
     sigma_s = StringToVec3(child_element->FindAttribute("value")->Value());
+  }
+
+  child_element = material_element->FirstChildElement("ss_type");
+  if (child_element) {
+    std::string type = child_element->FindAttribute("value")->Value();
+    ss_type = ss_type_name_map[type];
+    GetPresetSS(ss_type, sigma_a, sigma_s);
   }
 
   child_element = material_element->FirstChildElement("false_surface");
@@ -514,10 +573,12 @@ BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction,
       (material_type != MATERIAL_TYPE_PRINCIPLED ||
        scatterDistance == glm::vec3{0.0f}))
       return nullptr;
-  if (material_type == MATERIAL_TYPE_KDSUBSURFACE) {
-    SubsurfaceFromDiffuse(*table, GetAlbedoColor(hit,scene), mfp, sigma_a, sigma_s);
+  HitRecord textureHit = GetShaderHit(hit,scene);
+  if (material_type == MATERIAL_TYPE_KDSUBSURFACE || material_type ==MATERIAL_TYPE_SUBSURFACE) {
+    if (material_type == MATERIAL_TYPE_KDSUBSURFACE)
+      SubsurfaceFromDiffuse(*table, GetAlbedoColor(hit,scene), mfp, sigma_a, sigma_s);
     BSSRDF *newBSSRDF = new TabulatedBSSRDF(
-        hit.position, -direction, eta, BSSRDF_TABULATED, hit.geometry_normal,
+        hit.position, -direction, eta, BSSRDF_TABULATED, textureHit.normal,
         this, sigma_a, sigma_s, *table);
     return newBSSRDF;
   } else if (material_type == MATERIAL_TYPE_PRINCIPLED &&
@@ -526,7 +587,6 @@ BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction,
     if (diffuseWeight == 0.0f)
       return nullptr;
     glm::vec3 color = GetAlbedoColor(hit,scene);
-    HitRecord textureHit = GetShaderHit(hit,scene);
     return new DisneyBSSRDF(color * diffuseWeight, scatterDistance,
                             textureHit.position, -direction, textureHit.normal,
                             eta, this);

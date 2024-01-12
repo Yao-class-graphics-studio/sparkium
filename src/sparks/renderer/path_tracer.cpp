@@ -254,7 +254,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
   if(!initialized)
     initialMedium(origin, sampleTime);
   Medium *currentMedium = mediumStack.top();
-  const float pdfClamp = 0.05f;
+  const float pdfClamp = 0.1f;
   glm::vec3 emission{0.0f}, direct{0.0f}, env{0.0f}, incident{0.0f};
   glm::vec3 envDirection = scene_->GetSceneLightDirection();
   glm::vec3 envLight = scene_->GetSceneLight(), envThroughput{1.0f};
@@ -413,7 +413,6 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           if (flag == 1) {
             env += bsdf->f(-direction, envDirection, BxDFType(BSDF_ALL)) * scene_->GetSceneLight() *
                    std::fabs(glm::dot(envDirection, norm)) * envThroughput;
-                   
           }
         }
         
