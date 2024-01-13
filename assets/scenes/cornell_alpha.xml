@@ -178,7 +178,8 @@
         <index value="17"/>
 
         <material type="lambertian">
-            <albedo value="1 1 1"/>
+            <albedo value="0 0 1"/>
+            <alpha value="0.5"/>
         </material>
     </model>
 
@@ -241,7 +242,8 @@
         <index value="18"/>
 
         <material type="lambertian">
-            <albedo value="1 1 1"/>
+            <albedo value="1 0 0"/>
+            <alpha value="0.5"/>
         </material>
     </model>
 

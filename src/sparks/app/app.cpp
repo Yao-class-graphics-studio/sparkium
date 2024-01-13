@@ -525,6 +525,10 @@ void App::UpdateImGui() {
                              0.0f, 1e5f, "%.3f", ImGuiSliderFlags_Logarithmic);
       reset_accumulation_ |=
           ImGui::SliderFloat("Alpha", &material.alpha, 0.0f, 1.0f, "%.3f");
+      if (material.material_type == MaterialType(MATERIAL_TYPE_TRANSMISSIVE)) {
+        reset_accumulation_ |=
+            ImGui::SliderFloat("IOR", &material.eta, 1.0f, 3.0f, "%.3f");
+      }
       if (material.material_type == MaterialType(MATERIAL_TYPE_PRINCIPLED)) {
         reset_accumulation_ |= ImGui::SliderFloat(
             "Metallic", &material.metallic, 0.0f, 1.0f, "%.3f");

@@ -488,7 +488,7 @@ class SpecularReflection : public BxDF {
   }
   glm::vec3 Sample_f(const glm::vec3 &wo, glm::vec3 &wi, const glm::vec2 &args, float& pdf) const override {
     wi = glm::vec3{-wo.x, -wo.y, wo.z};
-    pdf = 10000000.0f;
+    pdf = 1000.0f;
     return pdf * fresnel_->Evaluate(CosTheta(wi)) * R_ / AbsCosTheta(wi);
   }
   float Pdf(const glm::vec3 &wo, const glm::vec3 &wi) const override {
@@ -519,10 +519,10 @@ class SpecularTransmission : public BxDF {
     float etaT = entering ? etaB_ : etaA_;
     if (!Refract(wo, glm::vec3(0.0f,0.0f,(wo.z<0.0f?-1.0f:1.0f)),etaI/etaT, wi))
         return glm::vec3{0.0f};
-    pdf=1;
+    pdf=1000.0f;
     glm::vec3 ft = T_ * (glm::vec3(1.0f) - fresnel_.Evaluate(CosTheta(wi)));
     ft *= (etaI * etaI) / (etaT * etaT);
-    return ft / AbsCosTheta(wi);
+    return pdf * ft / AbsCosTheta(wi);
   }
   float Pdf(const glm::vec3 &wo, const glm::vec3 &wi) const override {
     return 0;
@@ -532,5 +532,30 @@ class SpecularTransmission : public BxDF {
   glm::vec3 T_;
   float etaA_, etaB_;
   FresnelDielectric fresnel_;
+};
+
+class AlphaTransmission : public BxDF {
+ public:
+  AlphaTransmission(const glm::vec3 &T)
+      : BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)),
+        T_(T) {
+  }
+  glm::vec3 f(const glm::vec3 &wo, const glm::vec3 &wi) const {
+    return glm::vec3{0.0f};
+  }
+  glm::vec3 Sample_f(const glm::vec3 &wo,
+                     glm::vec3 &wi,
+                     const glm::vec2 &args,
+                     float &pdf) const override {
+    wi = -wo;
+    pdf = 1000.0f;
+    return pdf * T_ / AbsCosTheta(wi);
+  }
+  float Pdf(const glm::vec3 &wo, const glm::vec3 &wi) const override {
+    return 0;
+  }
+
+ private:
+  glm::vec3 T_;
 };
 }  // namespace sparks

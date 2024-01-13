@@ -205,6 +205,7 @@ const std::vector<float> &Scene::GetEnvmapCdf() const {
 glm::mat4 InterpolateTransformation(const glm::mat4 &start,
                                     const glm::mat4 &end,
                                     float t) {
+    if (start == end) return start;
     // M = TRS
   glm::vec3 T[2];
   glm::quat R[2];

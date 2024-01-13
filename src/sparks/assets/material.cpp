@@ -378,9 +378,9 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
     }
     case MATERIAL_TYPE_TRANSMISSIVE: {
         bsdf->Add(new SpecularTransmission(glm::vec3{ 1.0f }, 1.0f, eta), 1);
-        bsdf->Add(new SpecularReflection(glm::vec3{ 1.0f },
-            new FresnelDielectric(1.0f, eta)),
-            1.0f);
+        //bsdf->Add(new SpecularReflection(glm::vec3{ 1.0f },
+        //    new FresnelDielectric(1.0f, eta)),
+        //    1.0f);
         break;
     }
     case MATERIAL_TYPE_MEDIUM: {
@@ -499,11 +499,13 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
     }
   }
   if (real_alpha != 1.0f) {
+    float sum_weight = 0;
     for (auto &[bxdf, weight] : bsdf->bxdfs_) {
       bxdf = new ScaledBxDF(bxdf, glm::vec3{real_alpha});
+      sum_weight += weight;
       weight *= real_alpha;
     }
-    bsdf->Add(new SpecularTransmission(glm::vec3{1.0f-real_alpha}, 1.0f, 1.0f), 1 - real_alpha);
+    bsdf->Add(new AlphaTransmission(glm::vec3{1.0f-real_alpha}), sum_weight * (1 - real_alpha));
   }
   return bsdf;
 }

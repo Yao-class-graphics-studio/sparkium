@@ -270,8 +270,9 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
   const std::function<float(const glm::vec3&, const glm::vec3&, float, float, HitRecord*)> TraceRayMethod = 
       std::bind(&Scene::TraceRay, scene_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, sampleTime);
   auto FirstBounceClamp = [bounces](const glm::vec3 &L) -> glm::vec3 {
+    //return L;
     if (bounces == 0)
-      return glm::clamp(L, 0.0f, 30.0f);
+      return glm::clamp(L, 0.0f, 10.0f);
     return L;
   };
   intersection = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit, sampleTime);
@@ -401,6 +402,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
         else
           incident = glm::vec3{0.0f};
         if ((sampledType & BSDF_SPECULAR) || material.false_surface) {
+          if (sampledType & BSDF_SPECULAR)
+            //incident = glm::clamp(incident, 0.0f, 100.0f);
           return FirstBounceClamp(incident);
         }
         // emission
@@ -432,8 +435,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
     assert(!std::isnan(L[0]) && !std::isnan(L[1]) && !std::isnan(L[2]));
     //if (bounces == 0)
     //  L = glm::clamp(L, 0.0f, 1.0f);
-    //if(material.material_type == MATERIAL_TYPE_PRINCIPLED)
-    //  L = clamp(L, 0.0f, 1.5f);
+    if(material.material_type == MATERIAL_TYPE_PRINCIPLED)
+      L = clamp(L, 0.0f, 1.5f);
     return FirstBounceClamp(L);
   }
 
