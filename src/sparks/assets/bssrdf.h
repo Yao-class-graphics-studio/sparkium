@@ -1,6 +1,5 @@
 #pragma once
 #include "sparks/assets/bxdf.h"
-// #include "sparks/assets/scene.h"
 #include "sparks/assets/medium.h"
 #include <memory>
 #include <random>
@@ -81,6 +80,13 @@ class BSSRDFTable {
           profile(new float[nRadiusSamples * nRhoSamples]),
           rhoEff(new float[nRhoSamples]),
           profileCDF(new float[nRadiusSamples * nRhoSamples]) {
+    }
+    ~BSSRDFTable() {
+        delete[] rhoSamples;
+        delete[] radiusSamples;
+        delete[] profile;
+        delete[] rhoEff;
+        delete[] profileCDF;
     }
     // BSSRDFTable(const BSSRDFTable&) = default;
     // BSSRDFTable& operator = (const BSSRDFTable&) = default;

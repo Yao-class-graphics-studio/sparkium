@@ -27,6 +27,7 @@ public:
                            std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const = 0;
     virtual float p(glm::vec3 wo, glm::vec3 wi) const = 0;
     virtual glm::vec3 getEmission() const = 0;
+    virtual void Update(glm::vec3 a_, glm::vec3 s_, glm::vec3 emission_, float g_) = 0;
 protected:
     const float MAX_FLOAT = 1e10f;
 };
@@ -50,6 +51,10 @@ public:
     }
     glm::vec3 getEmission() const {
         return emission;
+    }
+    void Update(glm::vec3 a_, glm::vec3 s_, glm::vec3 emission_, float g_) {
+        sigma_a = a_, sigma_s = s_, emission = emission_, g = g_;
+        sigma_t = sigma_a + sigma_s;
     }
 };
 
@@ -77,6 +82,9 @@ public:
             assert(maxDensity > 0);
             invMaxDensity = 1 / maxDensity;
         }
+    ~GridDensityMedium() {
+        delete[] density;
+    }
     glm::vec3 Tr(glm::vec3 origin, glm::vec3 direction, float tMax,
                  std::mt19937 &rd, std::uniform_real_distribution<float> &uniform) const;
     glm::vec3 Sample(const glm::vec3 origin, const glm::vec3 direction, glm::vec3 &sample, float &pdf, 
@@ -95,6 +103,10 @@ public:
     }
     glm::vec3 getEmission() const {
         return emission;
+    }
+    void Update(glm::vec3 a_, glm::vec3 s_, glm::vec3 emission_, float g_) {
+        sigma_a = a_, sigma_s = s_, emission = emission_, g = g_;
+        sigma_t = (sigma_a + sigma_s)[0];
     }
 };
 

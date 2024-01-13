@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <scene>
+    <light>
+		<color value="1 1 1"/>
+		<strength value="10"/>
+		<direction value="0.1 1 0"/>
+	</light>
+
     <camera>
         <transform type="lookat">
             <eye value="-200 200 -600"/>
@@ -11,7 +17,7 @@
     </camera>
 
     <!--Light-->
-    <model name="Light">
+    <!-- <model name="Light">
         <vertex position="280.0 1048.7 276.0"/>
         <vertex position="288.0 1048.7 280.0"/>
         <vertex position="276.0 1048.7 280.0"/>
@@ -27,7 +33,9 @@
             <emission value="1.0 1.0 1.0"/>
             <emission_strength value="160000.0"/>
         </material>
-    </model>
+    </model> -->
+
+    
 
     <!--floor-->
     <model name="Floor">
@@ -36,8 +44,8 @@
         <vertex position="0.0 0.0 559.2"/>
         <vertex position="549.6 0.0 559.2"/>
         <index value="0"/>
-        <index value="1"/>
         <index value="3"/>
+        <index value="1"/>
         <index value="1"/>
         <index value="3"/>
         <index value="2"/>
@@ -322,16 +330,16 @@
 
         <material type="grid_medium">
             <albedo value="1 1 1"/>
-            <sigma_a value="0.0004 0.0004 0.0004"/>
+            <sigma_a value="0.0020 0.0020 0.0020"/>
             <sigma_s value="0.0016 0.0016 0.0016"/>
             <false_surface value="TRUE"/>
             <volumetric_emission value="0 0 0"/>
             <g value="0"/>
             <eta value="1"/>
-            <density_grid_path value="../../textures/alpha_shadow_grid.txt"/>
+            <density_grid_path value="../../textures/monotone_grid.txt"/>
             <pos000 value="398.6 248.7 408.2"/>
-            <pos100 value="402.7 248.7 150.1"/>
-            <pos010 value="150.1 248.7 408.2"/>
+            <pos100 value="150.1 248.7 408.2"/>
+            <pos010 value="402.7 248.7 150.1"/>
             <pos001 value="405.0 348.7 408.2"/>
         </material>
     </model>
