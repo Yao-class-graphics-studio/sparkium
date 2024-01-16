@@ -6,7 +6,7 @@
 #include <functional>
 
 // all w are local direction
-
+// BSSRDF: Jingyi Lyu
 namespace sparks {
 
 class Scene;

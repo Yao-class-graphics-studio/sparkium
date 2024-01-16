@@ -24,6 +24,7 @@ enum MaterialType : int {
 
 class Scene;
 
+// New features appended: Jingyi Lyu + Shengquan Du.
 class Material {
 public:
   glm::vec3 albedo_color{0.8f};

@@ -11,6 +11,8 @@
 
 namespace sparks {
 
+// Disney principled BSDF: Shengquan Du.
+
 class Scene;
 
 inline float Pow5(float x) {

@@ -3,6 +3,9 @@
 #include "glm/gtc/type_ptr.hpp"
 
 namespace sparks {
+
+// BSSRDF: Jingyi Lyu.
+
 // BSSRDF Utility
 
 template <typename Predicate>

@@ -2,6 +2,7 @@
 
 #include "algorithm"
 
+// Acceleration structure: Shengquan Du
 namespace sparks {
 AcceleratedMesh::AcceleratedMesh(const Mesh &mesh) : Mesh(mesh) {
   BuildAccelerationStructure();

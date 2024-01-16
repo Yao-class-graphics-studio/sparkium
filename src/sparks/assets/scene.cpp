@@ -180,8 +180,6 @@ void Scene::UpdateEnvmapConfiguration() {
   for (auto &v : envmap_cdf_) {
     v *= inv_total_weight;
   }
-  std::cerr << envmap_minor_color_[0] << " " << envmap_minor_color_[1] << " " << envmap_minor_color_[2] << std::endl;
-  std::cerr << envmap_major_color_[0] << " " << envmap_major_color_[1] << " " << envmap_major_color_[2] << std::endl;
 }
 glm::vec3 Scene::GetEnvmapLightDirection() const {
   float sin_offset = std::sin(envmap_offset_);
@@ -201,7 +199,7 @@ const glm::vec3 &Scene::GetEnvmapMajorColor() const {
 const std::vector<float> &Scene::GetEnvmapCdf() const {
   return envmap_cdf_;
 }
-
+// Motion blur: Shengquan Du.
 glm::mat4 InterpolateTransformation(const glm::mat4 &start,
                                     const glm::mat4 &end,
                                     float t) {

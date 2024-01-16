@@ -8,6 +8,7 @@
 
 namespace sparks {
 
+// Volumetric medium: Jingyi Lyu.
 
 bool GetMediumScatteringProperties(const std::string &name,
                                    glm::vec3 *sigma_a,

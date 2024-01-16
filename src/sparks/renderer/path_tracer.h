@@ -6,6 +6,8 @@
 
 namespace sparks {
 
+// Jingyi Lyu
+// Stack for nested medium
 class MyStack {
   int cnt;
   Medium *data[10];

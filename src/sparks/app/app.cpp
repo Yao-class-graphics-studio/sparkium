@@ -495,6 +495,9 @@ void App::UpdateImGui() {
     reset_accumulation_ |= ImGui::SliderAngle(
         "Offset", &scene.GetEnvmapOffset(), 0.0f, 360.0f, "%.0f deg");
 
+    // Appended UI for modification of entity properties: Jingyi Lyu + Shengquan Du.
+    // Each worked for their own features.
+
     if (selected_entity_id_ != -1) {
       ImGui::NewLine();
       ImGui::Text("Material");

@@ -2,7 +2,9 @@
 #include "glm/glm.hpp"
 
 namespace sparks {
+// Library of BSSRDF presettings: Jingyi Lyu.
 
+// Fetched from pbrt-v3
 struct PresetSS {
     const char *name;
     glm::vec3 sigma_s;

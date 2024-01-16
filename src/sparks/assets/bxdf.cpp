@@ -4,6 +4,7 @@
 
 namespace sparks {
 
+// BxDF (except BSSRDF): Shengquan Du.
 
 // BxDF method definition
 glm::vec3 BxDF::Sample_f(const glm::vec3 &wo, glm::vec3 &wi, const glm::vec2 &args, float& pdf) const{

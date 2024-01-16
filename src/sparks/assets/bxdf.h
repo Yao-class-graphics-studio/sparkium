@@ -9,6 +9,8 @@
 
 namespace sparks {
 
+// BxDF (except BSSRDF): Shengquan Du.
+
 inline float sqr(float x) {
   return x * x;
 }

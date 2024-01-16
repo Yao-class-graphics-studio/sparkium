@@ -11,6 +11,8 @@ struct TreeNode {
 };
 }  // namespace
 
+// Acceleration structure: Shengquan Du.
+
 class AcceleratedMesh : public Mesh {
  public:
   AcceleratedMesh() = default;

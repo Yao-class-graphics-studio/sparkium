@@ -13,6 +13,7 @@ namespace sparks {
 
 // utility
 
+// Read density grid from file. Jingyi Lyu.
 float* readDensityGrid(const std::string &path, int &nx, int &ny, int &nz) {
   std::ifstream in;
   in.open(path, std::ios::in);
@@ -41,6 +42,7 @@ std::unordered_map<std::string, MaterialType> material_name_map{
     {"grid_medium", MATERIAL_TYPE_GRID_MEDIUM}
 };
 
+// Map for BSSRDF Type. Jingyi Lyu.
 std::unordered_map<std::string, PresetSSType> ss_type_name_map{
     {"apple", SS_APPLE},
     {"chicken_1", SS_CHICKEN_1},
@@ -94,7 +96,7 @@ std::unordered_map<std::string, PresetSSType> ss_type_name_map{
 
 }
 
-
+// Read material from XML. Jingyi Lyu + Shengquan Du. 
 Material::Material(Scene *scene, const tinyxml2::XMLElement *material_element)
     : table(new BSSRDFTable(100, 64))  {
   if (!material_element) {
@@ -361,17 +363,20 @@ Material::Material(const glm::vec3 &albedo) {
   albedo_color = albedo;
 }
 
+// Shengquan Du
 glm::vec3 Material::GetAlbedoColor(const HitRecord &hit,
                                    const Scene *scene) const {
   return albedo_color * glm::vec3(scene->GetTexture(albedo_texture_id).Sample(hit.tex_coord));
 }
 
+// Shengquan Du
 float Material::GetAlpha(const HitRecord &hit, const Scene *scene) const {
   if (!use_alpha_texture)
     return alpha;
   return scene->GetTexture(alpha_texture_id).Sample(hit.tex_coord)[3];
 }
 
+// Return actual hit (considering normal texture etc.). Shengquan Du.
 HitRecord Material::GetShaderHit(const HitRecord &hit, const Scene *scene) const{
   HitRecord textureHit = hit;
   if (!textureHit.front_face) {
@@ -400,6 +405,7 @@ HitRecord Material::GetShaderHit(const HitRecord &hit, const Scene *scene) const
   return textureHit;
 }
 
+// Shengquan Du
 glm::vec3 Material::GetShaderNormal(const HitRecord &hit,
                                     const Scene *scene) const {
   if (!use_normal_texture)
@@ -408,6 +414,7 @@ glm::vec3 Material::GetShaderNormal(const HitRecord &hit,
     return GetShaderHit(hit, scene).normal;
 }
 
+// Shengquan Du.
 BSDF* Material::ComputeBSDF(const HitRecord &hit,
                          const Scene* scene) const {
   glm::vec3 color = GetAlbedoColor(hit, scene);
@@ -569,6 +576,7 @@ BSDF* Material::ComputeBSDF(const HitRecord &hit,
   return bsdf;
 }
 
+// Jingyi Lyu.
 BSSRDF* Material::ComputeBSSRDF(const HitRecord &hit, const glm::vec3 direction, const Scene* scene) {
   if (material_type != MATERIAL_TYPE_SUBSURFACE &&
       material_type != MATERIAL_TYPE_KDSUBSURFACE &&

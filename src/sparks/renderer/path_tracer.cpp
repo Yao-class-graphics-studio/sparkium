@@ -29,50 +29,7 @@ PathTracer::PathTracer(const RendererSettings *render_settings,
   uniform = std::uniform_real_distribution<float>(0, 1);
 }
 
-// glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
-//                                 glm::vec3 direction,
-//                                 int x,
-//                                 int y,
-//                                 int sample,
-//                                 bool moreBounces,
-//                                 float weight) {
-//   glm::vec3 throughput{1.0f};
-//   glm::vec3 radiance{0.0f};
-//   HitRecord hit_record;
-//   const int max_bounce = render_settings_->num_bounces;
-//   std::mt19937 rd(sample ^ x ^ y);
-//   for (int i = 0; i < max_bounce; i++) {
-//     auto t = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit_record);
-//     if (t > 0.0f) {
-//       auto &material =
-//           scene_->GetEntity(hit_record.hit_entity_id).GetMaterial();
-//       if (material.material_type == MATERIAL_TYPE_EMISSION) {
-//         radiance += throughput * material.emission * material.emission_strength;
-//         break;
-//       } else {
-//         throughput *=
-//             material.albedo_color *
-//             glm::vec3{scene_->GetTextures()[material.albedo_texture_id].Sample(
-//                 hit_record.tex_coord)};
-//         origin = hit_record.position;
-//         direction = scene_->GetEnvmapLightDirection();
-//         radiance += throughput * scene_->GetEnvmapMinorColor();
-//         throughput *=
-//             std::max(glm::dot(direction, hit_record.normal), 0.0f) * 2.0f;
-//         if (scene_->TraceRay(origin, direction, 1e-3f, 1e4f, nullptr) < 0.0f) {
-//           radiance += throughput * scene_->GetEnvmapMajorColor();
-//         }
-//         break;
-//       }
-//     } else {
-//       radiance += throughput * glm::vec3{scene_->SampleEnvmap(direction)};
-//       break;
-//     }
-//   }
-//   return radiance;
-// }
-
-
+// Jingyi Lyu
 // sample from light source, returns sample result(position on light source), pdf, normal vector and light
 void PathTracer::SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, int except) {
   const std::vector<Entity> &lightSources = scene_->GetEntities(); // all of them shall be meshes
@@ -122,6 +79,7 @@ void PathTracer::SampleFromLight(glm::vec3 &res, glm::vec3 &norm, float &area, i
   area = totalArea;
 }
 
+// Jingyi Lyu
 float PathTracer::getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area, float sampleTime) {
   HitRecord tmp;
   float t = scene_->TraceRay(pos, sample, 1e-3f, 1e4f, &tmp, sampleTime);
@@ -131,15 +89,14 @@ float PathTracer::getPdfByLight(glm::vec3 pos, glm::vec3 sample, float area, flo
     return 0.0f;
 }
 
+// Jingyi Lyu
 int PathTracer::shadowRay(glm::vec3 pos, glm::vec3 &dir, glm::vec3 sample, glm::vec3 &throughput, float sampleTime) {
   MyStack tmpStack = mediumStack;
   HitRecord tmpHit;
   glm::vec3 currentPos = pos;
   throughput = glm::vec3{1.0f};
   glm::vec3 norm;
-  // return 0;
   while(true) {
-    // std::cerr << currentPos[0] << " " << currentPos[1] << " " << currentPos[2] << " " << dir[0] << " " << dir[1] << " " << dir[2] << " " << tmpStack.size() << std::endl;
     Medium *tmpMedium = tmpStack.top();
     float check = scene_->TraceRay(currentPos, dir, 1e-3f, 1e4f, &tmpHit, sampleTime);
     if(check < 0) {
@@ -163,6 +120,7 @@ int PathTracer::shadowRay(glm::vec3 pos, glm::vec3 &dir, glm::vec3 sample, glm::
   }
 }
 
+// Jingyi Lyu
 glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &dir, float &lightArea, int except, float sampleTime) {
   // return glm::vec3{1.0f};
   glm::vec3 directSample, directNorm, directDir;
@@ -188,6 +146,8 @@ glm::vec3 PathTracer::directIllumination(glm::vec3 pos, float &pdf, glm::vec3 &d
   return res;
 }
 
+// Jingyi Lyu
+// To process multiple nested medium, use a stack
 void PathTracer::updateStack(MyStack &st, HitRecord hit, bool penetrate) {
   const Material material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
   // std::cerr << hit.position[1] << std::endl;
@@ -197,13 +157,9 @@ void PathTracer::updateStack(MyStack &st, HitRecord hit, bool penetrate) {
     st.push(material.medium);
   else
     st.pop();
-  // std::cerr << "****" << std::endl;
-  // std::cerr << hit.position[0] << " " << hit.position[1] << " " << hit.position[2] << std::endl;
-  // std::cerr << (hit.front_face ? "in" : "out") << " " << (material.medium == nullptr ? "vaccum" : "medium") << std::endl;
-  // if(st.size() < 0)
-  //   system("pause");
 }
 
+// Jingyi Lyu
 void PathTracer::initialMedium(glm::vec3 pos, float sampleTime) {
   glm::vec3 currentPos(0.0f, 1e3f, 0.0f);
   glm::vec3 dir = glm::normalize(pos - currentPos);
@@ -214,10 +170,8 @@ void PathTracer::initialMedium(glm::vec3 pos, float sampleTime) {
     HitRecord hit;
     int t = scene_->TraceRay(currentPos, dir, 1e-3f, 1e4f, &hit, sampleTime);
     int dis = glm::length(pos - currentPos);
-    // std::cerr << currentPos[1] << std::endl;
     if(t < 0 || t > dis)
       break;
-    // std::cerr << "t" << std::endl;
     const Material &material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
     glm::vec3 norm = material.GetShaderNormal(hit, scene_);
     if(!material.false_surface && hit.front_face)
@@ -230,10 +184,9 @@ void PathTracer::initialMedium(glm::vec3 pos, float sampleTime) {
       cnt--;
   }
   mediumStack.flag = true;
-  // std::cerr << "************************************* " << mediumStack.size() << std::endl;
-  // system("pause");
 }
 
+// Jingyi Lyu + Shengquan Du
 static float PowerHeuristic(float pdf1, float pdf2) {
   if (pdf1 == 0.0f)
     return 0.0f;
@@ -241,6 +194,9 @@ static float PowerHeuristic(float pdf1, float pdf2) {
   return pdf1 * pdf1 / (pdf1 * pdf1 + pdf2 * pdf2);
 }
 
+// Jingyi Lyu implemented the basic algorithm first
+// Then slightly reconstructed by Shengquan Du
+// Both have added new features after reconstruction
 // path trace main algorithm
 glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 glm::vec3 direction,
@@ -250,7 +206,8 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
                                 int sample,
                                 int bounces,
                                 bool initialized,
-                                float currentRatio) {           
+                                float currentRatio) {    
+  // Initialization: Jingyi Lyu + Shengquan Du       
   if(!initialized)
     initialMedium(origin, sampleTime);
   Medium *currentMedium = mediumStack.top();
@@ -277,9 +234,9 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
   };
   intersection = scene_->TraceRay(origin, direction, 1e-3f, 1e4f, &hit, sampleTime);
   if(currentMedium != nullptr) {
-    // std::cerr << (unsigned long long)nullptr << " " << (unsigned long long)currentMedium << std::endl;
     volWeight = currentMedium->Sample(origin, direction, volSample, volPdf, volFlag, intersection, rd, uniform);
   }
+  // Medium sampling: Jingyi Lyu
   // If ray is not in vaccum, do medium sampling
   if(volFlag) {
     // directIllumination evaluates direct light strength ingoing
@@ -303,11 +260,10 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
   } else { // otherwise, do normal sampling
     if (intersection <= 0.0f)
       return scene_->SampleEnvmap(direction);
-        //return bounces == 0 ? scene_->SampleEnvmap(direction) : glm::vec3{0.0f}; //FirstBounceClamp(glm::vec3(scene_->SampleEnvmap(direction)));
     Material material = scene_->GetEntity(hit.hit_entity_id).GetMaterial();
     std::unique_ptr<BSDF> bsdf(material.ComputeBSDF(hit, scene_)); 
     std::unique_ptr<BSSRDF> bssrdf(material.ComputeBSSRDF(hit, direction, scene_));
-    //sample incident
+    // sample incident
     glm::vec3 incidentSample;
     float incidentPdf;
     BxDFType sampledType = BxDFType(0);
@@ -319,18 +275,13 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
       incidentSample = glm::vec3{0.0f};
       incident = glm::vec3{0.0f};
     } else {
-      // Coming into an entiy with BSSRDF
+      // Coming into an entiy with BSSRDF. Jingyi Lyu
       if(bssrdf != nullptr) {
-        // std::cerr << "???" << std::endl;
         glm::vec3 ssSample, ssDir, ssNormal;
         float rawPdf = 0.0f, fullPdf = 0.0f;
         glm::vec3 ss = bssrdf->Sample_S(TraceRayMethod, ssSample, ssDir, ssNormal, rawPdf, fullPdf,
                                         hit.hit_entity_id, rd, uniform);
         if(glm::length(ss) > 1e-6f && rawPdf > 1e-6f && fullPdf > 1e-6f) {
-         /* printf("ss: %f %f %f\n", ss[0], ss[1], ss[2]);
-          printf("addr; ssDir: %p %f %f %f\n", glm::value_ptr(ssDir), ssDir[0], ssDir[1], ssDir[2]);
-          printf("ssNormal: %f %f %f\n", ssNormal[0], ssNormal[1], ssNormal[2]);
-          printf("fullPdf: %f\n", fullPdf);*/
           assert(!std::isnan(ss[0]));
           assert(!std::isnan(ss[1]));
           assert(!std::isnan(ss[2]));
@@ -352,23 +303,16 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
 
           assert(!std::isnan(incident[0]));
           incident /= actualContinueProb;
-          // reflection on surface of bssrdf material is not implemented yet
-          // it should be identical to other material (in fact lambertian material, as assumed)
-          // but unknown bug exists so I cannot reuse the existing code
-          // TODO
           incident = glm::clamp(incident, 0.0f, 1.0f); 
-          // it shouldn't appear since we don't have clamp in procedure. but removing it produces BLOODY scene in translucent example.
-          // BSSRDF is really confusing for debugging and parameter setting. I will try to fix it (or at least understand it) later. 
         }
-      } else {
-
+      } else { // Normal surface. Jingyi Lyu + Shengquan Du
         brdf = bsdf->Sample_f(-direction, incidentSample,
                               glm::vec2{uniform(rd), uniform(rd)}, incidentPdf,
                               BxDFType(BSDF_ALL), sampledType);
         
         glm::vec3 norm = material.GetShaderNormal(hit, scene_);
         glm::vec3 pos = hit.position + 3e-5f * norm;
-        // direct illumination (from emitting entities)
+        // direct illumination (from emitting entities). Jingyi Lyu + Shengquan Du
         direct = directIllumination(hit.position + 3e-5f * norm, directPdf, directDir, lightArea, hit.hit_entity_id, sampleTime);
         if(direct != glm::vec3{0.0f}) {
           direct *= bsdf->f(-direction, directDir, BxDFType(BSDF_ALL)) * std::fabs(glm::dot(norm, directDir));
@@ -380,7 +324,7 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           directPdf = 0;
         }
 
-        // incident illumination
+        // incident illumination. Jingyi Lyu + Shengquan Du
         assert(!std::isnan(incidentPdf));
         assert(!std::isinf(incidentPdf));
         bool penetrate = glm::dot(norm, incidentSample) * glm::dot(norm, -direction) < 0.0f;
@@ -392,8 +336,6 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           incidentPdf = glm::clamp(incidentPdf, pdfClamp, 1e10f);
           incident = SampleRay(shift(hit.position, norm, incidentSample),
                               incidentSample, x, y, sampleTime, sample, bounces + (material.false_surface ? 0 : 1), true, incidentRatio);
-          // if(incident[1] > 0 && bounces == 1 && hit.position[1] >= 330.0f && hit.position[1] <= 330.1f)
-          //   std::cerr << incidentRatio << std::endl;          
           incident = incident * brdf *
                       std::fabs(glm::dot(norm, incidentSample)) /
                       (actualContinueProb * incidentPdf);
@@ -403,14 +345,13 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
           incident = glm::vec3{0.0f};
         if ((sampledType & BSDF_SPECULAR) || material.false_surface) {
           if (sampledType & BSDF_SPECULAR)
-            //incident = glm::clamp(incident, 0.0f, 100.0f);
           return FirstBounceClamp(incident);
         }
-        // emission
+        // emission. Jingyi Lyu
         emission = material.material_type == MATERIAL_TYPE_EMISSION
                           ? material.emission * material.emission_strength * currentRatio
                           : glm::vec3{0.0f};
-        // direct illumination (from environment)
+        // direct illumination (from environment). Jingyi Lyu
         if(scene_->use_scene_light) {
           int flag = shadowRay(pos, envDirection, glm::vec3{0.0f}, envThroughput, sampleTime);
           if (flag == 1) {
@@ -422,18 +363,10 @@ glm::vec3 PathTracer::SampleRay(glm::vec3 origin,
       }
     }
     if (sampledType & BSDF_SPECULAR) {
-      //printf("incident %f %f %f\n", incident[0], incident[1], incident[2]);
       return FirstBounceClamp(incident);
     }
     glm::vec3 L = (emission + direct + env + incident) * volWeight;
-    // if(bounces == 2 && origin[1] >= 330.0f && origin[1] <= 330.1f && material.material_type == MATERIAL_TYPE_EMISSION)
-    //   std::cerr << L[1] << std::endl;
-    // if(bounces == 0 && L[1] > 2.0f)
-    //   std::cerr << L[1] << std::endl;
-      //printf("%f %f %f\n", incident[0], incident[1], incident[2]);
     assert(!std::isnan(L[0]) && !std::isnan(L[1]) && !std::isnan(L[2]));
-    //if (bounces == 0)
-    //  L = glm::clamp(L, 0.0f, 1.0f);
     if(material.material_type == MATERIAL_TYPE_PRINCIPLED)
       L = clamp(L, 0.0f, 1.5f);
     return FirstBounceClamp(L);

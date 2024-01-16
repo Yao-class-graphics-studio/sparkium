@@ -2,6 +2,7 @@
 
 namespace sparks {
 
+// Volumetric medium: Jingyi Lyu
 // medium sampling utility
 
 bool IntersectWithGrid(const glm::vec3 origin, const glm::vec3 direction, float &tMin, float &tMax) {
