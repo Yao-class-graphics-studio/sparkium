@@ -1,0 +1,18 @@
+# Blender 3.6.5 MTL File: 'center.blend'
+# www.blender.org
+
+newmtl Indoor_Fd_Build_Gjy_Zujian_B_02.004
+Ks 0.050000 0.050000 0.050000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+Pr 0.552786
+Pm 1.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd C:/Indoor_Fd_Build_Gjy_Zujian_B_02_Diffuse.png
+map_Bump -bm 1.000000 C:/Indoor_Fd_Build_Gjy_Zujian_B_02_Normal.png

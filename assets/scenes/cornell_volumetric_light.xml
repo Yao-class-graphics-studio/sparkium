@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+        <transform type="lookat">
+            <eye value="278 273 -800"/>
+            <center value="278 273 0"/>
+            <up value="0.0 1.0 0.0"/>
+        </transform>
+        <fov value="40"/>
+        <speed value="100"/>
+    </camera>
+
+    <!--Light-->
+    <model name="Light">
+        <vertex position="343.0 750.0 227.0"/>
+        <vertex position="343.0 750.0 332.0"/>
+        <vertex position="213.0 750.0 332.0"/>
+        <vertex position="213.0 750.0 227.0"/>
+        <index value="0"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="2"/>
+
+        <material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="120.0"/>
+        </material>
+    </model>
+
+    <!--floor-->
+    <model name="Floor">
+        <vertex position="552.8 0.0   0.0"/>
+        <vertex position="0.0 0.0   0.0"/>
+        <vertex position="0.0 0.0 559.2"/>
+        <vertex position="549.6 0.0 559.2"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="2"/>
+
+        <material type="lambertian">
+            <albedo value="0.8 0.8 0.8"/>
+        </material>
+    </model>
+
+    <!--ceiling-->
+    <model name="Ceiling">
+        <vertex position="556.0 548.8 0.0  "/>
+        <vertex position="556.0 548.8 559.2"/>
+        <vertex position="0.0 548.8 559.2"/>
+        <vertex position="0.0 548.8   0.0"/>
+        <vertex position="303.0 548.8 267.0"/>
+        <vertex position="303.0 548.8 292.0"/>
+        <vertex position="253.0 548.8 292.0"/>
+        <vertex position="253.0 548.8 267.0"/>
+        <index value="1"/>
+        <index value="5"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="2"/>
+        <index value="6"/>
+        <index value="6"/>
+        <index value="2"/>
+        <index value="3"/>
+        <index value="6"/>
+        <index value="3"/>
+        <index value="7"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="3"/>
+        <index value="4"/>
+        <index value="3"/>
+        <index value="0"/>
+        <index value="0"/>
+        <index value="4"/>
+        <index value="5"/>
+        <index value="5"/>
+        <index value="0"/>
+        <index value="1"/>
+
+        <material type="lambertian">
+            <albedo value="0.8 0.8 0.8"/>
+        </material>
+    </model>
+
+    <!--back wall-->
+    <model name="Back Wall">
+        <vertex position="549.6   0.0 559.2"/>
+        <vertex position="0.0   0.0 559.2"/>
+        <vertex position="0.0 548.8 559.2"/>
+        <vertex position="556.0 548.8 559.2"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="2"/>
+
+        <material type="lambertian">
+            <albedo value="0.8 0.8 0.8"/>
+        </material>
+    </model>
+
+    <!--right wall-->
+    <model name="Right Wall">
+        <vertex position="0.0   0.0 559.2 "/>
+        <vertex position="0.0   0.0   0.0"/>
+        <vertex position="0.0 548.8   0.0"/>
+        <vertex position="0.0 548.8 559.2"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="2"/>
+
+        <material type="lambertian">
+            <albedo value="0.0 0.8 0.0"/>
+        </material>
+    </model>
+
+    <!--left wall-->
+    <model name="Left Wall">
+        <vertex position="552.8   0.0   0.0 "/>
+        <vertex position="549.6   0.0 559.2"/>
+        <vertex position="556.0 548.8 559.2"/>
+        <vertex position="556.0 548.8   0.0"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="2"/>
+
+        <material type="lambertian">
+            <albedo value="0.8 0.0 0.0"/>
+        </material>
+    </model>
+
+    <model type="obj" name="Bunny">
+        <filename value="../../meshes/bunny.obj"/>
+        <transform type="world">
+            <scale value="1000 1000 1000"/>
+            <translation value="240 -29 231"/>
+            <rotation value="-174 52 -180"/>
+        </transform>
+
+        <material type="lambertian">
+            <albedo value="1 1 0.7"/>
+        </material>
+    </model>
+
+    <model name="atmosphere">
+        <vertex position="555.0 548.7 0.1  "/>
+        <vertex position="555.0 548.7 558.2"/>
+        <vertex position="0.1 548.7 558.2"/>
+        <vertex position="0.1 548.7 0.1"/>
+        <vertex position="552.7 0.1 0.1 "/>
+        <vertex position="548.6 0.1 558.2"/>
+        <vertex position="0.1 0.1 558.2"/>
+        <vertex position="0.1 0.1 0.1 "/>
+
+        <index value="0"/>
+        <index value="1"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="2"/>
+        <index value="1"/>
+        <index value="2"/>
+        <index value="5"/>
+        <index value="6"/>
+        <index value="6"/>
+        <index value="3"/>
+        <index value="2"/>
+        <index value="3"/>
+        <index value="6"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="7"/>
+        <index value="5"/>
+        <index value="7"/>
+        <index value="6"/>
+        <index value="5"/>
+        <index value="4"/>
+        <index value="0"/>
+        <index value="3"/>
+        <index value="3"/>
+        <index value="7"/>
+        <index value="4"/>
+        <index value="4"/>
+        <index value="1"/>
+        <index value="0"/>
+        <index value="1"/>
+        <index value="4"/>
+        <index value="5"/>
+
+        <material type="medium">
+            <albedo value="1 1 1"/>
+            <sigma_a value="0.0002 0.0002 0.0002"/>
+            <sigma_s value="0.0008 0.0008 0.0008"/>
+            <false_surface value="TRUE"/>
+            <volumetric_emission value="0 0 0"/>
+            <g value="0"/>
+            <eta value="1"/>
+        </material>
+    </model>
+
+</scene>

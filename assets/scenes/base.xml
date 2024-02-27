@@ -18,7 +18,7 @@
 		</material>
 	</model>
 
-	<model type="sphere">
+	<!-- <model type="sphere">
 		<center value="0.0 0.0 0.0"/>
 		<radius value="0.5"/>
 
@@ -27,7 +27,8 @@
 		<material type="lambertian">
 			<albedo value="1 1 1"/>
 			<albedo_texture value="../../textures/earth.jpg"/>
+			<normal_texture value="../../textures/earth_normal.png"/>
 		</material>
-	</model>
+	</model> -->
 
 </scene>

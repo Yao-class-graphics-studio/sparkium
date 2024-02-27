@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene>
+    <camera>
+        <transform type="lookat">
+            <eye value="0 10.856 10.809"/>
+            <center value="0 0 0"/>
+            <up value="0.0 1.0 0.0"/>
+        </transform>
+        <fov value="40"/>
+        <speed value="100"/>
+    </camera>
+
+    	<model type="obj" name="light1">
+		<filename value="../../meshes/mip/light1.obj"/>
+        <material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="30.0"/>
+        </material>
+	</model>
+	<model type="obj" name="light2">
+		<filename value="../../meshes/mip/light2.obj"/>
+        <material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="30.0"/>
+        </material>
+	</model>
+	<model type="obj" name="light3">
+		<filename value="../../meshes/mip/light3.obj"/>
+        <material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="30.0"/>
+        </material>
+	</model>
+	<model type="obj" name="light4">
+		<filename value="../../meshes/mip/light4.obj"/>
+        <material type="emission">
+            <emission value="1.0 1.0 1.0"/>
+            <emission_strength value="30.0"/>
+        </material>
+	</model>
+	<model type="obj" name="plane1">
+		<filename value="../../meshes/mip/plane1.obj"/>
+		<material type="principled">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<eta value="1.450000"/>
+			<roughness value="0.121818"/>
+			<metallic value="1.000000"/>
+		</material>
+	</model>
+	<model type="obj" name="plane2">
+		<filename value="../../meshes/mip/plane2.obj"/>
+		<material type="principled">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<eta value="1.450000"/>
+			<roughness value="0.080000"/>
+			<metallic value="1.000000"/>
+		</material>
+	</model>
+	<model type="obj" name="plane3">
+		<filename value="../../meshes/mip/plane3.obj"/>
+		<material type="principled">
+			<albedo value="0.800000 0.800000 0.800000"/>
+			<eta value="1.450000"/>
+			<roughness value="0.040000"/>
+			<metallic value="1.000000"/>
+		</material>
+	</model>
+	<model type="obj" name="plane4">
+		<filename value="../../meshes/mip/plane4.obj"/>
+		<material type="specular">
+		</material>
+	</model>
+
+
+</scene>

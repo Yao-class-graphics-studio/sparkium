@@ -49,6 +49,7 @@ void Camera::GenerateRay(float aspect,
   float theta = 2.0f * PI * rand_w;
   float sin_theta = std::sin(theta);
   float cos_theta = std::cos(theta);
+  // Aperture: By TAs.
   origin =
       glm::vec3{glm::vec2{sin_theta, cos_theta} * rand_r * aperture_, 0.0f};
   direction = glm::normalize(

@@ -121,7 +121,7 @@
 
     <!--short block-->
     <model name="Short Block">
-        <vertex position="130.0 165.0  65.0"/>
+                <vertex position="130.0 165.0  65.0"/>
         <vertex position="82.0 165.0 225.0"/>
         <vertex position="240.0 165.0 272.0"/>
         <vertex position="290.0 165.0 114.0"/>
@@ -146,36 +146,36 @@
         <vertex position=" 82.0 165.0 225.0"/>
         <vertex position="82.0   0.0 225.0"/>
 
+        <index value="1"/>
+        <index value="3"/>
         <index value="0"/>
-        <index value="1"/>
-        <index value="3"/>
-        <index value="1"/>
-        <index value="3"/>
         <index value="2"/>
+        <index value="3"/>
+        <index value="1"/>
+        <index value="5"/>
+        <index value="7"/>
         <index value="4"/>
-        <index value="5"/>
-        <index value="7"/>
-        <index value="5"/>
-        <index value="7"/>
         <index value="6"/>
+        <index value="7"/>
+        <index value="5"/>
+        <index value="9"/>
+        <index value="11"/>
         <index value="8"/>
-        <index value="9"/>
-        <index value="11"/>
-        <index value="9"/>
-        <index value="11"/>
         <index value="10"/>
+        <index value="11"/>
+        <index value="9"/>
+        <index value="13"/>
+        <index value="15"/>
         <index value="12"/>
-        <index value="13"/>
-        <index value="15"/>
-        <index value="13"/>
-        <index value="15"/>
         <index value="14"/>
+        <index value="15"/>
+        <index value="13"/>
+        <index value="17"/>
+        <index value="19"/>
         <index value="16"/>
-        <index value="17"/>
-        <index value="19"/>
-        <index value="17"/>
-        <index value="19"/>
         <index value="18"/>
+        <index value="19"/>
+        <index value="17"/>
 
         <material type="lambertian">
             <albedo value="1 1 1"/>

@@ -2,14 +2,14 @@
 #include "memory"
 #include "sparks/assets/camera.h"
 #include "sparks/assets/entity.h"
-#include "sparks/assets/material.h"
+// #include "sparks/assets/material.h"
 #include "sparks/assets/mesh.h"
 #include "sparks/assets/texture.h"
 #include "sparks/assets/util.h"
 #include "vector"
 
 namespace sparks {
-class Scene {
+class Scene{
  public:
   Scene();
   explicit Scene(const std::string &filename);
@@ -19,6 +19,7 @@ class Scene {
   [[nodiscard]] const Texture &GetTexture(int texture_id) const;
   [[nodiscard]] int GetTextureCount() const;
   [[nodiscard]] std::vector<const char *> GetTextureNameList() const;
+  [[nodiscard]] int GetTextureId(const std::string &name) const;
 
   template <class... Args>
   int AddEntity(Args... args) {
@@ -64,12 +65,17 @@ class Scene {
                  const glm::vec3 &direction,
                  float t_min,
                  float t_max,
-                 HitRecord *hit_record) const;
+                 HitRecord *hit_record,
+                 float sampleTime) const;
 
   bool TextureCombo(const char *label, int *current_item) const;
   bool EntityCombo(const char *label, int *current_item) const;
   int LoadTexture(const std::string &file_path);
   int LoadObjMesh(const std::string &file_path);
+
+  glm::vec3 GetSceneLight() const;
+  glm::vec3 GetSceneLightDirection() const;
+  bool use_scene_light{false};
 
  private:
   std::vector<Texture> textures_;
@@ -80,6 +86,9 @@ class Scene {
   int envmap_id_{1};
   float envmap_offset_{0.0f};
   std::vector<float> envmap_cdf_;
+  glm::vec3 light{0.0f};
+  glm::vec3 light_direction{0.0f, 1.0f, 0.0f};
+  float light_strength{1.0f};
   glm::vec3 envmap_light_direction_{0.0f, 1.0f, 0.0f};
   glm::vec3 envmap_major_color_{0.5f};
   glm::vec3 envmap_minor_color_{0.3f};
@@ -88,5 +97,7 @@ class Scene {
   float camera_speed_{3.0f};
   glm::vec3 camera_pitch_yaw_roll_{0.0f, 0.0f, 0.0f};
   Camera camera_{};
+
+  
 };
 }  // namespace sparks

@@ -55,6 +55,17 @@ glm::vec4 StringToVec4(const std::string &s) {
   return {v[0], v[1], v[2], v[3]};
 }
 
+bool StringToBool(const std::string &s) {
+  std::string tmps = s;
+  for (auto &c : tmps)
+    c = std::toupper(c);
+  if (tmps == "1" || tmps == "TRUE")
+    return true;
+  if (tmps == "0" || tmps == "FALSE")
+    return false;
+  assert(("cannot convert string to bool",0));
+}
+
 glm::mat4 XmlTransformMatrix(tinyxml2::XMLElement *transform_element) {
   if (!transform_element)
     return glm::mat4{1.0f};

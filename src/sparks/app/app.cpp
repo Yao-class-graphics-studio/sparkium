@@ -5,6 +5,7 @@
 #include "absl/strings/str_split.h"
 #include "cmath"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "iostream"
 #include "sparks/util/util.h"
 #include "stb_image_write.h"
@@ -494,13 +495,16 @@ void App::UpdateImGui() {
     reset_accumulation_ |= ImGui::SliderAngle(
         "Offset", &scene.GetEnvmapOffset(), 0.0f, 360.0f, "%.0f deg");
 
+    // Appended UI for modification of entity properties: Jingyi Lyu + Shengquan Du.
+    // Each worked for their own features.
+
     if (selected_entity_id_ != -1) {
       ImGui::NewLine();
       ImGui::Text("Material");
       ImGui::Separator();
       static int current_item = 0;
       std::vector<const char *> material_types = {
-          "Lambertian", "Specular", "Transmissive", "Principled", "Emission"};
+          "Lambertian", "Specular", "Transmissive", "Principled", "Emission", "Subsurface", "KdSubsureface", "Medium", "Grid Medium"};
       Material &material = scene.GetEntity(selected_entity_id_).GetMaterial();
       reset_accumulation_ |=
           ImGui::Combo("Type", reinterpret_cast<int *>(&material.material_type),
@@ -510,6 +514,12 @@ void App::UpdateImGui() {
           ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
       reset_accumulation_ |=
           scene.TextureCombo("Albedo Texture", &material.albedo_texture_id);
+      reset_accumulation_ |=
+          ImGui::Checkbox("Use Normal Texture", &material.use_normal_texture);
+      if (material.use_normal_texture) {
+        reset_accumulation_ |=
+            scene.TextureCombo("Normal Texture", &material.normal_texture_id);
+      }
       reset_accumulation_ |= ImGui::ColorEdit3(
           "Emission", &material.emission[0],
           ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
@@ -518,6 +528,104 @@ void App::UpdateImGui() {
                              0.0f, 1e5f, "%.3f", ImGuiSliderFlags_Logarithmic);
       reset_accumulation_ |=
           ImGui::SliderFloat("Alpha", &material.alpha, 0.0f, 1.0f, "%.3f");
+      if (material.material_type == MaterialType(MATERIAL_TYPE_TRANSMISSIVE)) {
+        reset_accumulation_ |=
+            ImGui::SliderFloat("IOR", &material.eta, 1.0f, 3.0f, "%.3f");
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_PRINCIPLED)) {
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Metallic", &material.metallic, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |=
+            ImGui::SliderFloat("IOR", &material.eta, 1.0f, 3.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Roughness", &material.roughness, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "SpecularTint", &material.specularTint, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Anisotropic", &material.anisotropic, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |=
+            ImGui::SliderFloat("Sheen", &material.sheen, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "SheenTint", &material.sheenTint, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "Clearcoat", &material.clearcoat, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "ClearcoatGloss", &material.clearcoatGloss, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::SliderFloat(
+            "SpecularTrans", &material.specTrans, 0.0f, 1.0f, "%.3f");
+        reset_accumulation_ |= ImGui::Checkbox("Thin", &material.thin);
+        if (material.thin) {
+          reset_accumulation_ |= ImGui::SliderFloat(
+              "Flatness", &material.flatness, 0.0f, 1.0f, "%.3f");
+          reset_accumulation_ |= ImGui::SliderFloat(
+              "DiffuseTrans", &material.diffTrans, 0.0f, 1.0f, "%.3f");
+        } else {
+          reset_accumulation_ |= ImGui::SliderFloat3(
+              "ScatterDistance", glm::value_ptr(material.scatterDistance), 0.0f,
+              1.0f, "%.3f");
+        }
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_MEDIUM) || material.material_type == MaterialType(MATERIAL_TYPE_GRID_MEDIUM)) {
+        bool tmpFlag = false;
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_a", reinterpret_cast<float *>(&material.sigma_a));
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_s", reinterpret_cast<float *>(&material.sigma_s));
+        tmpFlag |= ImGui::Checkbox(
+            "False Surface", &material.false_surface);
+        tmpFlag |= ImGui::ColorEdit3(
+            "Volumetric Emission", &material.volumetric_emission[0],
+            ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_Float);
+        tmpFlag |= ImGui::SliderFloat(
+            "g", &material.g, -1.0f, 1.0f, "%.3f");
+        if(tmpFlag) {
+          material.medium->Update(material.sigma_a, material.sigma_s, material.volumetric_emission, material.g);
+        }
+        reset_accumulation_ |= tmpFlag;
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_KDSUBSURFACE)) {
+        bool tmpFlag = false;
+        tmpFlag |= ImGui::SliderFloat(
+            "g", &material.g, -1.0f, 1.0f, "%.3f");
+        tmpFlag |= ImGui::SliderFloat(
+            "eta", &material.eta, 1.0f, 2.0f, "%.3f");
+        tmpFlag |= ImGui::InputFloat3(
+            "mfp", reinterpret_cast<float *>(&material.mfp));
+        if(tmpFlag) {
+          ComputeBeamDiffusionBSSRDF(material.g, material.eta, *material.table);
+        }
+        reset_accumulation_ |= tmpFlag;
+      }
+      if (material.material_type == MaterialType(MATERIAL_TYPE_SUBSURFACE)) {
+        std::vector<const char*> ss_keys{
+            "apple", "chicken_1", "chicken_2",
+            "cream", "ketchup", "marble", "potato", "skimmilk",
+            "skin_1", "skin_2", "spectralon", "wholemilk", "lowfat_milk", "reduced_milk",
+            "regular_milk", "espresso", "mint_mocha_coffee", "lowfat_soy_milk", "regular_soy_milk",
+            "lowfat_chocolate_milk", "regular_chocolate_milk", "coke", "pepsi", "sprite",
+            "gatorade", "chardonnay", "white_zinfandel", "merlot", "budweiser_beer", "coors_light_beer",
+            "clorox", "apple_juice", "cranberry_juice", "grape_juice", "ruby_grape_juice", "white_grapefuite_juice",
+            "shampoo", "strawberry_shampoo", "head_and_shoulders_shampoo", "lemon_tee_powder", "orange_powder", "pink_lemonade_powder",
+            "cappuccino_powder", "salt_powder", "sugar_powder", "suisse_mocha_powder", "pacific_ocean_surface_water", "none"
+        };
+        bool tmpFlag = false;
+        tmpFlag |=
+          ImGui::Combo("Subsurface Preset", reinterpret_cast<int *>(&material.ss_type),
+                       ss_keys.data(), ss_keys.size());
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_a", reinterpret_cast<float *>(&material.sigma_a));
+        tmpFlag |= ImGui::InputFloat3(
+            "sigma_s", reinterpret_cast<float *>(&material.sigma_s));
+        tmpFlag |= ImGui::SliderFloat(
+            "g", &material.g, -1.0f, 1.0f, "%.3f");
+        tmpFlag |= ImGui::SliderFloat(
+            "eta", &material.eta, 1.0f, 2.0f, "%.3f");
+        if(tmpFlag) {
+          ComputeBeamDiffusionBSSRDF(material.g, material.eta, *material.table);
+          GetPresetSS(material.ss_type, material.sigma_a, material.sigma_s);
+        }
+        reset_accumulation_ |= tmpFlag;
+      }
     }
 
 #if !defined(NDEBUG)

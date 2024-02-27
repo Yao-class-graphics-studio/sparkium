@@ -14,6 +14,8 @@ glm::vec3 StringToVec3(const std::string &s);
 
 glm::vec4 StringToVec4(const std::string &s);
 
+bool StringToBool(const std::string &s);
+
 glm::mat4 XmlTransformMatrix(tinyxml2::XMLElement *transform_element);
 
 glm::mat4 XmlComposeTransformMatrix(tinyxml2::XMLElement *object_element);
